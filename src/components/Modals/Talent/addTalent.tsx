@@ -1,14 +1,14 @@
-import { Modal, Select } from "@mantine/core"
 import Close from "@assets/icons/close.svg"
-import { FormControls, Button } from "@components/index"
-import { Formik, Form } from "formik"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Button, FormControls } from "@components/index"
+import { Modal, Select } from "@mantine/core"
 import { showNotification } from "@mantine/notifications"
-import { type Error } from "../../../type/api/index"
-import { createTalent } from "@services/talents"
-import { addTalentValidationSchema } from "@utils/validationSchema"
 import { fetchManagers } from "@services/manager"
+import { createTalent } from "@services/talents"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { addTalentValidationSchema } from "@utils/validationSchema"
+import { Form, Formik } from "formik"
 import { useState } from "react"
+import { type Error } from "../../../type/api/index"
 
 export interface AddTalentModalProps {
     opened: boolean
@@ -21,8 +21,8 @@ type ManagerType = {
 }
 
 const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
-    const queryClient = useQueryClient();
-    const [selectedManager, setSelectedManager] = useState<ManagerType>();
+    const queryClient = useQueryClient()
+    const [selectedManager, setSelectedManager] = useState<ManagerType>()
 
     const { isPending, mutate } = useMutation({
         mutationFn: createTalent,
@@ -53,9 +53,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
         queryFn: () => fetchManagers(),
     })
 
-    const managers: ManagerType[] = teamQuery.data?.data || [];
-
-    console.log(teamQuery.data?.data)
+    const managers: ManagerType[] = teamQuery.data?.data || []
 
     return (
         <Modal
@@ -92,14 +90,16 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                     stageName: "",
                     emailAddress: "",
                     phoneNumber: "",
-                    gender: "male",
-                    industry:"",
+                    gender: "",
+                    industry: "",
                 }}
                 validationSchema={addTalentValidationSchema}
-                onSubmit={(values) => mutate({
-                    ...values,
-                    manager: selectedManager?._id,
-                })}
+                onSubmit={(values) =>
+                    mutate({
+                        ...values,
+                        manager: selectedManager?._id,
+                    })
+                }
             >
                 {() => (
                     <Form className="py-4 mt-4">
@@ -154,7 +154,6 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
                                 }}
-                          
                             />
                         </div>
                         <div className="mb-6">
@@ -162,8 +161,6 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Mobile Number"
                                 control="input"
                                 name="phoneNumber"
-                                //placeholder="enter your password"
-
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -181,19 +178,21 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 searchable
                                 styles={{
                                     input: {
-                                    borderRadius: "80px",
-                                    padding: "16px",
-                                    height: "50px",
-                                    marginTop: "10px",
+                                        borderRadius: "80px",
+                                        padding: "16px",
+                                        height: "50px",
+                                        marginTop: "10px",
                                     },
-                                    label:{
-                                        fontSize:"15px",
-                                    }
+                                    label: {
+                                        fontSize: "15px",
+                                    },
                                 }}
                                 value={selectedManager?._id || null}
                                 onChange={(value) => {
-                                    const selected = managers.find((manager) => manager._id === value);
-                                    setSelectedManager(selected || undefined);
+                                    const selected = managers.find(
+                                        (manager) => manager._id === value
+                                    )
+                                    setSelectedManager(selected || undefined)
                                 }}
                                 clearable
                             />
@@ -203,13 +202,14 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Gender"
                                 control="select"
                                 name="gender"
-                                //placeholder="enter your email address"
+                                placeholder="Select Gender"
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
                                 }}
                                 labelClassName="text-[#000]"
                             >
+                                <option value="">Select Gender</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                             </FormControls>
@@ -219,7 +219,6 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Industry"
                                 control="input"
                                 name="industry"
-                                //placeholder="enter your email address"
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",

@@ -1,38 +1,38 @@
-import {
-    Layout,
-    Button,
-    StatisticsCard,
-    InquiryTable,
-    TalentMagicLinkModal,
-    EventDetailsModal,
-    SetReminderModal,
-    InquiryDetails,
-    RespondModal,
-    AddTalentModal,
-    EmptyState,
-    LoadingState,
-} from "@components/index"
-import { FaPlus } from "react-icons/fa"
-import { RiLinksFill } from "react-icons/ri"
-import Profile from "@assets/icons/profile.svg"
-import InquiryIcon from "@assets/icons/inquiries.svg"
 import Events from "@assets/icons/event.svg"
-import { FaAngleRight } from "react-icons/fa6"
-import UpcomingEvents from "./components/upcomingEvents"
-import { useState, useMemo, useEffect } from "react"
+import InquiryIcon from "@assets/icons/inquiries.svg"
+import Profile from "@assets/icons/profile.svg"
+import {
+    AddTalentModal,
+    Button,
+    EmptyState,
+    EventDetailsModal,
+    InquiryDetails,
+    InquiryTable,
+    Layout,
+    LoadingState,
+    RespondModal,
+    SetReminderModal,
+    StatisticsCard,
+    TalentMagicLinkModal,
+} from "@components/index"
 import useAuth from "@hooks/auth/useAuth"
 import { fetchProfile } from "@services/auth"
 import { useQuery } from "@tanstack/react-query"
+import { useEffect, useMemo, useState } from "react"
+import { FaPlus } from "react-icons/fa"
+import { FaAngleRight } from "react-icons/fa6"
+import { RiLinksFill } from "react-icons/ri"
+import UpcomingEvents from "./components/upcomingEvents"
 //import { Results } from "type/api/calendar.types"
-import { useNavigate } from "react-router-dom"
-import { BsFillInfoCircleFill } from "react-icons/bs"
-import { CopyToClipboard } from "react-copy-to-clipboard"
+import ErrorComponent from "@components/errorComponent"
+import { useGetEvents } from "@hooks/useEvent"
 import { Alert } from "@mantine/core"
 import { fetchInquiries } from "@services/inquiry"
-import { useGetEvents } from "@hooks/useEvent"
-import { Data } from "../../type/api/event.types"
+import { CopyToClipboard } from "react-copy-to-clipboard"
+import { BsFillInfoCircleFill } from "react-icons/bs"
+import { useNavigate } from "react-router-dom"
 import { Data as InquiryData } from "type/api/inquiry.types"
-import ErrorComponent from "@components/errorComponent"
+import { Data } from "../../type/api/event.types"
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -136,7 +136,7 @@ const Dashboard = () => {
                                     className="text-[#FFB400] mt-3"
                                 />
 
-                                <p className="text-md sm:text-2md md:text-[20px] font-normal p-2 leading-6 tracking-[0.5px]">
+                                <p className="text-md sm:text-2md md:text-[14px] font-normal p-2 leading-6 tracking-[0.5px]">
                                     You are yet to complete your account
                                     registration.
                                     <span
