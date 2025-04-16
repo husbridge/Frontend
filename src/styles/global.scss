@@ -1,0 +1,321 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,500;0,600;0,700;0,800;0,900;1,500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    h1 {
+        @apply text-2xl;
+    }
+    h2 {
+        @apply text-xl;
+    }
+
+    h3 {
+        @apply text-2lg;
+    }
+    h4 {
+        @apply text-lg;
+    }
+    h5 {
+        @apply text-3md;
+    }
+    h6 {
+        @apply text-2md;
+    }
+    .body-medium {
+        @apply text-md;
+    }
+    .body-regular {
+        @apply text-sm;
+    }
+    .body-small {
+        @apply text-xs;
+    }
+}
+
+.btn--primary {
+    @apply bg-black-100 text-yellow-100 text-sm sm:text-md  ;
+}
+.btn--primary{
+    @apply disabled:bg-neutral-10 disabled:text-neutral-40 disabled:cursor-not-allowed;
+}
+
+.btn--black {
+    @apply bg-black-100 text-white-100 text-md sm:text-2md ;
+}
+
+.btn--transparent {
+    @apply bg-[#F5F5F6]  py-2 border hover:bg-white-100 text-black-100 text-md sm:text-2md rounded-lg;
+}
+.btn--yellow {
+    @apply border border-[#FFC107] text-black-100 bg-transparent py-2 text-sm sm:text-md;
+}
+.btn--red {
+    @apply bg-white-100 border border-[#FF4040] text-[#FF4040] py-2;
+}
+.btn--gray {
+    @apply bg-[#FAFAFA] py-2 border border-black-30 text-black-100 text-md sm:text-2md;
+}
+.btn--white{
+    @apply bg-[#E5E5E5] text-md sm:text-2md py-2 text-black-100
+}
+
+.btn--clear {
+    @apply bg-transparent border py-2 text-md sm:text-2md rounded-[35px];
+}
+
+.btn--border {
+    @apply bg-white-100 border border-[#86C429] py-2;
+}
+
+.btn--red {
+    @apply  text-[#707070] border border-[#FF5C5C] text-sm md:text-2md lg:text-md ;
+}
+
+
+body {
+    margin: 0;
+    font-family:
+        "Montserrat",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Roboto",
+        "Oxygen",
+        "Ubuntu",
+        "Cantarell",
+        "Fira Sans",
+        "Droid Sans",
+        "Helvetica Neue",
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+}
+
+.no-scrollbar::-webkit-scrollbar { 
+    display: none; 
+} 
+// .btn {
+//     @apply tex min-w-[140px];
+// }
+.mantine-Pagination-control{
+    color: #40D57B;
+    //background-color: yellow;
+    
+}
+@media only screen and (max-width: 768px) {
+    // .fc-list-event {
+    //     padding: 10px;
+    //     margin-bottom: 10px;
+    //     border-radius: 8px;
+    // }
+    // .fc-list-event-title {
+    //     font-size: 14px;
+    //     font-weight: bold;
+    // }
+    // .fc-list-event-time {
+    //     font-size: 12px;
+    //     color: #888;
+    // }
+}
+.event-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 8px;
+    border-radius: 9px;
+    margin-bottom: 8px;
+}
+
+.event-details {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+}
+
+.fc-toolbar-title {
+    font-size: 16px; /* Adjust title size */
+    font-weight: bold;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .fc-toolbar-title {
+        font-size: 14px; /* Smaller title for mobile */
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .fc-toolbar.fc-header-toolbar {
+      //flex-direction: column;
+      //order: 2;
+      font-size: 10px;
+    }
+    .fc-toolbar-chunk {
+      display: table-row;
+      text-align: center;
+      padding: 5px 0;
+    }
+  }
+  @media screen and (max-width: 450px) {
+  .fc-toolbar-title{
+    //padding-top: 100px;
+    text-align: center !important;
+  }
+  .fc-toolbar.fc-header-toolbar {
+    display: block !important;
+  }
+
+.fc-button-group{
+    display: flex;
+    justify-content: flex-end !important;
+    position: absolute !important;
+    right: 20px;
+    top:8px
+    //margin-top: -10px;
+}
+   }
+
+  .fc .fc-timegrid-slot {
+    height: 50px !important;
+  }
+
+  th.fc-col-header-cell {
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  .fc-timegrid-event {
+    border: none;
+    border-radius: 4px;
+  }
+
+  .fc-event-main {
+    border-top: 4px solid #00c34f;
+    border-radius: 4px 4px 0px 0px;
+  }
+
+  .appointment-event {
+    padding: 5px;
+    height: 100%;
+  }
+  .code {
+    @apply h-[35px] sm:h-[70px] lg:w-[80px] md:w-[70px] w-[40px] #{!important} ;
+}
+  
+/* Calendar Header for Month and Year */
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #F3F3F3;
+    color: black;
+    font-weight: bold;
+}
+
+.calendar-header-title {
+    font-size: 1.2rem;
+}
+
+
+
+/* Days Header */
+.days-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    padding: 10px 15px;
+    border-radius: 8px;
+  }
+  
+  .arrow-button {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  /* Days container */
+  .days-container {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin: 0 10px;
+  }
+  
+  .day-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    padding: 10px 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .day-box:hover {
+    background-color: #ddd;
+  }
+  
+  .day-name {
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 5px;
+  }
+  
+  .day-number {
+    font-size: 1.2rem;
+    color: #000;
+  }
+  
+  /* Selected date styling */
+  .selected {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .selected .day-name,
+  .selected .day-number {
+    color: #fff;
+  }
+/* Calendar body */
+.calendar-body {
+    padding: 15px;
+}
+
+.weekdays-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .weekday-item {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .weekday-item.selected {
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+  }
+  
+  .weekday-name {
+    font-size: 14px;
+    color: gray;
+  }
+  
+  .date-digit {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  

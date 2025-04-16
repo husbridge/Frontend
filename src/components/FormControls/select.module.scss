@@ -1,0 +1,15 @@
+.select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: transparent;
+    // background-image: url("../../assets/svg/dropdown.svg");
+    background-repeat: no-repeat;
+    background-position-x: 99%;
+    background-position-y: 20px;
+}
+
+ .select:invalid { color: #CECECC; }
+//   option[value=""][disabled] {
+//     display: none;
+//     color: #666;
+//   }

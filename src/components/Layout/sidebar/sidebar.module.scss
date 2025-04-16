@@ -1,0 +1,16 @@
+.inactive {
+    path {
+        //@apply fill-[#FFFFFF];
+    }
+    svg,path:hover{
+        @apply fill-[#292D32];
+    }
+}
+
+.active {
+    //@apply text-primary-100 bg-accent-10 font-bold;
+    svg,path {
+        @apply fill-[#292D32];
+    }
+}
+
