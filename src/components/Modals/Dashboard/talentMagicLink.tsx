@@ -97,7 +97,7 @@ const TalentMagicLinkModal = ({
                                                 <Tooltip
                                                     className="inline-block"
                                                     label={
-                                                        <div className="max-w-sm w-full">
+                                                        <div className="max-w-sm h-fit w-full text-wrap">
                                                             Management request
                                                             has been sent.
                                                             You're seeing this
