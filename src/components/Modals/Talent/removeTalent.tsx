@@ -40,7 +40,7 @@ const RemoveTalentModal = ({ opened, setOpened }: RemoveTalentModalProps) => {
                 <br />
 
                 <h1 className="font-semibold sm:text-lg text-3md mb-4 text-center">
-                    Remove Shalliopopi?
+                    Remove Shallipopi?
                 </h1>
                 <p className="font-medium text-sm text-center ">
                     Are you sure you want to shallipopi from your talent list?
