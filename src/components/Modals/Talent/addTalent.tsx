@@ -29,7 +29,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
         onSuccess: (data) => {
             showNotification({
                 title: "Success",
-                message: data.data.message,
+                message: data?.data.message,
                 color: "green",
             })
             setOpened(false)

@@ -10,33 +10,10 @@ export default function PendingTalent({ item }: { item: Data }) {
     const deleteMutation = useMutation({
         mutationFn: deleteTalent,
         mutationKey: ["delete-talent"],
-        onMutate: async (talentId) => {
-            await queryClient.cancelQueries({
-                predicate: (query) => {
-                    return (
-                        Array.isArray(query.queryKey) &&
-                        query.queryKey[0] === "talents"
-                    )
-                },
-            })
 
-            const previousTalents = queryClient.getQueryData(["talents"])
-
-            queryClient.setQueryData(["talents"], (old) =>
-                (old as [])?.filter((talent: any) => talent.id !== talentId)
-            )
-
-            return { previousTalents }
-        },
-
-        onSettled: (data) => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({
-                predicate: (query) => {
-                    return (
-                        Array.isArray(query.queryKey) &&
-                        query.queryKey[0] === "talents"
-                    )
-                },
+                queryKey: ["talents"],
             })
             showNotification({
                 title: "Success",
@@ -44,13 +21,12 @@ export default function PendingTalent({ item }: { item: Data }) {
                 color: "green",
             })
         },
-        onError: (err:any, _variables, context) => {
-            queryClient.setQueryData(["talents"], context?.previousTalents)
-             showNotification({
-                 title: "Error",
-                 message: err?.response?.data?.message || err.message,
-                 color: "red",
-             })
+        onError: (err: any) => {
+            showNotification({
+                title: "Error",
+                message: err?.response?.data?.message || err.message,
+                color: "red",
+            })
         },
     })
     return (
@@ -83,10 +59,16 @@ export default function PendingTalent({ item }: { item: Data }) {
                         </button>
                     </Tooltip>
                     <Badge
-                        className="bg-red-600 cursor-pointer"
+                        className={`bg-red-600  transition-all duration-300  ${
+                            deleteMutation.isPending
+                                ? "!cursor-not-allowed pointer-events-none"
+                                : " cursor-pointer"
+                        }`}
                         onClick={() => deleteMutation.mutate(item._id)}
                     >
-                        Cancel Request
+                        {deleteMutation.isPending
+                            ? "Canceling Request"
+                            : "Cancel Request"}
                     </Badge>
                 </span>
             )}
