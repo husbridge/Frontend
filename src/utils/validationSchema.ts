@@ -54,8 +54,9 @@ export const verificationValidationSchema = yup.object().shape({
 export const loginValidationSchema = yup.object().shape({
     username: yup
         .string()
-        .required("Email is required")
-        .email("Please use a valid email address"),
+        .trim()
+        .email("Please use a valid email address")
+        .required("Email is required"),
     password: yup.string().required("Password is required"),
     //.min(8, "Password must be a minimum of 8 characters"),
 })
@@ -63,8 +64,9 @@ export const loginValidationSchema = yup.object().shape({
 export const clientLoginValidationSchema = yup.object().shape({
     email: yup
         .string()
-        .required("Email is required")
-        .email("Please use a valid email address"),
+        .trim()
+        .email("Please use a valid email address")
+        .required("Email is required"),
     password: yup
         .string()
         .required("Password is required")

@@ -28,7 +28,7 @@ const Contact = () => {
     return (
         <>
             {isLoading ? (
-                <LoadingState /> 
+                <LoadingState />
             ) : error ? (
                 <ErrorComponent />
             ) : (
@@ -43,11 +43,11 @@ const Contact = () => {
                                 Contact{" "}
                                 {`${data?.data.firstName} ${data?.data.lastName} ${data?.data.stageName && `(${data?.data.stageName})`}`}
                             </p>
-                            {data?.data.manager && 
+                            {data?.data.manager && (
                                 <p className="text-white-100 text-center text-md mt-2 font-normal">
-                                    Managed by {data?.data.manager.fullName} 
+                                    Managed by {data?.data.manager.fullName}
                                 </p>
-                            }
+                            )}
                         </div>
                         <Tabs
                             variant="unstyled"

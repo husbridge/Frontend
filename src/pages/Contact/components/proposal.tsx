@@ -1,12 +1,13 @@
-import { FormControls, Button, InquirySentModal } from "@components/index"
-import { Formik, Form } from "formik"
-import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
-import { proposalInquiryValidationSchema } from "@utils/validationSchema"
+import { Button, FormControls, InquirySentModal } from "@components/index"
+import { useInquiryStore } from "@hooks/useInquiry"
 import { showNotification } from "@mantine/notifications"
 import { sendPortalOTP } from "@services/auth"
+import { uploadFile } from "@services/storage"
+import { useMutation } from "@tanstack/react-query"
+import { proposalInquiryValidationSchema } from "@utils/validationSchema"
+import { Form, Formik } from "formik"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useInquiryStore } from "@hooks/useInquiry"
 
 const Proposal = ({ id }: { id: string }) => {
     const [opened, setOpened] = useState(false)
@@ -15,7 +16,14 @@ const Proposal = ({ id }: { id: string }) => {
 
     const onSendOtp = useMutation({
         mutationFn: sendPortalOTP,
-        onSuccess: () => {
+        onSuccess: (data: any) => {
+            if (data?.message) {
+                showNotification({
+                    title: "Success",
+                    message: data.message || "",
+                    color: "green",
+                })
+            }
             navigate("/confirm-inquiry")
         },
         onError: (err: Error) => {
@@ -29,12 +37,22 @@ const Proposal = ({ id }: { id: string }) => {
         },
     })
 
-    const handleValidation = (values: any) => {
-        if (values.document) setDocument(values.document)
+    const handleValidation = async (values: any) => {
+        console.log(values.document)
+
+        if (values.document) {
+            const formData = new FormData()
+            formData.append("file", values.document)
+            const data = await uploadFile(formData)
+            console.log(data)
+
+            setDocument(values.document)
+        }
         const inquiry = {
             ...values,
             inquiryType: "proposal",
             talentID: id,
+            // document:
         }
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
@@ -55,6 +73,7 @@ const Proposal = ({ id }: { id: string }) => {
                     phoneNumber: "",
                     subject: "",
                     description: "",
+                    document: null,
                 }}
                 validationSchema={proposalInquiryValidationSchema}
                 onSubmit={(values) => {
