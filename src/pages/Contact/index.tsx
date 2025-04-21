@@ -1,17 +1,17 @@
-import { Tabs } from "@mantine/core"
+import { Avatar, Tabs } from "@mantine/core"
 import { useState } from "react"
 
+import defaultAvatar from "@assets/icons/avatar.svg"
+import Logo from "@assets/icons/logo.svg"
+import ErrorComponent from "@components/errorComponent"
+import { LoadingState } from "@components/index"
+import { useMediaQuery } from "@mantine/hooks"
+import { fetchPublicProfile } from "@services/auth"
+import { useQuery } from "@tanstack/react-query"
+import { useParams } from "react-router-dom"
+import Booking from "./components/booking"
 import Collaboration from "./components/collaboration"
 import Proposal from "./components/proposal"
-import Booking from "./components/booking"
-import ErrorComponent from "@components/errorComponent"
-import Logo from "@assets/icons/logo.svg"
-import Avatar from "@assets/icons/avatar.svg"
-import { useMediaQuery } from "@mantine/hooks"
-import { useQuery } from "@tanstack/react-query"
-import { fetchPublicProfile } from "@services/auth"
-import { useParams } from "react-router-dom"
-import { LoadingState } from "@components/index"
 
 const Contact = () => {
     const [activeTab, setActiveTab] = useState<string | null>("booking")
@@ -25,6 +25,7 @@ const Contact = () => {
         queryKey: ["profile"],
         queryFn: () => fetchPublicProfile(uniqueName || ""),
     })
+
     return (
         <>
             {isLoading ? (
@@ -32,31 +33,36 @@ const Contact = () => {
             ) : error ? (
                 <ErrorComponent />
             ) : (
-                <div className="bg-[#F2F2F2]">
-                    <div className="sm:w-[70%] min-h-screen mx-auto bg-white-100">
-                        <div className="bg-black-100 p-8 rounded-b-2xl mb-6">
+                <section className="bg-[#F2F2F2]">
+                    <section className="sm:w-[70%] min-h-screen mx-auto bg-white-100">
+                        <section className="bg-black-100 p-8 rounded-b-2xl mb-6">
                             <img src={Logo} alt="" className="w-24" />
                             <div className="flex justify-center mt-2">
-                                <img src={Avatar} alt="" className="w-20" />
+                                <Avatar
+                                    src={
+                                        data?.data.profileUrl.trim()
+                                            ? data.data.profileUrl
+                                            : defaultAvatar
+                                    }
+                                    alt={data?.data.fullName}
+                                    className="size-20 rounded-full"
+                                />
                             </div>
                             <p className="text-white-100 text-center sm:text-lg text-3md font-semibold mt-2">
                                 Contact{" "}
-                                {`${data?.data.firstName} ${data?.data.lastName} ${data?.data.stageName && `(${data?.data.stageName})`}`}
+                                {`${data?.data.fullName} ${data?.data.stageName && `(${data?.data.stageName})`}`}
                             </p>
                             {data?.data.manager && (
                                 <p className="text-white-100 text-center text-md mt-2 font-normal">
                                     Managed by {data?.data.manager.fullName}
                                 </p>
                             )}
-                        </div>
+                        </section>
                         <Tabs
                             variant="unstyled"
                             defaultValue="singleAddition"
                             onChange={setActiveTab}
                             value={activeTab}
-                            // classNames={{ tab: {
-                            //     bac
-                            // } }}
                             styles={{
                                 list: {
                                     backgroundColor: "#F7F7F7",
@@ -119,8 +125,8 @@ const Contact = () => {
                                 <Collaboration id={data?.data._id || ""} />
                             </Tabs.Panel>
                         </Tabs>
-                    </div>
-                </div>
+                    </section>
+                </section>
             )}
         </>
     )

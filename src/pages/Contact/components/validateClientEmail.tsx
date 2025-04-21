@@ -1,20 +1,21 @@
-import LeftBackground from "@pages/auth/components/leftBackground"
-import { FormControls, Button, InquirySentModal } from "@components/index"
-import { Formik, Form } from "formik"
-import { useNavigate } from "react-router-dom"
-import { MdArrowBack } from "react-icons/md"
-import { useState, useEffect } from "react"
-import { sendPortalOTP, verifyPortalOTP } from "@services/auth"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { showNotification } from "@mantine/notifications"
-import { type Error } from "type/api"
-import { confirmEmailAddressSchema } from "@utils/validationSchema"
-import { CreateInquiryRequest } from "type/api/inquiry.types"
-import { createInquiry } from "@services/inquiry"
+import { Button, FormControls, InquirySentModal } from "@components/index"
 import useTimer from "@hooks/auth/useTimer"
+import { showNotification } from "@mantine/notifications"
+import LeftBackground from "@pages/auth/components/leftBackground"
+import { sendPortalOTP, verifyPortalOTP } from "@services/auth"
+import { createInquiry } from "@services/inquiry"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { confirmEmailAddressSchema } from "@utils/validationSchema"
+import { Form, Formik } from "formik"
+import { useEffect, useState } from "react"
+import { MdArrowBack } from "react-icons/md"
+import { useNavigate } from "react-router-dom"
+import { type Error } from "type/api"
+import { CreateInquiryRequest } from "type/api/inquiry.types"
 
 const ValidateClientEmail = () => {
     const { handleTimerStart, time, minutes, seconds } = useTimer()
+
     const [openModal, setOpenModal] = useState(false)
     const navigate = useNavigate()
 
@@ -113,10 +114,7 @@ const ValidateClientEmail = () => {
                 </h3>
 
                 <Formik
-                    initialValues={{
-                        code: "",
-                        //username:""
-                    }}
+                    initialValues={{ code: "" }}
                     validationSchema={confirmEmailAddressSchema}
                     onSubmit={(values) => {
                         mutate({
@@ -129,7 +127,7 @@ const ValidateClientEmail = () => {
                         <Form className="py-4 mt-4">
                             <div className="mb-6">
                                 <FormControls
-                                    label="We have sent a 6-digit confirmaton OTP to the email address  you provided in the inquiry."
+                                    label="We have sent a 6-digit confirmation OTP to the email address  you provided in the inquiry."
                                     control="otp"
                                     name="code"
                                     placeholder="enter your new password"
@@ -153,15 +151,22 @@ const ValidateClientEmail = () => {
                     )}
                 </Formik>
 
-                <p className="mt-6 text-[16px] text-[#475569]">
+                <p className="mt-6 text-base text-[#475569]">
                     Didn't receive any code?{" "}
-                    <span
-                        className="text-[#47556978] cursor-pointer pr-2"
-                        onClick={() => time === 0 && handleResend()}
-                    >
-                        {isLoading ? "Retrying..." : "Retry in"}
-                    </span>
-                    {`${minutes}:${seconds}`}
+                    {time <= 0 ? (
+                        <button
+                            onClick={() => handleResend()}
+                            className="inline-flex hover:!text-black"
+                        >
+                            {isLoading ? "Sending..." : "Resend"}
+                        </button>
+                    ) : (
+                        <>
+                            <span className="text-[#47556978] pr-2">
+                                Retry in {`${minutes}:${seconds}`}
+                            </span>
+                        </>
+                    )}
                 </p>
             </div>
         </div>

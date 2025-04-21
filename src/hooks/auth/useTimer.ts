@@ -1,33 +1,41 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react"
 
-export default function useTimer(start?: number) {
-	const [countDown, setCountDown] = useState(start || 120);
+export default function useTimer(initialTime: number = 120) {
+    const [countDown, setCountDown] = useState(initialTime)
+    const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-	const intervalRef = useRef<number | null>(null);
-	const timer = () => setCountDown(countDownDate => countDownDate - 1);
-	const handleTimerStart = () => {
-		setCountDown(120);
-		intervalRef.current = setInterval(timer, 1000) as unknown as number;
-	};
+    const clear = useCallback(() => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+            intervalRef.current = null
+        }
+    }, [])
 
-	const resetInterval = () => {
-		if (intervalRef) {
-			intervalRef.current && clearInterval(intervalRef.current);
-			intervalRef.current = null;
-		}
-	};
+    const tick = useCallback(() => {
+        setCountDown((prev) => {
+            if (prev <= 1) {
+                clear()
+                return 0
+            }
+            return prev - 1
+        })
+    }, [clear])
 
-	useEffect(() => {
-		if (countDown < 1) {
-			resetInterval();
-		}
-	}, [countDown]);
-	useEffect(() => {
-		return resetInterval;
-	}, []);
+    const handleTimerStart = useCallback(() => {
+        clear()
+        setCountDown(initialTime)
+        intervalRef.current = setInterval(tick, 1000)
+    }, [initialTime, tick, clear])
 
-	const seconds = `0${Math.floor(countDown % 60)}`.slice(-2);
-	const minutes = `0${Math.floor(countDown / 60)}`.slice(-2);
+    useEffect(() => clear, [clear])
 
-	return { minutes, seconds, time: countDown, handleTimerStart };
+    const seconds = `0${countDown % 60}`.slice(-2)
+    const minutes = `0${Math.floor(countDown / 60)}`.slice(-2)
+
+    return {
+        minutes,
+        seconds,
+        time: countDown,
+        handleTimerStart,
+    }
 }

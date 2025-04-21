@@ -2,7 +2,6 @@ import { Button, FormControls, InquirySentModal } from "@components/index"
 import { useInquiryStore } from "@hooks/useInquiry"
 import { showNotification } from "@mantine/notifications"
 import { sendPortalOTP } from "@services/auth"
-import { uploadFile } from "@services/storage"
 import { useMutation } from "@tanstack/react-query"
 import { proposalInquiryValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
@@ -40,19 +39,18 @@ const Proposal = ({ id }: { id: string }) => {
     const handleValidation = async (values: any) => {
         console.log(values.document)
 
-        if (values.document) {
-            const formData = new FormData()
-            formData.append("file", values.document)
-            const data = await uploadFile(formData)
-            console.log(data)
+        // if (values.document) {
+        //     const formData = new FormData()
+        //     formData.append("file", values.document)
+        //     const data = await uploadFile(formData)
+        //     console.log(data)
 
-            setDocument(values.document)
-        }
+        // }
+        setDocument(values.document)
         const inquiry = {
             ...values,
             inquiryType: "proposal",
             talentID: id,
-            // document:
         }
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
