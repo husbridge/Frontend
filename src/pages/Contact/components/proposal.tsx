@@ -1,7 +1,8 @@
 import { Button, FormControls, InquirySentModal } from "@components/index"
-import { useInquiryStore } from "@hooks/useInquiry"
+import { Progress } from "@mantine/core"
 import { showNotification } from "@mantine/notifications"
 import { sendPortalOTP } from "@services/auth"
+import { uploadFile } from "@services/storage"
 import { useMutation } from "@tanstack/react-query"
 import { proposalInquiryValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
@@ -10,8 +11,8 @@ import { useNavigate } from "react-router-dom"
 
 const Proposal = ({ id }: { id: string }) => {
     const [opened, setOpened] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(0)
     const navigate = useNavigate()
-    const setDocument = useInquiryStore((state) => state.setDocument)
 
     const onSendOtp = useMutation({
         mutationFn: sendPortalOTP,
@@ -38,20 +39,36 @@ const Proposal = ({ id }: { id: string }) => {
 
     const handleValidation = async (values: any) => {
         console.log(values.document)
+        let uploadedDocumentKey
 
-        // if (values.document) {
-        //     const formData = new FormData()
-        //     formData.append("file", values.document)
-        //     const data = await uploadFile(formData)
-        //     console.log(data)
+        if (values.document) {
+            const formData = new FormData()
+            formData.append("file", values.document)
+            const data = await uploadFile(formData, (percent) =>
+                setUploadProgress(percent)
+            )
+            console.log(data)
 
-        // }
-        setDocument(values.document)
+            if (data === null) {
+                showNotification({
+                    title: "Error",
+                    message: "Failed to upload document",
+                    color: "red",
+                })
+                return
+            }
+
+            uploadedDocumentKey = data
+        }
+
+        console.log(uploadedDocumentKey)
         const inquiry = {
             ...values,
             inquiryType: "proposal",
             talentID: id,
+            document: uploadedDocumentKey,
         }
+
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
         onSendOtp.mutate({
@@ -153,7 +170,7 @@ const Proposal = ({ id }: { id: string }) => {
                                 placeholder="Make your Inquiry"
                             />
                         </div>
-                        <div className="mb-6">
+                        <div className="mb-6 space-y-1">
                             <FormControls
                                 label="Attach document"
                                 control="file"
@@ -165,6 +182,13 @@ const Proposal = ({ id }: { id: string }) => {
                                 }}
                                 placeholder="Upload Png, Jpg or Jpeg of your Valid ID"
                             />
+                            {uploadProgress > 0 && (
+                                <Progress
+                                    value={uploadProgress}
+                                    color="yellow"
+                                    radius="xl"
+                                />
+                            )}
                         </div>
                         <p className="text-black-60 text-sm text-center">
                             *You'll be required to validate your email address

@@ -1,15 +1,13 @@
-import { useInquiryStore } from "@hooks/useInquiry"
-import axiosInstance from "./api.services"
 import {
     CreateInquiryRequest,
     CreateInquiryResponse,
     InquiryResponse,
-    SendMailRequest,
     InquiryStatResponse,
+    SendMailRequest,
 } from "type/api/inquiry.types"
+import axiosInstance from "./api.services"
 
 import { AxiosResponse } from "axios"
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
 
 export const fetchInquiries = async (filters?: any) => {
     const cleanedFilters = Object.fromEntries(
@@ -59,59 +57,11 @@ export const fetchInquiriesByManagerId = async (id: string) => {
 //     // Add response type fields
 // }
 
-const s3Client = new S3Client({
-    region: import.meta.env.VITE_AWS_REGION || "us-east-1",
-    credentials: {
-        accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID || "",
-        secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_KEY || "",
-    },
-    maxAttempts: 3,
-})
-
 export const createInquiry = async (
     data: CreateInquiryRequest
 ): Promise<AxiosResponse<CreateInquiryResponse>> => {
-    const { document, setDocument } = useInquiryStore.getState()
-    let uploadedDocumentKey: string | undefined
-    console.log(import.meta.env.VITE_AWS_REGION, document)
-    if (document) {
-        try {
-            // Generate a unique key for the file
-            const fileExtension = document.name.split(".").pop()
-            const uniqueKey = `inquiries/${Date.now()}~~${document.size}~~${document.name}.${fileExtension}`
-
-            // Upload to S3
-            await s3Client.send(
-                new PutObjectCommand({
-                    Bucket: import.meta.env.VITE_AWS_BUCKET_NAME,
-                    Key: uniqueKey,
-                    Body: document,
-                    ContentType: document.type,
-                    Metadata: {
-                        filename: document.name,
-                        size: document.size.toString(),
-                    },
-                })
-            )
-            setDocument(null)
-            uploadedDocumentKey = uniqueKey
-        } catch (error) {
-            console.error("Error uploading document to S3:", error)
-            throw new Error("Failed to upload document")
-        }
-    }
-
-    // Prepare the final data with document key if available
-    const finalData = {
-        ...data,
-        attachDocument: uploadedDocumentKey,
-    }
-
     // Send the inquiry data to the backend
-    return axiosInstance.post<CreateInquiryResponse>(
-        "/portal/inquires",
-        finalData
-    )
+    return axiosInstance.post<CreateInquiryResponse>("/portal/inquires", data)
 }
 
 // export const createInquiry = (data: CreateInquiryRequest) => {

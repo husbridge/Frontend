@@ -55,7 +55,7 @@ const ValidateClientEmail = () => {
     const { isPending, mutate } = useMutation({
         mutationFn: verifyPortalOTP,
         onSuccess: () => {
-            inquiry && onCreateInquiry.mutate(inquiry)
+            if (inquiry) onCreateInquiry.mutate(inquiry)
         },
         onError: (err: Error) => {
             showNotification({

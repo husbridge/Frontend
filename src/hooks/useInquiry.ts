@@ -47,21 +47,46 @@ const useGetPortalInquiries = (userType: string) => {
     return result
 }
 
+type FileMeta = {
+    name: string
+    size: number
+    type: string
+    lastModified: number
+}
+
 interface InquiryStore {
     document: File | null
+    documentMeta: FileMeta | null
     setDocument: (document: File | null) => void
+    clearDocument: () => void
 }
 
 const useInquiryStore = create<InquiryStore>()(
     persist(
         (set) => ({
             document: null,
+            documentMeta: null,
             setDocument: (document: File | null) => {
                 set(() => ({
-                    document: document,
+                    document,
+                    documentMeta: document
+                        ? {
+                              name: document.name,
+                              size: document.size,
+                              type: document.type,
+                              lastModified: document.lastModified,
+                          }
+                        : null,
                 }))
             },
+            clearDocument: () => set({ document: null, documentMeta: null }),
         }),
+        // {
+        //     name: "inquiry-document-meta",
+        //     partialize: (state) => ({
+        //         fileMeta: state.documentMeta, 
+        //     }),
+        // }
         {
             name: "inquiry-store",
             storage: {
@@ -70,7 +95,7 @@ const useInquiryStore = create<InquiryStore>()(
                     return value ? JSON.parse(value) : null
                 },
                 setItem: (key, value) => {
-                    localStorage.setItem(key, JSON.stringify(value))
+                    localStorage.setItem(key, JSON.stringify(value.state.documentMeta))
                 },
                 removeItem: (key) => {
                     localStorage.removeItem(key)
