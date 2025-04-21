@@ -1,12 +1,13 @@
 import { Stepper, rem } from "@mantine/core"
+import { useMediaQuery } from "@mantine/hooks"
 import { useState } from "react"
 import AccountInformation from "./components/accountInformation"
-import LeftBackground from "./components/leftBackground"
 import AgencyInformation from "./components/agencyInformation"
+import LeftBackground from "./components/leftBackground"
 import PersonalInformation from "./components/personalInformation"
-import { useMediaQuery } from "@mantine/hooks"
 // import { VerificationSuccessfulModal } from "@components/index"
 import { useLocation } from "react-router-dom"
+import AlreadyHaveAnAccount from "./components/AlreadyHaveAnAccount"
 
 const AgencySignUp = () => {
     const location = useLocation()
@@ -17,7 +18,6 @@ const AgencySignUp = () => {
     const matches2 = useMediaQuery("(min-width: 768px)")
     const matches3 = useMediaQuery("(min-width: 500px)")
     const matches4 = useMediaQuery("(min-width: 550px)")
-    // const [opened, setOpened] = useState(false)
 
     return (
         <div className="flex">
@@ -28,7 +28,7 @@ const AgencySignUp = () => {
             <div className="md:block hidden">
                 <LeftBackground />
             </div>
-            <div className="bg-white-100 md:p-20 p-6 ">
+            <div className="bg-white-100 mx-auto md:p-20 p-6 ">
                 <Stepper
                     active={active}
                     //onStepClick={setActive}
@@ -37,8 +37,6 @@ const AgencySignUp = () => {
                         separator: {
                             marginLeft: rem(-2),
                             marginRight: rem(-2),
-
-                            //height: rem(10),
                         },
                         steps: {
                             paddingRight: matches2 ? 0 : 30,
@@ -116,9 +114,10 @@ const AgencySignUp = () => {
                             </p>
                         }
                     >
-                        <PersonalInformation/>
+                        <PersonalInformation />
                     </Stepper.Step>
                 </Stepper>
+                <AlreadyHaveAnAccount />
             </div>
         </div>
     )

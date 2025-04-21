@@ -1,13 +1,14 @@
 import { Stepper, rem } from "@mantine/core"
 import { useState } from "react"
 import AccountInformation from "./components/accountInformation"
-import LeftBackground from "./components/leftBackground"
 import AgencyInformation from "./components/agencyInformation"
+import LeftBackground from "./components/leftBackground"
 import PersonalInformation from "./components/personalInformation"
 // import { VerificationSuccessfulModal } from "@components/index"
 import { useMediaQuery } from "@mantine/hooks"
 
 import { useLocation } from "react-router-dom"
+import AlreadyHaveAnAccount from "./components/AlreadyHaveAnAccount"
 
 const ManagerSignUp = () => {
     const location = useLocation()
@@ -27,7 +28,7 @@ const ManagerSignUp = () => {
             <div className="md:block hidden">
                 <LeftBackground />
             </div>
-            <div className="bg-white-100 md:p-20 p-6 ">
+            <div className="bg-white-100 md:p-20 p-6 mx-auto">
                 <Stepper
                     active={active}
                     //onStepClick={setActive}
@@ -111,7 +112,7 @@ const ManagerSignUp = () => {
                         <PersonalInformation />
                     </Stepper.Step>
                 </Stepper>
-                
+                <AlreadyHaveAnAccount />
             </div>
         </div>
     )

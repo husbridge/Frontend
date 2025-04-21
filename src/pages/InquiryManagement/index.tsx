@@ -1,31 +1,31 @@
+import Events from "@assets/icons/event.svg"
+import InquiryIcon from "@assets/icons/inquiries.svg"
+import Profile from "@assets/icons/profile.svg"
+import ErrorComponent from "@components/errorComponent"
 import {
-    Layout,
-    StatisticsCard,
-    InquiryTable,
     Button,
+    Combobox,
+    EmptyState,
+    FilterModal,
     Input,
     InquiryDetails,
-    RespondModal,
-    EmptyState,
+    InquiryTable,
+    Layout,
     LoadingState,
-    FilterModal,
     Radio,
-    Combobox,
+    RespondModal,
+    StatisticsCard,
 } from "@components/index"
-import { BiSearch } from "react-icons/bi"
-import { IoFilter } from "react-icons/io5"
-import Profile from "@assets/icons/profile.svg"
-import InquiryIcon from "@assets/icons/inquiries.svg"
-import Events from "@assets/icons/event.svg"
-import { useState, useMemo, useEffect } from "react"
 import useAuth from "@hooks/auth/useAuth"
 import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
-import { fetchDashboardStats } from "@services/inquiry"
-import { useQuery } from "@tanstack/react-query"
-import ErrorComponent from "@components/errorComponent"
-import { countActiveFilters, dateRanges } from "@utils/helpers"
-import { fetchTalents } from "@services/talents"
 import useInquiryManagement from "@hooks/useInquiryManagement"
+import { fetchDashboardStats } from "@services/inquiry"
+import { fetchTalents } from "@services/talents"
+import { useQuery } from "@tanstack/react-query"
+import { countActiveFilters, dateRanges } from "@utils/helpers"
+import { useEffect, useMemo, useState } from "react"
+import { BiSearch } from "react-icons/bi"
+import { IoFilter } from "react-icons/io5"
 
 interface Talent {
     _id: string
@@ -39,7 +39,7 @@ interface Filter {
     endDate: string
 }
 
-const InquiryManagent = () => {
+const InquiryManagement = () => {
     const [openRespondModal, setOpenRespondModal] = useState(false)
     const {
         openInquiryDetails,
@@ -493,4 +493,4 @@ const InquiryManagent = () => {
     )
 }
 
-export default InquiryManagent
+export default InquiryManagement

@@ -33,6 +33,7 @@ import { BsFillInfoCircleFill } from "react-icons/bs"
 import { useNavigate } from "react-router-dom"
 import { Data as InquiryData } from "type/api/inquiry.types"
 import { Data } from "../../type/api/event.types"
+import { frontendUrl } from "@services/api.services"
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -232,8 +233,7 @@ const Dashboard = () => {
                                                 setCopied(false)
                                             }, 2000)
                                         }}
-                                        text={`https://projectx-gamma.vercel.app/contact/${data?.data.uniqueUsername}`}
-                                        //text={`http://localhost:5173/contact/${data?.data.uniqueUsername}`}
+                                        text={`${frontendUrl()}/contact/${data?.data.uniqueUsername}`}
                                     >
                                         <Button
                                             className="flex ml-4"

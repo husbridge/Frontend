@@ -1,27 +1,27 @@
-import { Route, Routes, Navigate, useLocation, Outlet } from "react-router-dom"
-import Welcome from "@pages/auth/welcome"
+import useAuth from "@hooks/auth/useAuth"
 import AgencySignUp from "@pages/auth/agencySignUp"
+import ClientLogin from "@pages/auth/clientSignIn"
+import ConfirmEmailAddress from "@pages/auth/confirmEmailAddress"
+import CreateNewPassword from "@pages/auth/createNewpassword"
+import ForgetPassword from "@pages/auth/forget"
+import Login from "@pages/auth/login"
 import ManagerSignUp from "@pages/auth/managerSignUp"
 import TalentSignUp from "@pages/auth/talentSignUp"
-import Login from "@pages/auth/login"
-import ForgetPassword from "@pages/auth/forget"
-import CreateNewPassword from "@pages/auth/createNewpassword"
+import Welcome from "@pages/auth/welcome"
+import CalendarManagement from "@pages/CalendarManagement"
+import Contact from "@pages/Contact"
+import ValidateClientEmail from "@pages/Contact/components/validateClientEmail"
 import Dashboard from "@pages/Dashboard"
+import HelpSupport from "@pages/Help&Support"
+import InquiryManagement from "@pages/InquiryManagement"
+import Messaging from "@pages/Messaging"
+import Settings from "@pages/Settings"
 import Talents from "@pages/Talent"
-import TalentInformation from "@pages/Talent/subnavigations/talentInformation"
 import AllInquiries from "@pages/Talent/subnavigations/allInquiries"
 import TalentCalendar from "@pages/Talent/subnavigations/calendar"
-import CalendarManagement from "@pages/CalendarManagement"
+import TalentInformation from "@pages/Talent/subnavigations/talentInformation"
 import Team from "@pages/Team"
-import Settings from "@pages/Settings"
-import InquiryManagent from "@pages/InquiryManagement"
-import Messaging from "@pages/Messaging"
-import Contact from "@pages/Contact"
-import useAuth from "@hooks/auth/useAuth"
-import ConfirmEmailAddress from "@pages/auth/confirmEmailAddress"
-import ClientLogin from "@pages/auth/clientSignIn"
-import HelpSupport from "@pages/Help&Support"
-import ValidateClientEmail from "@pages/Contact/components/validateClientEmail"
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom"
 
 const AuthenticatedRoutes: React.FC = () => {
     const { state } = useAuth()
@@ -50,12 +50,7 @@ const UnauthenticatedRoutes: React.FC = () => {
 
 function App() {
     const { state } = useAuth()
-    console.log(
-        "LOGSSSS: ",
-        import.meta.env.AWS_BUCKET_NAME,
-        import.meta.env.AWS_ACCESS_KEY_ID,
-        import.meta.env.AWS_SECRET_ACCESS_KEY
-    )
+
     return (
         <Routes>
             <Route element={<UnauthenticatedRoutes />}>
@@ -87,7 +82,7 @@ function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route
                     path="/inquiry-management"
-                    element={<InquiryManagent />}
+                    element={<InquiryManagement />}
                 />
                 <Route
                     path="/messaging"
@@ -102,9 +97,11 @@ function App() {
                 />
                 <Route path="/help&support" element={<HelpSupport />} />
             </Route>
-            <Route path="/agency-signup" element={<AgencySignUp />} />
-            <Route path="/manager-signup" element={<ManagerSignUp />} />
-            <Route path="/talent-signup" element={<TalentSignUp />} />
+            <Route>
+                <Route path="/agency-signup" element={<AgencySignUp />} />
+                <Route path="/manager-signup" element={<ManagerSignUp />} />
+                <Route path="/talent-signup" element={<TalentSignUp />} />
+            </Route>
             <Route
                 path="/confirm-email-address"
                 element={<ConfirmEmailAddress />}

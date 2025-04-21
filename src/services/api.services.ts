@@ -3,13 +3,15 @@ import { Error } from "../type/api"
 
 const isProduction = process.env.NODE_ENV === "production"
 
+export const frontendUrl = () => window.location.origin
+
 const BASE_URL = isProduction
     ? "https://husridge-server.onrender.com/api/"
     : "http://localhost:8084/api/"
 
 const MESSAGING_BASE_URL =
     !isProduction || isProduction
-        ? "https://messaging-chat.onrender.com/api"
+        ? "https://messaging-chat.onrender.com/api/"
         : "http://localhost:3000/api/"
 
 let EXPIRYINTERCEPTOR: number

@@ -19,15 +19,18 @@ const getBgColor = (name: string) => {
 };
 
 
+
 const getInitials = (name: string) => {
-  const nameParts = name.trim().split(' ');
+    const nameParts = name.trim().split(" ")
 
-  if (nameParts.length === 1) {
-    return nameParts[0].slice(0, 2).toUpperCase();
-  }
+    if (nameParts.length === 1) {
+        return nameParts[0].trim().slice(0, 2).toUpperCase()
+    }
 
-  return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
-};
+    return `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+        .trim()
+        .toUpperCase()
+}
 
 type AvatarProps = {
   imageUrl?: string;

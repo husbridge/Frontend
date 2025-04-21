@@ -3,6 +3,7 @@ import { Input } from "@components/index"
 import Avatar from "@components/Layout/avatar"
 import PendingTalent from "@components/Layout/PendingTalent"
 import { Alert, Modal } from "@mantine/core"
+import { frontendUrl } from "@services/api.services"
 import { fetchTalents } from "@services/talents"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
@@ -82,17 +83,13 @@ const TalentMagicLinkModal = ({
                             >
                                 <div className="flex items-center">
                                     <Avatar
-                                        alt={
-                                            item.firstName + " " + item.lastName
-                                        }
+                                        alt={item.fullName.trim()}
                                         imageUrl={item.profileUrl}
                                         size={45}
                                     />
                                     <div className="text-[#333333] ml-2">
-                                        <p className="text-3md">
-                                            {item.firstName +
-                                                " " +
-                                                item.lastName}
+                                        <p className="text-2md">
+                                            {item.fullName.trim()}
                                         </p>
                                         <div className="text-sm">
                                             {item.stageName}{" "}
@@ -109,14 +106,13 @@ const TalentMagicLinkModal = ({
                                                 setCopied(false)
                                             }, 2000)
                                         }}
-                                        text={`https://projectx-gamma.vercel.app/contact/${item.uniqueUsername}`}
-                                        //text={`http://localhost:5173/contact/${item.uniqueUsername}`}
+                                        text={`${frontendUrl()}/contact/${item.uniqueUsername}`}
                                     >
                                         <div className="flex">
                                             <div className="flex items-center cursor-pointer">
                                                 <IoCopyOutline
                                                     color="#FFC107"
-                                                    size="18px"
+                                                    size="16px"
                                                 />
                                                 <p className="ml-2 text-sm md:text-base text-black-600">
                                                     Copy Link
@@ -125,7 +121,7 @@ const TalentMagicLinkModal = ({
                                             <div className="flex items-center ml-4 cursor-pointer">
                                                 <LuShare2
                                                     color="#FFC107"
-                                                    size="18px"
+                                                    size="16px"
                                                 />
                                                 <p className="ml-2 text-sm md:text-base text-black-600">
                                                     Share

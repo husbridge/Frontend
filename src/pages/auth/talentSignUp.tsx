@@ -1,11 +1,12 @@
 import { Stepper, rem } from "@mantine/core"
+import { useMediaQuery } from "@mantine/hooks"
 import { useState } from "react"
+import { useLocation } from "react-router-dom"
 import AccountInformation from "./components/accountInformation"
+import AlreadyHaveAnAccount from "./components/AlreadyHaveAnAccount"
 import LeftBackground from "./components/leftBackground"
 import TalentInformation from "./components/talentInformation"
 import VerificationInformation from "./components/verificationInformation"
-import { useMediaQuery } from "@mantine/hooks"
-import { useLocation } from "react-router-dom"
 
 const TalentSignUp = () => {
     const location = useLocation()
@@ -16,13 +17,12 @@ const TalentSignUp = () => {
     const matches4 = useMediaQuery("(min-width: 550px)")
     const [active, setActive] = useState(location.state?.key || 0)
 
-    
     return (
-        <div className="flex">
+        <main className="flex">
             <div className="md:block hidden">
                 <LeftBackground />
             </div>
-            <div className="bg-white-100 md:p-20 p-6 ">
+            <div className="bg-white-100 md:p-20 p-6 mx-auto">
                 <Stepper
                     active={active}
                     onStepClick={setActive}
@@ -107,11 +107,12 @@ const TalentSignUp = () => {
                             </p>
                         }
                     >
-                        <VerificationInformation/>
+                        <VerificationInformation />
                     </Stepper.Step>
                 </Stepper>
+                <AlreadyHaveAnAccount />
             </div>
-        </div>
+        </main>
     )
 }
 
