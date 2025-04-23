@@ -1,13 +1,12 @@
-import io, { Socket } from "socket.io-client"
-import { useEffect, useState, useCallback } from "react"
 import useAuth from "@hooks/auth/useAuth"
-//import { showNotification } from "@mantine/notifications"
-import { Data, MessageNotification } from "type/api/messaging.types"
 import { useNotificationStore } from "@hooks/useNotificationStore"
+import { MESSAGING_BASE_URL } from "@services/api.services"
 import { jwtDecode } from "jwt-decode"
+import { useCallback, useEffect, useState } from "react"
+import io, { Socket } from "socket.io-client"
+import { Data, MessageNotification } from "type/api/messaging.types"
 
-const base = "https://messaging-chat.onrender.com" //import.meta.env.VITE_MESSAGING_BASE_URL
-// const base = "http://localhost:3000"
+const base = MESSAGING_BASE_URL
 
 export type DecodedUser = {
     id: string

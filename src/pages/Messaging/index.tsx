@@ -8,31 +8,31 @@ import {
 import Dialog from "./components/dialog"
 // import Avatar from "@assets/images/avatar.png"
 import {
+    ChangeEvent,
+    useCallback,
+    useEffect,
+    useMemo,
     useRef,
     useState,
-    useEffect,
-    useCallback,
-    useMemo,
-    ChangeEvent,
 } from "react"
 //import { MdAttachFile } from "react-icons/md"
-import SendIcon from "@assets/icons/sendIcon.svg"
-import { useMediaQuery } from "@mantine/hooks"
 import BackIcon from "@assets/icons/back.svg"
+import SendIcon from "@assets/icons/sendIcon.svg"
+import ErrorComponent from "@components/errorComponent"
+import { LoadingState } from "@components/index"
 import useAuth from "@hooks/auth/useAuth"
 import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
-import { LoadingState } from "@components/index"
-import ErrorComponent from "@components/errorComponent"
-import { Data } from "type/api/inquiry.types"
-import { useSocket } from "./hooks/useSockiet"
-import dayjs from "dayjs"
 import { useGetChats } from "@hooks/useMessaging"
-import { Data as ChatData } from "type/api/messaging.types"
+import { useMediaQuery } from "@mantine/hooks"
 import { groupBy, parseUTCDate } from "@utils/helpers"
+import dayjs from "dayjs"
+import { Data } from "type/api/inquiry.types"
+import { Data as ChatData } from "type/api/messaging.types"
+import { useSocket } from "./hooks/useSocket"
 
-import calendar from "dayjs/plugin/calendar"
 import Avatar from "@components/Layout/avatar"
 import { useNotificationStore } from "@hooks/useNotificationStore"
+import calendar from "dayjs/plugin/calendar"
 import { jwtDecode } from "jwt-decode"
 import { MdAttachFile } from "react-icons/md"
 dayjs.extend(calendar)

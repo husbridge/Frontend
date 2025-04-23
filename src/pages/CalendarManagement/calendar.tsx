@@ -1,35 +1,28 @@
+import RightArrow from "@assets/icons/rightArrow.svg"
 import {
-    Button,
-    Input,
     AddEvent,
+    Button,
     EventDetailModal,
+    Input,
     SetReminderModal,
 } from "@components/index"
-import FullCalendar from "@fullcalendar/react"
-import dayGridPlugin from "@fullcalendar/daygrid"
-import timeGridPlugin from "@fullcalendar/timegrid"
-import listPlugin from "@fullcalendar/list"
-import interactionPlugin from "@fullcalendar/interaction"
-import { BiSearch } from "react-icons/bi"
-import RightArrow from "@assets/icons/rightArrow.svg"
-import { FaPlus } from "react-icons/fa"
-import {
-    EventContentArg,
-    //EventApi,
-    EventClickArg,
-    EventInput,
-} from "@fullcalendar/core"
-// EventApi, , EventClickArg, EventInput
+import { EventClickArg, EventContentArg, EventInput } from "@fullcalendar/core"
 import { EventImpl } from "@fullcalendar/core/internal"
-import { useState, createRef, useEffect } from "react"
+import dayGridPlugin from "@fullcalendar/daygrid"
+import interactionPlugin from "@fullcalendar/interaction"
+import listPlugin from "@fullcalendar/list"
+import FullCalendar from "@fullcalendar/react"
+import timeGridPlugin from "@fullcalendar/timegrid"
+import { createRef, useEffect, useState } from "react"
+import { BiSearch } from "react-icons/bi"
+import { FaPlus } from "react-icons/fa"
 import { IoFilter } from "react-icons/io5"
 
+import { countActiveFilters, mergeDate } from "@utils/helpers"
 import dayjs from "dayjs"
-import { EventsData } from "type/api/event.types"
+import { CreateEventResponse, EventsData } from "type/api/event.types"
 import MonthYearHeader from "./components/monthYearHeader"
 import ScrollableDays from "./components/scrollableDays"
-import { countActiveFilters, mergeDate } from "@utils/helpers"
-import { CreateEventResponse } from "type/api/event.types"
 
 const renderEventContent = (eventContent: EventContentArg) => {
     const getRandomColor = () => {
@@ -76,10 +69,10 @@ const renderEventContent = (eventContent: EventContentArg) => {
 const Calendar = ({
     data,
     setOpenFilter,
-    filters
-} :{
-    data?:CreateEventResponse,
-    setOpenFilter: (isOpen: boolean) => void,
+    filters,
+}: {
+    data?: CreateEventResponse
+    setOpenFilter: (isOpen: boolean) => void
     filters: any
 }) => {
     const [addEvent, setAddEvent] = useState(false)
@@ -111,8 +104,6 @@ const Calendar = ({
 
         return result
     }
-
-    // Transform the data
 
     useEffect(() => {
         if (data?.data) {
@@ -169,7 +160,7 @@ const Calendar = ({
     }
     return (
         <>
-         <SetReminderModal
+            <SetReminderModal
                 opened={openSetReminder}
                 setOpened={setOpenSetReminder}
             />
@@ -183,122 +174,112 @@ const Calendar = ({
                 event={singleEvent}
             />
             <AddEvent opened={addEvent} setOpened={setAddEvent} />
-                    <div className="flex justify-between items-center mt-4">
-                        <p className="text-3md sm:text-[20px] lg:text-lg md:mb-0 mb-4">
-                            Calendar ({data?.data?.total||0})
-                        </p>
-                        <div className="sm:flex hidden">
-                            <Button
-                                variant="clear"
-                                className={`rounded-[35px] flex gap-2 !justify-between`}
-                                onClick={() => !!setOpenFilter && setOpenFilter(true)}
-                            >
-                                Filters
-                                {countActiveFilters(filters) > 0 ? (
-                                    <span className="py-0.5 px-2 text-sm rounded-full bg-black-100 text-white-100">
-                                        {countActiveFilters(filters)}
-                                    </span>
-                                ) : (
-                                    <IoFilter />
-                                )}
-                            </Button>
-                            <Input
-                                placeholder="Search for an event"
-                                className=" border border-[#E0E0E0] rounded-2xl w-[200px] xl:w-[300px] p-4 h-[50px] text-[12px] text-grey-100 font-medium ml-4"
-                                prefixIcon={
-                                    <BiSearch
-                                        size="30px"
-                                        color="black"
-                                        className="mr-2"
-                                    />
-                                }
+            <div className="flex justify-between items-center mt-4">
+                <p className="text-3md sm:text-[20px] lg:text-lg md:mb-0 mb-4">
+                    Calendar
+                    {/* ({data?.data?.total || 0}) */}
+                </p>
+                <div className="sm:flex hidden">
+                    <Button
+                        variant="clear"
+                        className={`rounded-[35px] flex gap-2 !justify-between`}
+                        onClick={() => !!setOpenFilter && setOpenFilter(true)}
+                    >
+                        Filters
+                        {countActiveFilters(filters) > 0 ? (
+                            <span className="py-0.5 px-2 text-sm rounded-full bg-black-100 text-white-100">
+                                {countActiveFilters(filters)}
+                            </span>
+                        ) : (
+                            <IoFilter />
+                        )}
+                    </Button>
+                    <Input
+                        placeholder="Search for an event"
+                        className=" border border-[#E0E0E0] rounded-2xl w-[200px] xl:w-[300px] p-4 h-[50px] text-[12px] text-grey-100 font-medium ml-4"
+                        prefixIcon={
+                            <BiSearch
+                                size="30px"
+                                color="black"
+                                className="mr-2"
                             />
-                        </div>
-
-                        <div className="flex">
-                            <Button
-                                className="flex text-white-100"
-                                variant="black"
-                                onClick={() => setAddEvent(true)}
-                            >
-                                <FaPlus color="white" className="mr-2" /> Add
-                                Event
-                            </Button>
-                        </div>
-                    </div>
-                    <div className="sm:hidden flex mt-4 justify-between">
-                        <Button
-                            variant="clear"
-                            className={`rounded-[35px] flex gap-2 !justify-between`}
-                            onClick={() => !!setOpenFilter && setOpenFilter(true)}
-                        >
-                            Filters
-                            {countActiveFilters(filters) > 0 ? (
-                                <span className="py-0.5 px-2 text-sm rounded-full bg-black-100 text-white-100">
-                                    {countActiveFilters(filters)}
-                                </span>
-                            ) : (
-                                <IoFilter />
-                            )}
-                        </Button>
-                        <Input
-                            placeholder="Search for an event"
-                            className=" border border-[#E0E0E0] rounded-2xl w-[200px] xl:w-[300px] p-4 h-[50px] text-[12px] text-grey-100 font-medium ml-4"
-                            prefixIcon={
-                                <BiSearch
-                                    size="30px"
-                                    color="black"
-                                    className="mr-2"
-                                />
-                            }
-                        />
-                    </div>
-                    <MonthYearHeader
-                        calendarRef={calendarComponentRef}
-                        updateDays={handleUpdateDays}
-                        currentDate={selectedDate}
+                        }
                     />
+                </div>
 
-                    {/* Scrollable Days */}
-                    <ScrollableDays
-                        selectedDate={selectedDate}
-                        setSelectedDate={handleUpdateDays}
-                    />
-                    <div className="bg-white-100 p-2 mt-4 relative">
-                        <FullCalendar
-                            ref={calendarComponentRef}
-                            eventClick={(arg) => handleEventClick(arg)}
-                            plugins={[
-                                dayGridPlugin,
-                                timeGridPlugin,
-                                interactionPlugin,
-                                listPlugin,
-                            ]}
-                            initialView={
-                                window.innerWidth > 768
-                                    ? "dayGridMonth"
-                                    : "listDay"
-                            }
-                            //dateClick={(info) => setSelectedDate(dayjs(info.date))}
+                <div className="flex">
+                    <Button
+                        className="flex text-white-100"
+                        variant="black"
+                        onClick={() => setAddEvent(true)}
+                    >
+                        <FaPlus color="white" className="mr-2" /> Add Event
+                    </Button>
+                </div>
+            </div>
+            <div className="sm:hidden flex mt-4 justify-between">
+                <Button
+                    variant="clear"
+                    className={`rounded-[35px] flex gap-2 !justify-between`}
+                    onClick={() => !!setOpenFilter && setOpenFilter(true)}
+                >
+                    Filters
+                    {countActiveFilters(filters) > 0 ? (
+                        <span className="py-0.5 px-2 text-sm rounded-full bg-black-100 text-white-100">
+                            {countActiveFilters(filters)}
+                        </span>
+                    ) : (
+                        <IoFilter />
+                    )}
+                </Button>
+                <Input
+                    placeholder="Search for an event"
+                    className=" border border-[#E0E0E0] rounded-2xl w-[200px] xl:w-[300px] p-4 h-[50px] text-[12px] text-grey-100 font-medium ml-4"
+                    prefixIcon={
+                        <BiSearch size="30px" color="black" className="mr-2" />
+                    }
+                />
+            </div>
+            <MonthYearHeader
+                calendarRef={calendarComponentRef}
+                updateDays={handleUpdateDays}
+                currentDate={selectedDate}
+            />
 
-                            views={{
-                                listWeek: { buttonText: "week" },
-                                listMonth: { buttonText: "Month" },
-                                listDay: { buttonText: "Day" },
-                            }}
-                            events={eventsData}
-                            eventContent={renderEventContent}
-                            headerToolbar={
-                                window.innerWidth > 768
-                                    ? getHeaderProps()
-                                    : false
-                            }
-                            windowResize={changeView}
-                        />
-                    </div>
-                
-                </>
-           
+            {/* Scrollable Days */}
+            <ScrollableDays
+                selectedDate={selectedDate}
+                setSelectedDate={handleUpdateDays}
+            />
+            <div className="bg-white-100 p-2 mt-4 relative">
+                <FullCalendar
+                    ref={calendarComponentRef}
+                    eventClick={(arg) => handleEventClick(arg)}
+                    plugins={[
+                        dayGridPlugin,
+                        timeGridPlugin,
+                        interactionPlugin,
+                        listPlugin,
+                    ]}
+                    initialView={
+                        window.innerWidth > 768 ? "dayGridMonth" : "listDay"
+                    }
+                    //dateClick={(info) => setSelectedDate(dayjs(info.date))}
+
+                    views={{
+                        listWeek: { buttonText: "week" },
+                        listMonth: { buttonText: "Month" },
+                        listDay: { buttonText: "Day" },
+                    }}
+                    events={eventsData}
+                    eventContent={renderEventContent}
+                    headerToolbar={
+                        window.innerWidth > 768 ? getHeaderProps() : false
+                    }
+                    windowResize={changeView}
+                />
+            </div>
+        </>
     )
 }
 

@@ -1,13 +1,13 @@
+import logo from "@assets/icons/logo.svg"
+import useAuth from "@hooks/auth/useAuth"
+import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
+import { Drawer } from "@mantine/core"
+import { useSocket } from "@pages/Messaging/hooks/useSocket"
+import { useEffect, useState } from "react"
+import { AiOutlineClose } from "react-icons/ai"
 import { LayoutProps } from "../../type/Layout/layout-interface"
 import Navbar from "./navbar/navbar"
 import Sidebar from "./sidebar/sidebar"
-import { Drawer } from "@mantine/core"
-import { useEffect, useState } from "react"
-import { AiOutlineClose } from "react-icons/ai"
-import logo from "@assets/icons/logo.svg"
-import { useSocket } from "@pages/Messaging/hooks/useSockiet"
-import useAuth from "@hooks/auth/useAuth"
-import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
 
 const Layout = ({ children, pageTitle, search }: LayoutProps) => {
     const { state } = useAuth()
@@ -17,7 +17,7 @@ const Layout = ({ children, pageTitle, search }: LayoutProps) => {
     })
     const {
         data: inquiryData,
-        isLoading: isLoaingInquiryData,
+        isLoading: isLoadingInquiryData,
         error: portalInquiryError,
     } = useGetPortalInquiries(state.user?.userType || "")
 
@@ -30,7 +30,7 @@ const Layout = ({ children, pageTitle, search }: LayoutProps) => {
                 : data?.data || []
         if (
             !isLoading &&
-            !isLoaingInquiryData &&
+            !isLoadingInquiryData &&
             !error &&
             !portalInquiryError
         ) {
@@ -38,7 +38,7 @@ const Layout = ({ children, pageTitle, search }: LayoutProps) => {
                 joinGroup(`messageNotification_${inquiry.chatGroupId}`)
             })
         }
-    }, [isLoading, isLoaingInquiryData, error, portalInquiryError])
+    }, [isLoading, isLoadingInquiryData, error, portalInquiryError])
 
     return (
         <>

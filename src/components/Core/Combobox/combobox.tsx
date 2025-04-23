@@ -9,13 +9,21 @@ interface ComboboxProps {
     value: Array<{ id: string; name: string }>
 }
 
-const Combobox = ({ label, options, onChange, value, placeholder, multiple=false }: ComboboxProps) => {
-
+const Combobox = ({
+    label,
+    options,
+    onChange,
+    value,
+    placeholder,
+    multiple = false,
+}: ComboboxProps) => {
     return (
         <div className="relative mb-4">
-           {label && <label className="block font-medium text-[black] mb-2 text-md ">
-                {label}
-            </label>}
+            {label && (
+                <label className="block font-medium text-[black] mb-2 text-md ">
+                    {label}
+                </label>
+            )}
             <MultiSelect
                 data={options.map((option) => ({
                     value: option.id,
@@ -23,7 +31,7 @@ const Combobox = ({ label, options, onChange, value, placeholder, multiple=false
                 }))}
                 placeholder={placeholder || "Search"}
                 searchable
-                value={value.map((item) => item.id ?? '')}
+                value={value.map((item) => item.id ?? "")}
                 onChange={(selectedIds) => {
                     const selectedOptions = options.filter((option) =>
                         selectedIds.includes(option.id)
@@ -33,14 +41,14 @@ const Combobox = ({ label, options, onChange, value, placeholder, multiple=false
                 multiple={multiple}
                 styles={() => ({
                     item: {
-                        borderRadius: '999px',
+                        borderRadius: "999px",
                     },
                     input: {
-                        borderRadius: '999px',
-                        padding: '8px 15px 10px 15px'
+                        borderRadius: "999px",
+                        padding: "8px 15px 10px 15px",
                     },
                     control: {
-                        borderRadius: '999px',
+                        borderRadius: "999px",
                     },
                 })}
             />
