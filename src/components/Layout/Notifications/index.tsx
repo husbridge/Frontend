@@ -26,12 +26,17 @@ const Notifications = ({ isOpen }: { isOpen: boolean }) => {
 
     useEffect(() => {
         if (isOpen) {
+            setPage(1)
             refetch()
             refetchInquiries()
         }
     }, [isOpen])
 
     const notifications: NotificationsResponse[] = data?.data ?? []
+
+    const total = notifications.length ?? 0
+
+    const hasNextPage = page * limit < total
 
     const handleNextPage = () => setPage((prev) => prev + 1)
     const handlePreviousPage = () => setPage((prev) => Math.max(prev - 1, 1))
@@ -46,7 +51,7 @@ const Notifications = ({ isOpen }: { isOpen: boolean }) => {
             <p className="text-md text-center mb-6 font-semibold">
                 Your Notifications
             </p>
-            {notifications.length === 0 ? (
+            {notifications.length <= 0 ? (
                 <p className="text-[#475569] text-sm text-center my-4">
                     No notifications available.
                 </p>
@@ -71,7 +76,7 @@ const Notifications = ({ isOpen }: { isOpen: boolean }) => {
                     <div />
                 )}
                 <span className="text-sm">{page}</span>
-                {notifications.length === limit ? (
+                {hasNextPage ? (
                     <button
                         onClick={handleNextPage}
                         className="px-2.5 py-2 bg-neutral-10 text-[16px] font-semibold rounded-full cursor-pointer"
