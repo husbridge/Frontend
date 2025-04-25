@@ -88,7 +88,7 @@ const InquiryManagement = () => {
 
     const {
         data: inquiryData,
-        isLoading: isLoaingInquiryData,
+        isLoading: isLoadingInquiryData,
         error: portalInquiryError,
     } = useGetPortalInquiries(userState?.userType || "")
 
@@ -368,7 +368,7 @@ const InquiryManagement = () => {
                 setOpened={setOpenInquiryDetails}
                 data={inquiryDetails}
             />
-            {isLoading || isLoaingInquiryData || isLoadingStat ? (
+            {isLoading || isLoadingInquiryData || isLoadingStat ? (
                 <LoadingState />
             ) : inquiryStatsError || portalInquiryError || inquiryError ? (
                 <ErrorComponent />

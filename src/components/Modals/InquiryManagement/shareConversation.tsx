@@ -49,7 +49,7 @@ const ShareConversationModal = ({
 
     const {
         data: inquiryData,
-        isLoading: isLoaingInquiryData,
+        isLoading: isLoadingInquiryData,
         error: portalInquiryError,
     } = useGetPortalInquiries(state.user?.userType || "")
 
@@ -112,7 +112,7 @@ const ShareConversationModal = ({
                     />
                 </div>
 
-                {isLoaingInquiryData || isLoading ? (
+                {isLoadingInquiryData || isLoading ? (
                     portalInquiryError || inquiryError ? (
                         <div>Error loading chats</div>
                     ) : (

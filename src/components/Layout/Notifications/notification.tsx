@@ -7,7 +7,7 @@ import useInquiryManagement from "@hooks/useInquiryManagement"
 import { markNotificationAsRead } from "@services/auth"
 import { useMutation } from "@tanstack/react-query"
 import { formatShortDateTime } from "@utils/helpers"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { NotificationsResponse } from "type/api/auth.types"
 
@@ -55,14 +55,14 @@ const Notification = ({ item }: { item: NotificationsResponse }) => {
         mutationFn: markNotificationAsRead,
     })
 
-    useEffect(() => {
-        if (!item.isRead) {
-            const timer = setTimeout(() => {
-                onReadNotification.mutate(item._id)
-            }, 1200)
-            return () => clearTimeout(timer)
-        }
-    }, [item._id, item.isRead, onReadNotification])
+    // useEffect(() => {
+    //     if (!item.isRead) {
+    //         const timer = setTimeout(() => {
+    //             onReadNotification.mutate(item._id)
+    //         }, 1200)
+    //         return () => clearTimeout(timer)
+    //     }
+    // }, [item._id, item.isRead, onReadNotification])
 
     const inquiry = inquiries.find((i) => i._id === item.metadata.inquiryId)
     if (item.type === "inquiry" && !inquiry) {

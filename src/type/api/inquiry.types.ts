@@ -1,5 +1,5 @@
-import { EventDate } from "./event.types"
 import { APIResponse } from "."
+import { EventDate } from "./event.types"
 
 export type InquiryResponse = APIResponse<Data[]>
 

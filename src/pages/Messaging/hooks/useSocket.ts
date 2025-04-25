@@ -1,5 +1,6 @@
 import useAuth from "@hooks/auth/useAuth"
 import { useNotificationStore } from "@hooks/useNotificationStore"
+import { showNotification } from "@mantine/notifications"
 import { MESSAGING_BASE_URL } from "@services/api.services"
 import { jwtDecode } from "jwt-decode"
 import { useCallback, useEffect, useState } from "react"
@@ -40,7 +41,7 @@ export const useSocket = ({
 
         newSocket.on("connect", () => {
             console.log("Connected to the server")
-            //newSocket.emit("joinGroup", { groupId });
+            //newSocket.emit("joinGroup", { roomId });
         })
         newSocket.on("data", (data) => {
             console.log("dat", data)
@@ -85,14 +86,16 @@ export const useSocket = ({
         (
             message: string,
             user: string,
-            groupId: string,
+            roomId: string,
             senderEmail: string
         ) => {
             if (socket) {
+                console.log(user, senderEmail, roomId)
                 socket.emit(
                     "message",
-                    { message, user, groupId, senderEmail },
+                    { message, user, roomId, senderEmail },
                     (response: any) => {
+                        console.log("sending ", message)
                         console.log("resp", response)
                         if (response.status === "ok") {
                             console.log("Message sent successfully!")
@@ -101,6 +104,11 @@ export const useSocket = ({
                                 "Message failed to send:",
                                 response.error
                             )
+                            showNotification({
+                                title: "Error",
+                                message: "Message failed to send.",
+                                color: "red",
+                            })
                         }
                     }
                 )
@@ -108,15 +116,16 @@ export const useSocket = ({
         },
         [socket]
     )
+
     const joinGroup = useCallback(
-        (groupId: string) => {
-            console.log(`Attempting to join group: ${groupId}`)
+        (roomId: string) => {
+            console.log(`Attempting to join group: ${roomId}`)
             if (socket) {
-                socket.emit("joinGroup", { groupId }, (response: any) => {
+                socket.emit("joinGroup", { roomId }, (response: any) => {
                     if (response?.status === "success") {
-                        console.log(`Successfully joined group ${groupId}`)
+                        console.log(`Successfully joined group ${roomId}`)
                     } else {
-                        console.error(`Failed to join group ${groupId}`)
+                        console.error(`Failed to join group ${roomId}`)
                     }
                 })
             } else {

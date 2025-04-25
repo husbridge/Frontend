@@ -11,7 +11,7 @@ export interface Data {
     senderId: string
     user: string
     message: string
-    groupId: string
+    roomId: string
     date: string
     createdAt: string
     updatedAt: string

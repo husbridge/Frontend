@@ -90,7 +90,7 @@ const Layout = ({ children, pageTitle, search }: LayoutProps) => {
                     </>
 
                     <main
-                        className={`w-full h-full overflow-y-auto      rounded-bl-[40px] bg-grey-90`}
+                        className={`w-full h-full overflow-y-auto rounded-bl-[40px] bg-grey-90`}
                     >
                         {children}
                     </main>

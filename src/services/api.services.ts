@@ -9,10 +9,9 @@ const BASE_URL = isProduction
     ? "https://husridge-server.onrender.com/api/"
     : "http://localhost:8084/api/"
 
-export const MESSAGING_BASE_URL =
-    !isProduction || isProduction
-        ? "https://messaging-chat.onrender.com/api/"
-        : "http://localhost:3000/api/"
+export const MESSAGING_BASE_URL = isProduction
+    ? "https://messaging-chat.onrender.com"
+    : "http://localhost:3000"
 
 let EXPIRYINTERCEPTOR: number
 

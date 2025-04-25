@@ -2,12 +2,8 @@ import { NavBarInterface } from "../../../type/Layout/layout-interface"
 import notificationIcon from "@assets/icons/notification.svg"
 import { Input } from "@components/index"
 import { BiSearch } from "react-icons/bi"
-// import Avatar from "@assets/icons/avatar.svg"
-//import { FiChevronDown } from "react-icons/fi"
 import { HiMenuAlt2 } from "react-icons/hi"
 import MessageIcon from "@assets/icons/message.svg"
-//import { useState } from "react"
-//import { useMediaQuery } from "@mantine/hooks"
 import Notifications from "../Notifications"
 import { Popover } from "@mantine/core"
 import { fetchNotifications } from "@services/auth"
@@ -24,10 +20,6 @@ import { useNotificationStore } from "@hooks/useNotificationStore"
 const Navbar = ({ setOpenSideBar, search }: NavBarInterface) => {
     const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
-    //const [openNotification, setOpenNotification] = useState(false)
-    //const [openProfile, setOpenProfile] = useState(false)
-    // const matches = useMediaQuery("(min-width: 650px)")
-
     const { state } = useAuth()
     const isClient = state.user?.userType === "client"
     const decoded = isClient
@@ -39,7 +31,7 @@ const Navbar = ({ setOpenSideBar, search }: NavBarInterface) => {
         enabled: !isClient,
         queryFn: () => fetchNotifications(),
     })
-    // const reset = useNotificationStore((state) => state.reset)
+    
     const chatGroupIds = useNotificationStore((state) => state.chatGroupIds)
     const newMessageCount = new Set(chatGroupIds).size
 
@@ -81,7 +73,6 @@ const Navbar = ({ setOpenSideBar, search }: NavBarInterface) => {
                         <Link
                             to="/messaging"
                             className="relative"
-                            // onClick={() => reset()}
                         >
                             {newMessageCount > 0 && (
                                 <span className="bg-yellow-100 rounded-full py-1 px-2 text-xs font-bold absolute top-0 right-0">

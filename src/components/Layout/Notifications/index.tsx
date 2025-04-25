@@ -36,7 +36,8 @@ const Notifications = ({ isOpen }: { isOpen: boolean }) => {
 
     const total = notifications.length ?? 0
 
-    const hasNextPage = page * limit < total
+    const hasNextPage = total === limit
+    
 
     const handleNextPage = () => setPage((prev) => prev + 1)
     const handlePreviousPage = () => setPage((prev) => Math.max(prev - 1, 1))

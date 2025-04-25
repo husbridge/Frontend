@@ -41,6 +41,7 @@ const InquiryDetails = ({
     data,
     fromMessaging,
 }: InquiryDetailsModalProps) => {
+
     const {
         link,
         fileSize,
@@ -151,7 +152,21 @@ const InquiryDetails = ({
     const handleRespond = async () => {
         // await joinGroup(item.chatGroupId)
 
-        sendMessage(messageBody, user || "", data?.chatGroupId || "", "")
+        if (!data) {
+            showNotification({
+                title: "Error",
+                message: "No data value found",
+                color: "red",
+            })
+            return
+        }
+
+        sendMessage(
+            messageBody,
+            user || "",
+            data?.chatGroupId || "",
+            data?.emailAddress || ""
+        )
 
         mutate({
             email: data?.emailAddress || "",
@@ -162,7 +177,7 @@ const InquiryDetails = ({
         })
     }
 
-    const handleAddtoCalendar = () => {
+    const handleAddToCalendar = () => {
         const payload: any = {
             eventTitle: data?.eventTitle,
             eventDate: data?.eventDate,
@@ -489,7 +504,7 @@ const InquiryDetails = ({
                         <Button
                             variant="primary"
                             className="!text-md mt-4"
-                            onClick={handleAddtoCalendar}
+                            onClick={handleAddToCalendar}
                             disabled={onAddEvent.isPending}
                         >
                             {onAddEvent.isPending

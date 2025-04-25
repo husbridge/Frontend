@@ -1,12 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import BackIcon from "@assets/icons/back.svg"
+import SendIcon from "@assets/icons/sendIcon.svg"
+import ErrorComponent from "@components/errorComponent"
 import {
     Button,
     InquiryDetails,
     Layout,
+    LoadingState,
     NewMessageModal,
 } from "@components/index"
-import Dialog from "./components/dialog"
-// import Avatar from "@assets/images/avatar.png"
+import useAuth from "@hooks/auth/useAuth"
+import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
+import { useGetChats } from "@hooks/useMessaging"
+import { useMediaQuery } from "@mantine/hooks"
+import { groupBy, parseUTCDate } from "@utils/helpers"
+import dayjs from "dayjs"
 import {
     ChangeEvent,
     useCallback,
@@ -15,19 +23,9 @@ import {
     useRef,
     useState,
 } from "react"
-//import { MdAttachFile } from "react-icons/md"
-import BackIcon from "@assets/icons/back.svg"
-import SendIcon from "@assets/icons/sendIcon.svg"
-import ErrorComponent from "@components/errorComponent"
-import { LoadingState } from "@components/index"
-import useAuth from "@hooks/auth/useAuth"
-import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
-import { useGetChats } from "@hooks/useMessaging"
-import { useMediaQuery } from "@mantine/hooks"
-import { groupBy, parseUTCDate } from "@utils/helpers"
-import dayjs from "dayjs"
 import { Data } from "type/api/inquiry.types"
 import { Data as ChatData } from "type/api/messaging.types"
+import Dialog from "./components/dialog"
 import { useSocket } from "./hooks/useSocket"
 
 import Avatar from "@components/Layout/avatar"
@@ -79,9 +77,7 @@ const Messaging = () => {
     const [openNewMessage, setOpenNewMessage] = useState(false)
     const ref = useRef<HTMLInputElement | null>(null)
     const [showMobileChat, setShowMobileChat] = useState(false)
-    const { sendMessage, joinGroup } = useSocket({
-        setMessages,
-    })
+    const { sendMessage, joinGroup } = useSocket({ setMessages })
 
     const [showInquiry, setShowInquiry] = useState(false)
     const {
@@ -98,7 +94,7 @@ const Messaging = () => {
 
     const {
         data: inquiryData,
-        isLoading: isLoaingInquiryData,
+        isLoading: isLoadingInquiryData,
         error: portalInquiryError,
     } = useGetPortalInquiries(state.user?.userType || "")
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -156,11 +152,9 @@ const Messaging = () => {
     useEffect(() => {
         if (showMessage) {
             const intervalId = setInterval(() => {
-                // reset()
                 if (activeGroup) removeChatGroupId(activeGroup?.chatGroupId)
             }, 1000)
 
-            // Cleanup the interval when the component is unmounted
             return () => clearInterval(intervalId)
         }
     }, [showMessage, setMessageCount, activeGroup])
@@ -171,7 +165,7 @@ const Messaging = () => {
                 opened={openNewMessage}
                 setOpened={setOpenNewMessage}
             />
-            {isLoading || isLoaingInquiryData ? (
+            {isLoading || isLoadingInquiryData ? (
                 <LoadingState />
             ) : portalInquiryError || inquiryError ? (
                 <ErrorComponent />
@@ -363,7 +357,7 @@ const Messaging = () => {
 
                                         <div className=" relative w-full z-2 sm:bg-white-100 bg-[#FBFBFB] botto order-3 pl-4 py-4 pr-8 ">
                                             {/* //w-[90%] md:w-[calc(70%-150px)] lg:w-[calc(60%-200px)] xl:w-[calc(70%-250px)] */}
-                                            <div className=" mx-4 overflow-x-hidden  w-full bg-[#F2F2F2]  rounded-[15px]  relative  pl-10 h-14 items-center flex">
+                                            <div className="mx-4 overflow-x-hidden  w-full bg-[#F2F2F2]  rounded-[15px]  relative  pl-4 h-14 items-center flex">
                                                 <div
                                                     className="pr-2"
                                                     onClick={() => {
@@ -380,7 +374,7 @@ const Messaging = () => {
                                                         ref={ref}
                                                     />
                                                 </div>
-                                                <div className="flex justify-between w-full">
+                                                <div className="flex flex-1 justify-between w-full">
                                                     <input
                                                         type="text"
                                                         placeholder="Write a message"

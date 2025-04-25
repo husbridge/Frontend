@@ -1,11 +1,11 @@
 import SmsEdit from "@assets/icons/smsEdit.svg"
 import { Input } from "@components/index"
-import { BiSearch } from "react-icons/bi"
-import useAuth from "@hooks/auth/useAuth"
-import { Data } from "type/api/inquiry.types"
 import Avatar from "@components/Layout/avatar"
+import useAuth from "@hooks/auth/useAuth"
 import { useNotificationStore } from "@hooks/useNotificationStore"
+import { BiSearch } from "react-icons/bi"
 import { AuthState } from "type/api/auth.types"
+import { Data } from "type/api/inquiry.types"
 
 type GroupedData = Record<string, Data[]>
 
