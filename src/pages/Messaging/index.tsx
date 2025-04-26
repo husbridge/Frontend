@@ -159,6 +159,7 @@ const Messaging = () => {
         }
     }, [showMessage, setMessageCount, activeGroup])
 
+
     return (
         <Layout>
             <NewMessageModal
@@ -183,6 +184,7 @@ const Messaging = () => {
                                 <Dialog
                                     handleClick={handleClick}
                                     setOpenNewMessage={setOpenNewMessage}
+                                    chats={chats?.data}
                                     data={
                                         state.user?.userType === "client"
                                             ? inquiryData?.data || []

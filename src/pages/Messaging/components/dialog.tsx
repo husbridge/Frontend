@@ -7,15 +7,19 @@ import { BiSearch } from "react-icons/bi"
 import { AuthState } from "type/api/auth.types"
 import { Data } from "type/api/inquiry.types"
 
+import { Data as ChatData } from "type/api/messaging.types"
+
 type GroupedData = Record<string, Data[]>
 
 const Dialog = ({
     handleClick,
     setOpenNewMessage,
     data,
+    chats,
 }: {
     handleClick: (val: Data) => void
     setOpenNewMessage: (val: boolean) => void
+    chats?: ChatData[]
     data: Data[]
 }) => {
     const { state } = useAuth()
@@ -50,7 +54,12 @@ const Dialog = ({
                     <BiSearch size="30px" color="black" className="mr-2" />
                 }
             />
-            <Chats handleClick={handleClick} data={data} state={state} />
+            <Chats
+                handleClick={handleClick}
+                chats={chats}
+                data={data}
+                state={state}
+            />
         </div>
     )
 }
@@ -60,6 +69,7 @@ export default Dialog
 interface ChatsProps {
     state: AuthState
     data: Data[]
+    chats?: ChatData[]
     handleClick: (val: Data) => void
 }
 
@@ -68,6 +78,7 @@ export const Chats = ({ handleClick, data, state }: ChatsProps) => {
     const setMessageCount = useNotificationStore(
         (state) => state.setMessageCount
     )
+
     const newData: GroupedData = {}
     data.forEach((item) => {
         if (newData[item.chatGroupId]) {
@@ -79,67 +90,77 @@ export const Chats = ({ handleClick, data, state }: ChatsProps) => {
 
     return (
         <>
-            {Object.entries(newData).map(([id, item]) => (
-                <div
-                    key={id}
-                    className="flex justify-between border-b border-[#d9d9d968] py-5 cursor-pointer"
-                    onClick={() => {
-                        if (chatGroupIds.includes(item[0].chatGroupId)) {
-                            setMessageCount(-1)
-                        }
-                        handleClick(item[0])
-                    }}
-                >
-                    <div className="flex items-center justify-between w-full">
-                        {/* <img src={Avatar} className="w-12 sm:w-16" alt="" /> */}
-                        <div className="flex items-center gap-2">
-                            <Avatar
-                                size={46}
-                                alt={
-                                    state.user?.userType === "client"
-                                        ? item[0].bookedForTalent.fullName
-                                              .split("  ")
-                                              .join(" ")
-                                        : item[0].fullName.trim()
-                                }
-                                imageUrl={
-                                    state.user?.userType === "client"
-                                        ? item[0].bookedForTalent.profileUrl
-                                        : undefined
-                                }
-                            />
-                            <div className="ml-2">
-                                <p className="text-[#0F0E0E] text-2md sm:text-3md font-medium">
-                                    {state.user?.userType === "client"
-                                        ? item[0].bookedForTalent.fullName
-                                        : item[0].fullName}
-                                </p>
-                                {/* <p className="text-md text-[#5F5E5E]">Yes Boss</p> */}
+            {Object.entries(newData).map(([id, item]) => {
+                // const individualChat = chats?.filter((ch) => ch.roomId === id)
+                // const lastMessage =
+                //     individualChat?.[individualChat?.length - 1]?.message
+                return (
+                    <div
+                        key={id}
+                        className="flex justify-between border-b border-[#d9d9d968] py-5 cursor-pointer"
+                        onClick={() => {
+                            if (chatGroupIds.includes(item[0].chatGroupId)) {
+                                setMessageCount(-1)
+                            }
+                            handleClick(item[0])
+                        }}
+                    >
+                        <div className="flex items-center justify-between w-full">
+                            {/* <img src={Avatar} className="w-12 sm:w-16" alt="" /> */}
+                            <div className="flex items-center gap-2">
+                                <Avatar
+                                    size={46}
+                                    alt={
+                                        state.user?.userType === "client"
+                                            ? item[0].bookedForTalent.fullName
+                                                  .split("  ")
+                                                  .join(" ")
+                                            : item[0].fullName.trim()
+                                    }
+                                    imageUrl={
+                                        state.user?.userType === "client"
+                                            ? item[0].bookedForTalent.profileUrl
+                                            : undefined
+                                    }
+                                />
+                                <div className="ml-2">
+                                    <p className="text-[#0F0E0E] text-2md sm:text-3md font-medium">
+                                        {state.user?.userType === "client"
+                                            ? item[0].bookedForTalent.fullName
+                                            : item[0].fullName}
+                                    </p>
+                                    <p className="text-sm text-gray-400">
+                                        {newData[id][0].emailAddress}
+                                        {/* {lastMessage} */}
+                                    </p>
+                                </div>
                             </div>
+
+                            {chatGroupIds.length > 0 && (
+                                <span>
+                                    {chatGroupIds.filter(
+                                        (i) => i === item[0].chatGroupId
+                                    ).length > 0 && (
+                                        <span className="bg-yellow-100 rounded-full py-1 px-2 text-xs font-bold">
+                                            {
+                                                chatGroupIds.filter(
+                                                    (i) =>
+                                                        i ===
+                                                        item[0].chatGroupId
+                                                ).length
+                                            }
+                                        </span>
+                                    )}
+                                </span>
+                            )}
                         </div>
 
-                        {chatGroupIds.length > 0 && (
-                            <span>
-                                {chatGroupIds.filter(
-                                    (i) => i === item[0].chatGroupId
-                                ).length > 0 && (
-                                    <span className="bg-yellow-100 rounded-full py-1 px-2 text-xs font-bold">
-                                        {
-                                            chatGroupIds.filter(
-                                                (i) => i === item[0].chatGroupId
-                                            ).length
-                                        }
-                                    </span>
-                                )}
-                            </span>
-                        )}
-                    </div>
-
-                    {/* <p className="text-sm text-black-60 font-medium mt-4">
+                        {/* <p className="text-sm text-black-60 font-medium mt-4">
                         Mon, Dec 18th
                     </p> */}
-                </div>
-            ))}
+                    </div>
+                )
+            })}
         </>
     )
 }
