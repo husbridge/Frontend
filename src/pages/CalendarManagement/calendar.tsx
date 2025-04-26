@@ -158,6 +158,23 @@ const Calendar = ({
         const calendarApi = calendarComponentRef.current?.getApi()
         calendarApi?.gotoDate(newDate.toDate())
     }
+
+    const [isShowingAllEvents, setIsShowingAllEvents] = useState(false)
+
+    const showAllEvents = (): void => {
+        const calendar = calendarComponentRef.current?.getApi()
+        if (!calendar) return
+        if (isShowingAllEvents) {
+            calendar.changeView(
+                window.innerWidth < 768 ? "listDay" : "dayGridMonth"
+            )
+        } else {
+            // Show all events
+            calendar.changeView("listMonth")
+        }
+
+        setIsShowingAllEvents(!isShowingAllEvents)
+    }
     return (
         <>
             <SetReminderModal
@@ -207,7 +224,14 @@ const Calendar = ({
                     />
                 </div>
 
-                <div className="flex">
+                <div className="flex gap-2 items-center">
+                    <Button
+                        className="flex text-black-100 h-11"
+                        variant="white"
+                        onClick={showAllEvents}
+                    >
+                        {isShowingAllEvents ? "Default View" : "All Events"}
+                    </Button>
                     <Button
                         className="flex text-white-100"
                         variant="black"
