@@ -1,5 +1,5 @@
 import { showNotification } from "@mantine/notifications"
-import axiosInstance from "./api.services"
+import axiosInstance, { axiosMessagingInstance } from "./api.services"
 
 export const uploadFile = async (
     file: FormData,
@@ -32,4 +32,28 @@ export const uploadFile = async (
     }
 
     return response.data.data
+}
+
+export const uploadChatFile = async (
+    file: FormData
+) => {
+    const token = JSON.parse(localStorage.getItem("user") || "{}").accessToken
+    const response = await axiosMessagingInstance.post("storage/upload", file, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            contentType: "multipart/form-data",
+        }
+    });
+
+    if (response.status >= 300) {
+        showNotification({
+            title: "Error",
+            message: response.data.message || "Failed to upload file",
+            color: "red",
+        });
+        return null;
+    }
+
+    return response.data.data;
+    
 }

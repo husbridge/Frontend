@@ -12,6 +12,7 @@ import {
 import useAuth from "@hooks/auth/useAuth"
 import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
 import { useGetChats } from "@hooks/useMessaging"
+// import { Progress } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks"
 import { groupBy, parseUTCDate } from "@utils/helpers"
 import dayjs from "dayjs"
@@ -33,6 +34,8 @@ import { useNotificationStore } from "@hooks/useNotificationStore"
 import calendar from "dayjs/plugin/calendar"
 import { jwtDecode } from "jwt-decode"
 import { MdAttachFile } from "react-icons/md"
+import { useMutation } from "@tanstack/react-query"
+import { uploadChatFile } from "@services/storage"
 dayjs.extend(calendar)
 
 export type DecodedUser = {
@@ -96,10 +99,20 @@ const Messaging = () => {
         data: inquiryData,
         isLoading: isLoadingInquiryData,
         error: portalInquiryError,
-    } = useGetPortalInquiries(state.user?.userType || "")
+    } = useGetPortalInquiries(state.user?.userType || "");
+
+    const { mutate: fileMutate } = useMutation({
+        mutationFn: (data: FormData) => {console.log(`====${data}`); return uploadChatFile(data)},
+        onSuccess: (data) => console.log(`==Upload result ${data.data}`)
+    });
+
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-        //const file = e.target.files?.[0]
-        console.log(e)
+        const file = e.target.files?.[0];
+
+        const formData = new FormData();
+        formData.append('file', file as any);
+
+        fileMutate(formData);
     }
 
     const matches = useMediaQuery("(min-width: 768px)")
@@ -291,7 +304,7 @@ const Messaging = () => {
                                                                     }
                                                                 )}
                                                             </p>
-                                                            {newMessages[
+                                                            { newMessages[
                                                                 item
                                                             ].map(
                                                                 (
