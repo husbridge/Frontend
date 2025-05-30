@@ -27,6 +27,7 @@ import {
 import { Data } from "type/api/inquiry.types"
 import { Data as ChatData } from "type/api/messaging.types"
 import Dialog from "./components/dialog"
+import ImageWithRefresh from "./components/imageWithAwsHook";
 import { useSocket } from "./hooks/useSocket"
 
 import Avatar from "@components/Layout/avatar"
@@ -113,6 +114,10 @@ const Messaging = () => {
         formData.append('file', file as any);
 
         fileMutate(formData);
+    }
+
+    const isImage = (contentType: string) => {
+        return contentType && contentType.startsWith('image/');
     }
 
     const matches = useMediaQuery("(min-width: 768px)")
@@ -334,6 +339,38 @@ const Messaging = () => {
                                                                                         : "text-[#01070E] rounded-tl-none rounded-[16px] bg-[#F5F5F5] p-4"
                                                                                 } text-sm`}
                                                                             >
+                                                                                {newItem.type === "file" && (
+                                                                                    <div className="space-y-3">
+                                                                                        {isImage(newItem.metadata.contentType) ? (
+                                                                                            <ImageWithRefresh newItem={newItem} />
+                                                                                        ) : (
+                                                                                            <button
+                                                                                                onClick={}
+                                                                                                className={`inline-flex items-center px-3 py-2 text-xs rounded-md transition-colors ${
+                                                                                                    newItem.user === user
+                                                                                                        ? "bg-[#FFC107] text-black hover:bg-[#FFB300]"
+                                                                                                        : "bg-[#07305F] text-white hover:bg-[#0A3D75]"
+                                                                                                }`}
+                                                                                            >
+                                                                                                <svg 
+                                                                                                    className="w-4 h-4 mr-1" 
+                                                                                                    fill="none" 
+                                                                                                    stroke="currentColor" 
+                                                                                                    viewBox="0 0 24 24"
+                                                                                                >
+                                                                                                    <path 
+                                                                                                        strokeLinecap="round" 
+                                                                                                        strokeLinejoin="round" 
+                                                                                                        strokeWidth={2} 
+                                                                                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+                                                                                                    />
+                                                                                                </svg>
+                                                                                                Download {newItem.metadata.key}
+                                                                                            </button>
+                                                                                        )}
+                                                                                    </div>
+                                                                                )}
+
                                                                                 {newItem.message.startsWith(
                                                                                     "https"
                                                                                 ) ? (
