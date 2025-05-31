@@ -28,7 +28,7 @@ import { Data } from "type/api/inquiry.types"
 import { Data as ChatData } from "type/api/messaging.types"
 import Dialog from "./components/dialog"
 import DownloadFileButton from "./components/downloadButton";
-import ImageWithRefresh from "./components/imageWithAwsHook";
+import ImageWithAwsHook from "./components/imageWithAwsHook";
 import { useSocket } from "./hooks/useSocket"
 
 import Avatar from "@components/Layout/avatar"
@@ -104,7 +104,7 @@ const Messaging = () => {
     } = useGetPortalInquiries(state.user?.userType || "");
 
     const { mutate: fileMutate } = useMutation({
-        mutationFn: (data: FormData) => {console.log(`====${data}`); return uploadChatFile(data)},
+        mutationFn: (data: FormData) => uploadChatFile(data, activeGroup?.chatGroupId || ""),
         onSuccess: (data) => console.log(`==Upload result ${data.data}`)
     });
 
@@ -343,7 +343,7 @@ const Messaging = () => {
                                                                                 {newItem.type === "file" && (
                                                                                     <div className="space-y-3">
                                                                                         {isImage(newItem.metadata.contentType) ? (
-                                                                                            <ImageWithRefresh newItem={newItem} opened={showMessage} />
+                                                                                            <ImageWithAwsHook newItem={newItem} />
                                                                                         ) : (
                                                                                             <DownloadFileButton newItem={newItem} opened={showMessage} />
                                                                                         )}
