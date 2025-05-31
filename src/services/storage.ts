@@ -35,10 +35,11 @@ export const uploadFile = async (
 }
 
 export const uploadChatFile = async (
-    file: FormData
+    file: FormData,
+    key: string
 ) => {
     const token = JSON.parse(localStorage.getItem("user") || "{}").accessToken
-    const response = await axiosMessagingInstance.post("storage/upload", file, {
+    const response = await axiosMessagingInstance.post(`/files/file-upload/${key}`, file, {
         headers: {
             Authorization: `Bearer ${token}`,
             contentType: "multipart/form-data",
