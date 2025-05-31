@@ -1,17 +1,16 @@
 import { useState } from "react";
-import useAwsFile from "@hooks/useAwsFile";
 import { Data as ChatData } from "type/api/messaging.types";
+import { useGetFileUrl } from "@hooks/newUseAwsFile";
+import { LoadingState } from "@components/index";
 
 interface Props {
     newItem: ChatData;
-    opened: boolean;
 }
 
-const ImageWithAwsHook = ({ newItem, opened }: Props) => {
-    const { fileProperties } = useAwsFile({
-        opened: opened,
-        attachDocument: newItem.metadata.key
-    });
+const ImageWithAwsHook = ({ newItem }: Props) => {
+    const {
+        data, isLoading
+    } = useGetFileUrl(newItem.metadata.key);
 
     const [failed, setFailed] = useState(false);
 
@@ -27,19 +26,23 @@ const ImageWithAwsHook = ({ newItem, opened }: Props) => {
         );
     }
 
-    const imageUrl = fileProperties?.url || newItem.metadata.url;
-
     return (
         <div className="space-y-2">
-            <img
-                src={imageUrl}
-                alt="Shared image"
-                className="max-w-full h-auto rounded-lg max-h-64 object-contain"
-                onError={handleImageError}
-            />
-            <div className="hidden text-red-500 text-xs">
-                Failed to load image
-            </div>
+            {isLoading ? (
+                <LoadingState />
+            ): (
+                <>
+                    <img
+                    src={data.data.url}
+                    alt="Shared image"
+                    className="max-w-full h-auto rounded-lg max-h-64 object-contain"
+                    onError={handleImageError}
+                    />
+                    <div className="hidden text-red-500 text-xs">
+                        Failed to load image
+                    </div>
+                </>
+            )}
         </div>
     )
 }
