@@ -343,9 +343,9 @@ const Messaging = () => {
                                                                                 {newItem.type === "file" && (
                                                                                     <div className="space-y-3">
                                                                                         {isImage(newItem.metadata.contentType) ? (
-                                                                                            <ImageWithRefresh newItem={newItem} />
+                                                                                            <ImageWithRefresh newItem={newItem} opened={showMessage} />
                                                                                         ) : (
-                                                                                            <DownloadFileButton newItem={newItem} />
+                                                                                            <DownloadFileButton newItem={newItem} opened={showMessage} />
                                                                                         )}
                                                                                     </div>
                                                                                 )}

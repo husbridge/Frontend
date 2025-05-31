@@ -4,11 +4,12 @@ import { Data as ChatData } from "type/api/messaging.types";
 
 interface Props {
     newItem: ChatData;
+    opened: boolean;
 }
 
-const DownloadFileButton = ({ newItem }: Props) => {
+const DownloadFileButton = ({ newItem, opened }: Props) => {
     const { downloadFile } = useAwsFile({
-        opened: true,
+        opened: opened,
         attachDocument: newItem.metadata.key
     });
 

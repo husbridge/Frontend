@@ -4,11 +4,12 @@ import { Data as ChatData } from "type/api/messaging.types";
 
 interface Props {
     newItem: ChatData;
+    opened: boolean;
 }
 
-const ImageWithAwsHook = ({ newItem }: Props) => {
+const ImageWithAwsHook = ({ newItem, opened }: Props) => {
     const { fileProperties } = useAwsFile({
-        opened: true,
+        opened: opened,
         attachDocument: newItem.metadata.key
     });
 
