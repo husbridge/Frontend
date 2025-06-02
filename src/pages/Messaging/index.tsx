@@ -103,6 +103,11 @@ const Messaging = () => {
         error: portalInquiryError,
     } = useGetPortalInquiries(state.user?.userType || "");
 
+    const user =
+        state.user?.userType === "client"
+            ? activeGroup?._id
+            : state.user?.uniqueUsername;
+
     const { mutate: fileMutate } = useMutation({
         mutationFn: (data: FormData) => uploadChatFile(data, activeGroup?.chatGroupId || ""),
         onSuccess: (data) => console.log(`==Upload result ${data.data}`)
@@ -113,6 +118,7 @@ const Messaging = () => {
 
         const formData = new FormData();
         formData.append('file', file as any);
+        formData.append('user', user || "")
 
         fileMutate(formData);
     }
@@ -139,10 +145,6 @@ const Messaging = () => {
     useEffect(() => {
         scrollToBottom()
     }, [containerRef, messages, showMessage, newMessages])
-    const user =
-        state.user?.userType === "client"
-            ? activeGroup?._id
-            : state.user?.uniqueUsername
 
     const handleSendMessage = () => {
         sendMessage(
