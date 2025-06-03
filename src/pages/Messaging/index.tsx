@@ -345,31 +345,36 @@ const Messaging = () => {
                                                                                         : "text-[#01070E] rounded-tl-none rounded-[16px] bg-[#F5F5F5] p-4"
                                                                                 } text-sm`}
                                                                             >
-                                                                                {newItem.type === "file" && (
+                                                                                {newItem.type === "file" ? (
                                                                                     <div className="space-y-3">
                                                                                         {isImage(newItem.metadata.contentType) ? (
                                                                                             <ImageWithAwsHook newItem={newItem} />
                                                                                         ) : (
-                                                                                            <DownloadFileButton newItem={newItem} opened={showMessage} />
+                                                                                            <>
+                                                                                                <DownloadFileButton newItem={newItem} opened={showMessage} />
+                                                                                                { newItem.metadata.key }
+                                                                                            </>
                                                                                         )}
                                                                                     </div>
-                                                                                )}
-
-                                                                                {newItem.message.startsWith(
-                                                                                    "https"
-                                                                                ) ? (
-                                                                                    <a
-                                                                                        target="_blank"
-                                                                                        href={
-                                                                                            newItem.message
-                                                                                        }
-                                                                                    >
-                                                                                        {
-                                                                                            newItem.message
-                                                                                        }
-                                                                                    </a>
                                                                                 ) : (
-                                                                                    newItem.message
+                                                                                    <>
+                                                                                        {newItem.message.startsWith(
+                                                                                            "https"
+                                                                                        ) ? (
+                                                                                            <a
+                                                                                                target="_blank"
+                                                                                                href={
+                                                                                                    newItem.message
+                                                                                                }
+                                                                                            >
+                                                                                                {
+                                                                                                    newItem.message
+                                                                                                }
+                                                                                            </a>
+                                                                                        ) : (
+                                                                                            newItem.message
+                                                                                        )}
+                                                                                    </>
                                                                                 )}
                                                                             </p>
                                                                             <p

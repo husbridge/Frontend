@@ -15,15 +15,15 @@ const DownloadFileButton = ({ newItem, opened }: Props) => {
 
     return (
         <div
-            className="flex  items-center "
-            onClick={downloadFile}
+        //   className="flex items-center gap-1 px-3 py-2  bg-gray-800 hover:bg-orange-100 rounded-lg cursor-pointer transition-colors duration-150 border border-orange-200"
+          className="flex items-center gap-1 mb-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer transition-colors duration-150 border border-gray-600"
+          onClick={downloadFile}
         >
-            <RxDownload
-                color="#D95B0E"
-                size={22}
-                style={{ marginRight: "5px" }}
-            />
-            <p className="cursor-pointer text-sm">Download</p>
+        <RxDownload
+          className="text-orange-400"
+          size={18}
+        />
+        <p className="text-white font-medium">Download</p>
         </div>
     );
 }

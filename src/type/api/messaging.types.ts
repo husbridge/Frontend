@@ -13,6 +13,7 @@ export enum MessageType {
 interface MessageMetadata {
     contentType: string;
     key: string;
+    originalName: string;
     url: string;
 }
 
