@@ -24,6 +24,7 @@ const ClientLogin: React.FC = () => {
                 type: "SET_USER_DATA",
                 payload: {
                     accessToken: data.data.data.accessToken,
+                    id: "",
                     userType: "client",
                     refreshToken: "",
                     profilePhotoUrl: "",
@@ -41,6 +42,7 @@ const ClientLogin: React.FC = () => {
                 "user",
                 JSON.stringify({
                     accessToken: data.data.data.accessToken,
+                    id: data.data.data.id,
                     userType: "client",
                 })
             )

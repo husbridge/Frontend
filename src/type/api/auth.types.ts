@@ -52,7 +52,7 @@ export interface ClientSigninResponse{
     statusCode: number 
     message: string 
     hasError: boolean 
-    data: {accessToken: string}
+    data: {accessToken: string, id: string}
 }
 export interface OTPValidationRequest {
     username: string
