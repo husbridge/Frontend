@@ -21,6 +21,7 @@ const VerificationInformation = () => {
             if (state.user){
                 const user={ accessToken: state.user.accessToken,
                     refreshToken: state.user.refreshToken,
+                    id: state.user.id,
                     profilePhotoUrl: state.user.profilePhotoUrl,
                     fullName: state.user.fullName,
                     firstName: state.user.firstName,
