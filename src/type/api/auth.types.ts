@@ -81,6 +81,7 @@ export interface PortalOTPValidationResponse {
 export interface Data {
     accessToken: string
     refreshToken: string
+    id: string
     profilePhotoUrl: string
     fullName: string
     firstName: string
