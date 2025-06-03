@@ -103,10 +103,16 @@ const Messaging = () => {
         error: portalInquiryError,
     } = useGetPortalInquiries(state.user?.userType || "");
 
-    const user =
-        state.user?.userType === "client"
-            ? activeGroup?._id
-            : state.user?.uniqueUsername;
+    const userId = state.user?.id || "";
+
+    const isUserMessage = (newItemUser: string) => {
+        const identifiers = [
+            activeGroup?._id,
+            state.user?.uniqueUsername,
+            userId
+        ]
+        return identifiers.some((data) => data === newItemUser);
+    }
 
     const { mutate: fileMutate } = useMutation({
         mutationFn: (data: FormData) => uploadChatFile(data, activeGroup?.chatGroupId || ""),
@@ -118,7 +124,6 @@ const Messaging = () => {
 
         const formData = new FormData();
         formData.append('file', file as any);
-        formData.append('user', user || "")
 
         fileMutate(formData);
     }
@@ -149,7 +154,7 @@ const Messaging = () => {
     const handleSendMessage = () => {
         sendMessage(
             message,
-            user || "",
+            userId,
             activeGroup?.chatGroupId || "",
             decoded.email
         )
@@ -324,8 +329,7 @@ const Messaging = () => {
                                                                             index
                                                                         }
                                                                         className={`${
-                                                                            newItem.user ===
-                                                                            user
+                                                                            isUserMessage(newItem.user)
                                                                                 ? "lg:ml-64 ml-20 flex justify-end mr-6"
                                                                                 : "ml-6 lg:mr-64 mr-20 "
                                                                         }`}
@@ -336,8 +340,7 @@ const Messaging = () => {
                                                                         >
                                                                             <p
                                                                                 className={`${
-                                                                                    newItem.user ===
-                                                                                    user
+                                                                                    isUserMessage(newItem.user)
                                                                                         ? "text-[#FFC107] bg-black-100  rounded-[16px] p-4 rounded-tr-none"
                                                                                         : "text-[#01070E] rounded-tl-none rounded-[16px] bg-[#F5F5F5] p-4"
                                                                                 } text-sm`}
@@ -370,7 +373,7 @@ const Messaging = () => {
                                                                                 )}
                                                                             </p>
                                                                             <p
-                                                                                className={`${newItem.user === user ? "text-end pr-1.5" : "text-start pl-1.5"} text-[#07305F] text-[10px] mt-2`}
+                                                                                className={`${isUserMessage(newItem.user) ? "text-end pr-1.5" : "text-start pl-1.5"} text-[#07305F] text-[10px] mt-2`}
                                                                             >
                                                                                 {dayjs(
                                                                                     newItem.date
