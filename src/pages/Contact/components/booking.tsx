@@ -83,7 +83,7 @@ const Booking = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "booking",
             talentID: id,
-            document: uploadedDocumentKey
+            attachDocument: uploadedDocumentKey
         }
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
@@ -116,8 +116,7 @@ const Booking = ({ id }: { id: string }) => {
                             eventStartTime: "",
                             eventEndTime: "",
                         },
-                    ],
-                    document: null
+                    ]
                 }}
                 validationSchema={
                     step === 1

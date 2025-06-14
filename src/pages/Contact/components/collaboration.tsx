@@ -58,7 +58,7 @@ const Collaboration = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "collaboration",
             talentID: id,
-            document: document
+            attachDocument: document
         }
 
         // console.log("inquiry: ", inquiry)
