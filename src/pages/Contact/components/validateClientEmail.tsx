@@ -12,11 +12,9 @@ import { MdArrowBack } from "react-icons/md"
 import { useNavigate } from "react-router-dom"
 import { type Error } from "type/api"
 import { CreateInquiryRequest } from "type/api/inquiry.types"
-import { useInquiryStore } from "@hooks/useInquiry";
 
 const ValidateClientEmail = () => {
     const { handleTimerStart, time, minutes, seconds } = useTimer()
-    const document = useInquiryStore((state) => state.document);
 
     const [openModal, setOpenModal] = useState(false)
     const navigate = useNavigate()
@@ -35,30 +33,9 @@ const ValidateClientEmail = () => {
         navigate("/", { replace: true, relative: "path" })
     }
 
-    const createInquiryMutate = (inquiryData: any) => {
-        if (document) {
-            const formData = new FormData();
-            formData.append('document', document);
-
-            Object.keys(inquiryData).forEach(key => {
-                const data = typeof inquiryData[key] === 'object'
-                    ? JSON.stringify(inquiryData[key])
-                    : inquiryData[key];
-
-                if (key !== 'document') {
-                    formData.append(key, data);
-                }
-            });
-
-            return createInquiry(formData);
-        }
-
-        return createInquiry(inquiryData);
-    }
-
     const queryClient = useQueryClient()
     const onCreateInquiry = useMutation({
-        mutationFn: createInquiryMutate,
+        mutationFn: createInquiry,
         onSuccess: () => {
             queryClient
                 .invalidateQueries({ queryKey: ["inquiries"] })

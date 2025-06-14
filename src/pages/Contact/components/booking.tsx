@@ -15,9 +15,10 @@ import { useMutation } from "@tanstack/react-query"
 import { sendPortalOTP } from "@services/auth"
 import { showNotification } from "@mantine/notifications"
 import { useInquiryStore } from "@hooks/useInquiry";
+import { uploadFile } from "@services/storage"
 
 const Booking = ({ id }: { id: string }) => {
-    const [step, setStep] = useState(1)
+    const [step, setStep] = useState(1);
     const document = useInquiryStore((state) => state.document);
 
     const navigate = useNavigate()
@@ -38,7 +39,26 @@ const Booking = ({ id }: { id: string }) => {
         },
     })
 
-    const handleValidation = (values: any) => {
+    const handleValidation = async (values: any) => {
+        let uploadedDocumentKey = "";
+
+        if (document) {
+            const formData = new FormData();
+            formData.append('file', document);
+            const data = await uploadFile(formData);
+
+            if (data === null) {
+                showNotification({
+                    title: 'Error',
+                    message: 'Failed to upload document',
+                    color: 'red'
+                });
+                return;
+            }
+
+            uploadedDocumentKey = data;
+        }
+
         const inquiry = {
             fullName: values.fullName,
             description: values.description,
@@ -63,7 +83,7 @@ const Booking = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "booking",
             talentID: id,
-            document: document
+            document: uploadedDocumentKey
         }
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
