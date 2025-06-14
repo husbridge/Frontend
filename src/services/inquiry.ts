@@ -58,7 +58,7 @@ export const fetchInquiriesByManagerId = async (id: string) => {
 // }
 
 export const createInquiry = async (
-    data: CreateInquiryRequest
+    data: CreateInquiryRequest | FormData
 ): Promise<AxiosResponse<CreateInquiryResponse>> => {
     // Send the inquiry data to the backend
     return axiosInstance.post<CreateInquiryResponse>("/portal/inquires", data)

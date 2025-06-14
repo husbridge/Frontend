@@ -14,11 +14,11 @@ import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { sendPortalOTP } from "@services/auth"
 import { showNotification } from "@mantine/notifications"
-// import { useInquiryStore } from "@hooks/useInquiry"
+import { useInquiryStore } from "@hooks/useInquiry";
 
 const Booking = ({ id }: { id: string }) => {
     const [step, setStep] = useState(1)
-    // const document = useInquiryStore((state) => state.document);
+    const document = useInquiryStore((state) => state.document);
 
     const navigate = useNavigate()
 
@@ -63,6 +63,7 @@ const Booking = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "booking",
             talentID: id,
+            document: document
         }
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
