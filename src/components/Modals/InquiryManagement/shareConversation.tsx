@@ -74,10 +74,7 @@ const ShareConversationModal = ({
 
     const handleClick = (val: Data) => {
         setOpened(false)
-        const user =
-            state.user?.userType === "client"
-                ? val.chatGroupId
-                : state.user?.uniqueUsername
+        const user = state.user?.id || "";
 
         sendMessage(link, user || "", val.chatGroupId || "", decoded.email)
     }

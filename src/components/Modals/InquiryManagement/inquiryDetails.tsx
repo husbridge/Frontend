@@ -119,10 +119,8 @@ const InquiryDetails = ({
         },
     })
 
-    const user =
-        state.user?.userType === "client"
-            ? data?._id
-            : state.user?.uniqueUsername
+    const user = state.user?.id || "";
+
     const isClient = state.user?.userType === "client"
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
