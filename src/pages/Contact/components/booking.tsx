@@ -97,6 +97,7 @@ const Booking = ({ id }: { id: string }) => {
                             eventEndTime: "",
                         },
                     ],
+                    document: null
                 }}
                 validationSchema={
                     step === 1
