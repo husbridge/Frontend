@@ -152,6 +152,7 @@ const Messaging = () => {
     }, [containerRef, messages, showMessage, newMessages])
 
     const handleSendMessage = () => {
+        console.log(`=== userId - ${userId}`);
         sendMessage(
             message,
             userId,
