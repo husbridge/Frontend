@@ -65,8 +65,7 @@ const GenerateIvoiceModal = ({
     })
 
     const formatCurrency = (amount: string, currency: string) => {
-        const symbol = CURRENCIES.find((value) => value.code === currency);
-        console.log(`=====symbol = ${symbol}`)
+        const symbol = CURRENCIES.find((value) => value.code === currency)?.symbol;
     
         return `${symbol}${amount}`;
     }
