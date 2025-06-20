@@ -10,6 +10,7 @@ import useAuth from "@hooks/auth/useAuth"
 import { jwtDecode } from "jwt-decode"
 import { DecodedUser } from "@components/Layout/sidebar/clientSidebar"
 import { useQuery } from "@tanstack/react-query"
+import { CURRENCIES } from "../../../type/currency.types";
 import { fetchProfile } from "@services/auth"
 
 export interface GenerateIvoiceModalProps {
@@ -27,7 +28,7 @@ const GenerateIvoiceModal = ({
     const [eventType, setEventType] = useState("Concert")
     const [eventDate, setEventDate] = useState("")
     const [fees, setFees] = useState("")
-    const [currency, setCurrency] = useState("")
+    const [currency, setCurrency] = useState("USD")
     const [logisticInformation, setLogisticInformation] =
         useState("Fully covered")
     const [showCustomInput, setShowCustomInput] = useState(false);
@@ -64,13 +65,19 @@ const GenerateIvoiceModal = ({
     })
 
     const formatCurrency = (amount: string, currency: string) => {
-        const symbol = currencySymbols[currency] || currency;
+        const symbol = CURRENCIES.find((value) => value.code === currency);
+        console.log(`=====symbol = ${symbol}`)
     
         return `${symbol}${amount}`;
     }
 
     const handleGeneratePdf = async () => {
         const formattedFee = formatCurrency(fees, currency);
+        const formattedLogisticsFee = formatCurrency(logisticsFee, currency);
+        const formattedTotalFee = formatCurrency(
+            String(Number(fees) + Number(logisticsFee)),
+            currency
+        );
 
         const pdfDoc = (
             <InvoicePDF
@@ -81,16 +88,14 @@ const GenerateIvoiceModal = ({
                 eventType={eventType}
                 eventDate={eventDate}
                 fees={formattedFee}
-                currency={currency}
                 billOption={billOption}
                 logisticInformation={logisticInformation}
-                customLogisticValue={customLogisticValue}
-                logisticsFee={`₦${logisticsFee}`}
+                logisticsFee={formattedLogisticsFee}
                 accountNumber={accountNumber}
                 accountName={accountName}
                 bankName={bankName}
                 additionalTC={additionalTC}
-                totalFee={String(`₦${Number(fees) + Number(logisticsFee)}`)}
+                totalFee={formattedTotalFee}
                 fullName={data?.data?.fullName || ""}
                 phoneNumber={data?.data.phoneNumber || ""}
                 address={data?.data.address || ""}
@@ -273,8 +278,8 @@ const GenerateIvoiceModal = ({
                                 <option value="overall">Overall</option>
                             </FormControls>
                         </div>
-                        <div className="sm:flex mb-6">
-                            <div className="sm:ml-4 w-full">
+                        <div className="sm:flex my-6 text-[14px]">
+                            <div className="mb-6 sm:ml-4 w-1/2">
                                 <FormControls
                                     label="Fees"
                                     control="input"
@@ -290,10 +295,10 @@ const GenerateIvoiceModal = ({
                                     }
                                 />
                             </div>
-                            <div>
+                            <div className="sm:ml-4 w-1/2">
                                 <FormControls
                                     label="Currency"
-                                    control="input"
+                                    control="select"
                                     name="currency"
                                     classNames={{
                                         mainRoot:
@@ -304,7 +309,11 @@ const GenerateIvoiceModal = ({
                                         setCurrency(e.currentTarget.value)
                                     }
                                 >
-                                    <option value=""></option>
+                                    {CURRENCIES.map(currency => (
+                                        <option key={currency.code} value={currency.code}>
+                                            {`${currency.name} (${currency.code})`}
+                                        </option>
+                                    ))}
                                 </FormControls>
                             </div>
                         </div>
@@ -329,6 +338,7 @@ const GenerateIvoiceModal = ({
                                 <FormControls
                                     label="Custom Logistics Information"
                                     control="input"
+                                    type="text"
                                     name="customLogisticsInformation"
                                     placeholder="Enter custom logistics information"
                                     classNames={{
