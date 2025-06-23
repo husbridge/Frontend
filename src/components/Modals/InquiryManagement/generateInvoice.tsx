@@ -53,7 +53,6 @@ const GenerateIvoiceModal = ({
         } else {
             setShowCustomInput(false);
             setLogisticInformation(
-                //@ts-expect-error
                 value
             );
         }
