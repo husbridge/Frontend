@@ -66,7 +66,7 @@ const Proposal = ({ id }: { id: string }) => {
             ...values,
             inquiryType: "proposal",
             talentID: id,
-            document: uploadedDocumentKey,
+            attachDocument: uploadedDocumentKey,
         }
 
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
@@ -88,7 +88,7 @@ const Proposal = ({ id }: { id: string }) => {
                     phoneNumber: "",
                     subject: "",
                     description: "",
-                    document: null,
+                    attachDocument: null,
                 }}
                 validationSchema={proposalInquiryValidationSchema}
                 onSubmit={(values) => {
@@ -174,7 +174,7 @@ const Proposal = ({ id }: { id: string }) => {
                             <FormControls
                                 label="Attach document"
                                 control="file"
-                                name="document"
+                                name="attachDocument"
                                 classNames={{
                                     mainRoot:
                                         "border border-dashed  border-[#CBD5E1] px-2 rounded-3xl",

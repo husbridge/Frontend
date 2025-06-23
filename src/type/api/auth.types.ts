@@ -52,7 +52,7 @@ export interface ClientSigninResponse{
     statusCode: number 
     message: string 
     hasError: boolean 
-    data: {accessToken: string}
+    data: {accessToken: string, id: string}
 }
 export interface OTPValidationRequest {
     username: string
@@ -81,6 +81,7 @@ export interface PortalOTPValidationResponse {
 export interface Data {
     accessToken: string
     refreshToken: string
+    id: string
     profilePhotoUrl: string
     fullName: string
     firstName: string

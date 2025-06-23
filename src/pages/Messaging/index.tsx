@@ -12,6 +12,7 @@ import {
 import useAuth from "@hooks/auth/useAuth"
 import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
 import { useGetChats } from "@hooks/useMessaging"
+// import { Progress } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks"
 import { groupBy, parseUTCDate } from "@utils/helpers"
 import dayjs from "dayjs"
@@ -26,6 +27,8 @@ import {
 import { Data } from "type/api/inquiry.types"
 import { Data as ChatData } from "type/api/messaging.types"
 import Dialog from "./components/dialog"
+import DownloadFileButton from "./components/downloadButton";
+import ImageWithAwsHook from "./components/imageWithAwsHook";
 import { useSocket } from "./hooks/useSocket"
 
 import Avatar from "@components/Layout/avatar"
@@ -33,6 +36,8 @@ import { useNotificationStore } from "@hooks/useNotificationStore"
 import calendar from "dayjs/plugin/calendar"
 import { jwtDecode } from "jwt-decode"
 import { MdAttachFile } from "react-icons/md"
+import { useMutation } from "@tanstack/react-query"
+import { uploadChatFile } from "@services/storage"
 dayjs.extend(calendar)
 
 export type DecodedUser = {
@@ -96,10 +101,35 @@ const Messaging = () => {
         data: inquiryData,
         isLoading: isLoadingInquiryData,
         error: portalInquiryError,
-    } = useGetPortalInquiries(state.user?.userType || "")
+    } = useGetPortalInquiries(state.user?.userType || "");
+
+    const userId = state.user?.id || "";
+
+    const isUserMessage = (newItemUser: string) => {
+        const identifiers = [
+            activeGroup?._id,
+            state.user?.uniqueUsername,
+            userId
+        ]
+        return identifiers.some((data) => data === newItemUser);
+    }
+
+    const { mutate: fileMutate } = useMutation({
+        mutationFn: (data: FormData) => uploadChatFile(data, activeGroup?.chatGroupId || ""),
+        onSuccess: (data) => console.log(`==Upload result ${data.data}`)
+    });
+
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-        //const file = e.target.files?.[0]
-        console.log(e)
+        const file = e.target.files?.[0];
+
+        const formData = new FormData();
+        formData.append('file', file as any);
+
+        fileMutate(formData);
+    }
+
+    const isImage = (contentType: string) => {
+        return contentType && contentType.startsWith('image/');
     }
 
     const matches = useMediaQuery("(min-width: 768px)")
@@ -120,15 +150,12 @@ const Messaging = () => {
     useEffect(() => {
         scrollToBottom()
     }, [containerRef, messages, showMessage, newMessages])
-    const user =
-        state.user?.userType === "client"
-            ? activeGroup?._id
-            : state.user?.uniqueUsername
 
     const handleSendMessage = () => {
+        console.log(`=== userId - ${userId}`);
         sendMessage(
             message,
-            user || "",
+            userId,
             activeGroup?.chatGroupId || "",
             decoded.email
         )
@@ -291,7 +318,7 @@ const Messaging = () => {
                                                                     }
                                                                 )}
                                                             </p>
-                                                            {newMessages[
+                                                            { newMessages[
                                                                 item
                                                             ].map(
                                                                 (
@@ -303,8 +330,7 @@ const Messaging = () => {
                                                                             index
                                                                         }
                                                                         className={`${
-                                                                            newItem.user ===
-                                                                            user
+                                                                            isUserMessage(newItem.user)
                                                                                 ? "lg:ml-64 ml-20 flex justify-end mr-6"
                                                                                 : "ml-6 lg:mr-64 mr-20 "
                                                                         }`}
@@ -315,31 +341,45 @@ const Messaging = () => {
                                                                         >
                                                                             <p
                                                                                 className={`${
-                                                                                    newItem.user ===
-                                                                                    user
+                                                                                    isUserMessage(newItem.user)
                                                                                         ? "text-[#FFC107] bg-black-100  rounded-[16px] p-4 rounded-tr-none"
                                                                                         : "text-[#01070E] rounded-tl-none rounded-[16px] bg-[#F5F5F5] p-4"
                                                                                 } text-sm`}
                                                                             >
-                                                                                {newItem.message.startsWith(
-                                                                                    "https"
-                                                                                ) ? (
-                                                                                    <a
-                                                                                        target="_blank"
-                                                                                        href={
-                                                                                            newItem.message
-                                                                                        }
-                                                                                    >
-                                                                                        {
-                                                                                            newItem.message
-                                                                                        }
-                                                                                    </a>
+                                                                                {newItem.type === "file" ? (
+                                                                                    <div className="space-y-3">
+                                                                                        {isImage(newItem.metadata.contentType) ? (
+                                                                                            <ImageWithAwsHook newItem={newItem} />
+                                                                                        ) : (
+                                                                                            <>
+                                                                                                <DownloadFileButton newItem={newItem} opened={showMessage} />
+                                                                                                { newItem.metadata.key }
+                                                                                            </>
+                                                                                        )}
+                                                                                    </div>
                                                                                 ) : (
-                                                                                    newItem.message
+                                                                                    <>
+                                                                                        {newItem.message.startsWith(
+                                                                                            "https"
+                                                                                        ) ? (
+                                                                                            <a
+                                                                                                target="_blank"
+                                                                                                href={
+                                                                                                    newItem.message
+                                                                                                }
+                                                                                            >
+                                                                                                {
+                                                                                                    newItem.message
+                                                                                                }
+                                                                                            </a>
+                                                                                        ) : (
+                                                                                            newItem.message
+                                                                                        )}
+                                                                                    </>
                                                                                 )}
                                                                             </p>
                                                                             <p
-                                                                                className={`${newItem.user === user ? "text-end pr-1.5" : "text-start pl-1.5"} text-[#07305F] text-[10px] mt-2`}
+                                                                                className={`${isUserMessage(newItem.user) ? "text-end pr-1.5" : "text-start pl-1.5"} text-[#07305F] text-[10px] mt-2`}
                                                                             >
                                                                                 {dayjs(
                                                                                     newItem.date

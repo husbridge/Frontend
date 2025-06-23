@@ -14,11 +14,13 @@ import {
 import { showNotification } from "@mantine/notifications"
 import { useNavigate } from "react-router-dom"
 import { sendPortalOTP } from "@services/auth"
+import { useInquiryStore } from "@hooks/useInquiry";
 
 const Collaboration = ({ id }: { id: string }) => {
     const [step, setStep] = useState(1)
     const [opened, setOpened] = useState(false)
     const navigate = useNavigate()
+    const document = useInquiryStore((state) => state.document);
 
     const onSendOtp = useMutation({
         mutationFn: sendPortalOTP,
@@ -56,6 +58,7 @@ const Collaboration = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "collaboration",
             talentID: id,
+            attachDocument: document
         }
 
         // console.log("inquiry: ", inquiry)
@@ -140,7 +143,7 @@ const Collaboration = ({ id }: { id: string }) => {
                                 type="button"
                                 onClick={() => setStep(4)}
                             >
-                                Preview Colaboration inquiry
+                                Preview Collaboration inquiry
                             </Button>
                             <Button
                                 variant="primary"

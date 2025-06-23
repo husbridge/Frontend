@@ -42,6 +42,7 @@ const AccountPreferences = () => {
                 const user = {
                     accessToken: state.user.accessToken,
                     refreshToken: state.user.refreshToken,
+                    id: state.user.id,
                     profilePhotoUrl: data.data.data || "",
                     fullName: state.user.fullName,
                     firstName: state.user.firstName,

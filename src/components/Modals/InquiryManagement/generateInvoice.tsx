@@ -10,6 +10,7 @@ import useAuth from "@hooks/auth/useAuth"
 import { jwtDecode } from "jwt-decode"
 import { DecodedUser } from "@components/Layout/sidebar/clientSidebar"
 import { useQuery } from "@tanstack/react-query"
+import { CURRENCIES } from "../../../type/currency.types";
 import { fetchProfile } from "@services/auth"
 
 export interface GenerateIvoiceModalProps {
@@ -27,8 +28,11 @@ const GenerateIvoiceModal = ({
     const [eventType, setEventType] = useState("Concert")
     const [eventDate, setEventDate] = useState("")
     const [fees, setFees] = useState("")
+    const [currency, setCurrency] = useState("USD")
     const [logisticInformation, setLogisticInformation] =
         useState("Fully covered")
+    const [showCustomInput, setShowCustomInput] = useState(false);
+    const [customLogisticValue, setCustomLogisticValue] = useState("");
     const [logisticsFee, setLogisticsFee] = useState("")
     const [additionalTC, setAdditionalTC] = useState("")
     const [accountNumber, setAccountNumber] = useState("")
@@ -41,12 +45,38 @@ const GenerateIvoiceModal = ({
 
     const decoded = jwtDecode(state.user?.accessToken || "") as DecodedUser
 
+    const onLogisticsInfoChange = (e: any) => {
+        const value = e.target.value;
+        if (value === 'custom') {
+            setShowCustomInput(true);
+            setLogisticInformation('');
+        } else {
+            setShowCustomInput(false);
+            setLogisticInformation(
+                value
+            );
+        }
+    }
+
     const { data } = useQuery({
         queryKey: ["profile"],
         queryFn: () => fetchProfile(),
     })
 
+    const formatCurrency = (amount: string, currency: string) => {
+        const symbol = CURRENCIES.find((value) => value.code === currency)?.symbol;
+    
+        return `${symbol}${amount}`;
+    }
+
     const handleGeneratePdf = async () => {
+        const formattedFee = formatCurrency(fees, currency);
+        const formattedLogisticsFee = formatCurrency(logisticsFee, currency);
+        const formattedTotalFee = formatCurrency(
+            String(Number(fees) + Number(logisticsFee)),
+            currency
+        );
+
         const pdfDoc = (
             <InvoicePDF
                 clientName={clientName}
@@ -55,15 +85,15 @@ const GenerateIvoiceModal = ({
                 clientPhoneNumber={clientPhoneNumber}
                 eventType={eventType}
                 eventDate={eventDate}
-                fees={`₦${fees}`}
+                fees={formattedFee}
                 billOption={billOption}
                 logisticInformation={logisticInformation}
-                logisticsFee={`₦${logisticsFee}`}
+                logisticsFee={formattedLogisticsFee}
                 accountNumber={accountNumber}
                 accountName={accountName}
                 bankName={bankName}
                 additionalTC={additionalTC}
-                totalFee={String(`₦${Number(fees) + Number(logisticsFee)}`)}
+                totalFee={formattedTotalFee}
                 fullName={data?.data?.fullName || ""}
                 phoneNumber={data?.data.phoneNumber || ""}
                 address={data?.data.address || ""}
@@ -222,28 +252,32 @@ const GenerateIvoiceModal = ({
                                 />
                             </div>
                         </div>
-                        <div className="sm:flex mb-6">
-                            <div className="w-full mb-6 sm:mb-0">
-                                <FormControls
-                                    label="Bill Option"
-                                    control="select"
-                                    name="billOption"
-                                    //placeholder="00/00/00"
-                                    classNames={{
-                                        mainRoot:
-                                            " border  border-black-20 px-4",
-                                        input: "text-[#40540A] text-[14px]",
-                                    }}
-                                    labelClassName="text-[#000]"
-                                    onChange={(e) =>
-                                        //@ts-expect-error
-                                        setBillOption(e.target.value)
-                                    }
-                                >
-                                    <option value="Per day">Per Day</option>
-                                </FormControls>
-                            </div>
-                            <div className="sm:ml-4 w-full">
+                        <div className="w-full mb-6 sm:mb-0">
+                            <FormControls
+                                label="Bill Option"
+                                control="select"
+                                name="billOption"
+                                //placeholder="00/00/00"
+                                classNames={{
+                                    mainRoot:
+                                        " border  border-black-20 px-4",
+                                    input: "text-[#40540A] text-[14px]",
+                                }}
+                                labelClassName="text-[#000]"
+                                onChange={(e) =>
+                                    //@ts-expect-error
+                                    setBillOption(e.target.value)
+                                }
+                            >
+                                <option value="per_event">Per Event</option>
+                                <option value="Per day">Per Day</option>
+                                <option value="per_week">Per Week</option>
+                                <option value="per_month">Per Month</option>
+                                <option value="overall">Overall</option>
+                            </FormControls>
+                        </div>
+                        <div className="sm:flex my-6 text-[14px]">
+                            <div className="mb-6 sm:ml-4 w-1/2">
                                 <FormControls
                                     label="Fees"
                                     control="input"
@@ -259,6 +293,27 @@ const GenerateIvoiceModal = ({
                                     }
                                 />
                             </div>
+                            <div className="sm:ml-4 w-1/2">
+                                <FormControls
+                                    label="Currency"
+                                    control="select"
+                                    name="currency"
+                                    classNames={{
+                                        mainRoot:
+                                            " border  border-black-20 px-4",
+                                        input: "text-[#40540A] text-[14px]",
+                                    }}
+                                    onChange={(e) =>
+                                        setCurrency(e.currentTarget.value)
+                                    }
+                                >
+                                    {CURRENCIES.map(currency => (
+                                        <option key={currency.code} value={currency.code}>
+                                            {`${currency.name} (${currency.code})`}
+                                        </option>
+                                    ))}
+                                </FormControls>
+                            </div>
                         </div>
                         <div className="mb-6">
                             <FormControls
@@ -271,17 +326,31 @@ const GenerateIvoiceModal = ({
                                     input: "text-[#40540A] text-[14px]",
                                 }}
                                 labelClassName="text-[#000]"
-                                onChange={(e) =>
-                                    setLogisticInformation(
-                                        //@ts-expect-error
-                                        e.target.value
-                                    )
-                                }
+                                onChange={onLogisticsInfoChange}
                             >
-                                <option value="Fully covered">
-                                    Fully covered
-                                </option>
+                                <option value="Fully covered">Fully covered</option>
+                                <option value="custom">Custom</option>
                             </FormControls>
+
+                            {showCustomInput && (
+                                <FormControls
+                                    label="Custom Logistics Information"
+                                    control="input"
+                                    type="text"
+                                    name="customLogisticsInformation"
+                                    placeholder="Enter custom logistics information"
+                                    classNames={{
+                                        mainRoot: " border  border-black-20 px-4 mt-2",
+                                        input: "text-[#40540A] text-[14px]"
+                                    }}
+                                    value={customLogisticValue}
+                                    onChange={(e) => {
+                                        const customValue = (e.target as any).value;
+                                        setCustomLogisticValue(customValue);
+                                        setLogisticInformation(customValue);
+                                    }}
+                                />
+                            )}
                         </div>
                         <div className="mb-6">
                             <FormControls

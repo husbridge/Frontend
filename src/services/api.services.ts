@@ -10,7 +10,7 @@ const BASE_URL = isProduction
     : "http://localhost:8084/api/"
 
 export const MESSAGING_BASE_URL = isProduction
-    ? "https://messaging-chat.onrender.com"
+    ? "https://messaging-chat-new.onrender.com"
     : "http://localhost:3000"
 
 let EXPIRYINTERCEPTOR: number

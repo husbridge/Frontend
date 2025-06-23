@@ -64,7 +64,7 @@ const useAwsFile = ({ opened, attachDocument }: Props) => {
             })
 
             const url = await getSignedUrl(s3Client, viewCommand, {
-                expiresIn: 1000 * 60, // 60 seconds
+                expiresIn: 1000 * 60 * 5, // 5 mins
             })
 
             setFileProperties({
