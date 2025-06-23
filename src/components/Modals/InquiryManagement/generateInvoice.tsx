@@ -45,7 +45,7 @@ const GenerateIvoiceModal = ({
 
     const decoded = jwtDecode(state.user?.accessToken || "") as DecodedUser
 
-    const onLogisticsInfoChange = (e) => {
+    const onLogisticsInfoChange = (e: any) => {
         const value = e.target.value;
         if (value === 'custom') {
             setShowCustomInput(true);
