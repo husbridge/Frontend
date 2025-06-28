@@ -1,5 +1,4 @@
 import { RxDownload } from "react-icons/rx"
-import useAwsFile from "@hooks/useAwsFile";
 import { Data as ChatData } from "type/api/messaging.types";
 
 interface Props {
@@ -7,11 +6,17 @@ interface Props {
     opened: boolean;
 }
 
-const DownloadFileButton = ({ newItem, opened }: Props) => {
-    const { downloadFile } = useAwsFile({
-        opened: opened,
-        attachDocument: newItem.metadata.key
-    });
+const DownloadFileButton = ({ newItem }: Props) => {
+    const downloadFile = () => {
+      const path = newItem.metadata.url;
+      // Create temporary link and trigger download
+      const link = document.createElement("a");
+      link.href = path;
+      link.download = path.split("/").pop() || "download";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
     return (
         <div
