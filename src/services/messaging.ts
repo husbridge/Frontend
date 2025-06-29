@@ -14,9 +14,9 @@ export const fetchChats = async (roomId: string, access: string) => {
     return response.data
 }
 
-export const getFileMetadata = async (key: string, access: string) => {
+export const getFileMetadata = async (path: string, access: string) => {
     const response = await axiosMessagingInstance.get(
-        `/files/metadata/${key}`,
+        `/files/metadata/${path}`,
         {
             headers: {
                 Authorization: `Bearer ${access}`,
@@ -26,9 +26,9 @@ export const getFileMetadata = async (key: string, access: string) => {
     return response.data
 }
 
-export const getDownloadUrl = async (key: string, access: string) => {
+export const getDownloadUrl = async (path: string, access: string) => {
     const response = await axiosMessagingInstance.get(
-        `/files/download/${key}`,
+        `/files/download/${path}`,
         {
             headers: {
                 Authorization: `Bearer ${access}`,
@@ -38,9 +38,9 @@ export const getDownloadUrl = async (key: string, access: string) => {
     return response.data
 }
 
-export const getShareableUrl = async (key: string, access: string) => {
+export const getShareableUrl = async (path: string, access: string) => {
     const response = await axiosMessagingInstance.get(
-        `/aws/share/${key}`,
+        `/files/share/${path}`,
         {
             headers: {
                 Authorization: `Bearer ${access}`,

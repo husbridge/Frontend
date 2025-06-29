@@ -6,31 +6,31 @@ import {
     getShareableUrl
 } from "@services/messaging";
 
-export const useGetFileUrl = (key: string) => {
+export const useGetFileUrl = (path: string) => {
     const {state}=useAuth()
     const result = useQuery({
         queryKey: ['fileUrl'],
-        queryFn: () => getDownloadUrl(key, state.user?.accessToken||"")
+        queryFn: () => getDownloadUrl(path, state.user?.accessToken||"")
     });
 
     return result;
 }
 
-export const useGetFileMetadata = (key: string) => {
+export const useGetFileMetadata = (path: string) => {
     const {state}=useAuth()
     const result = useQuery({
         queryKey: ['fileMetadata'],
-        queryFn: () => getFileMetadata(key, state.user?.accessToken||"")
+        queryFn: () => getFileMetadata(path, state.user?.accessToken||"")
     });
 
     return result;
 }
 
-export const useGetShareableUrl = (key: string) => {
+export const useGetShareableUrl = (path: string) => {
     const {state}=useAuth()
     const result = useQuery({
         queryKey: ['shareableUrl'],
-        queryFn: () => getShareableUrl(key, state.user?.accessToken||"")
+        queryFn: () => getShareableUrl(path, state.user?.accessToken||"")
     });
 
     return result;
