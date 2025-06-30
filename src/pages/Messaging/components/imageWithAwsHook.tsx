@@ -1,15 +1,14 @@
 import { useState } from "react";
+import { LoadingState } from "@components/index";
+import { useGetFileUrl } from "@hooks/useFile";
 import { Data as ChatData } from "type/api/messaging.types";
-// import { useGetFileUrl } from "@hooks/newUseAwsFile";
-// import { LoadingState } from "@components/index";
 
 interface Props {
     newItem: ChatData;
 }
 
 const ImageWithAwsHook = ({ newItem }: Props) => {
-    console.log(`=====Image key = ${newItem.metadata.key}`);
-    // console.log(`====Image url = ${data?.data?.url}`);
+    const { data, isLoading } = useGetFileUrl(newItem.metadata.url);
 
     const [failed, setFailed] = useState(false);
 
@@ -27,12 +26,12 @@ const ImageWithAwsHook = ({ newItem }: Props) => {
 
     return (
         <div className="space-y-2">
-            {/* {isLoading ? (
+            {isLoading ? (
                 <LoadingState />
-            ): ( */}
+            ): (
                 <>
                     <img
-                    src={newItem.metadata.key}
+                    src={data?.data?.url}
                     alt="Shared image"
                     className="max-w-full h-auto rounded-lg max-h-64 object-contain"
                     onError={handleImageError}
@@ -41,7 +40,7 @@ const ImageWithAwsHook = ({ newItem }: Props) => {
                         Failed to load image
                     </div>
                 </>
-            {/* )} */}
+            )}
         </div>
     )
 }
