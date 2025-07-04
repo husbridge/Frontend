@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { RxDownload } from "react-icons/rx"
 import useAuth from "@hooks/auth/useAuth";
-import { getDownloadUrl } from "@services/messaging";
+import { getChatDownloadUrl } from "@services/messaging";
 import { Data as ChatData } from "type/api/messaging.types";
 
 interface Props {
@@ -13,7 +13,7 @@ const DownloadFileButton = ({ newItem }: Props) => {
   const { state } = useAuth();
 
   const{ mutate } = useMutation({
-    mutationFn: async (url: string) => getDownloadUrl(url, state.user?.accessToken||""),
+    mutationFn: async (url: string) => getChatDownloadUrl(url, state.user?.accessToken||""),
     onSuccess: (data) => {
       const path = newItem.metadata.url;
       // Create temporary link and trigger download

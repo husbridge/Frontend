@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "./auth/useAuth";
 import {
-    getDownloadUrl,
+    getChatDownloadUrl,
     getFileMetadata,
     getShareableUrl
 } from "@services/messaging";
 
-export const useGetFileUrl = (path: string) => {
+export const useGetChatFileUrl = (path: string) => {
     const {state}=useAuth()
     const result = useQuery({
         queryKey: ['fileUrl'],
-        queryFn: () => getDownloadUrl(path, state.user?.accessToken||"")
+        queryFn: () => getChatDownloadUrl(path, state.user?.accessToken||"")
     });
 
     return result;

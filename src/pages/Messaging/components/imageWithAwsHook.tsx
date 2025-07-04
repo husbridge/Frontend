@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LoadingState } from "@components/index";
-import { useGetFileUrl } from "@hooks/useFile";
+import { useGetChatFileUrl } from "@hooks/useFile";
 import { Data as ChatData } from "type/api/messaging.types";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ImageWithAwsHook = ({ newItem }: Props) => {
-    const { data, isLoading } = useGetFileUrl(newItem.metadata.url);
+    const { data, isLoading } = useGetChatFileUrl(newItem.metadata.url);
 
     const [failed, setFailed] = useState(false);
 

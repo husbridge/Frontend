@@ -26,7 +26,7 @@ export const getFileMetadata = async (path: string, access: string) => {
     return response.data
 }
 
-export const getDownloadUrl = async (path: string, access: string) => {
+export const getChatDownloadUrl = async (path: string, access: string) => {
     const response = await axiosMessagingInstance.get(
         `/files/download/${path}`,
         {
