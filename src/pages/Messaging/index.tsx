@@ -126,6 +126,8 @@ const Messaging = () => {
         formData.append('file', file as any);
 
         fileMutate(formData);
+
+        e.target.value = '';
     }
 
     const isImage = (contentType: string) => {
