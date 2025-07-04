@@ -7,7 +7,17 @@ import { useNavigate } from "react-router-dom"
 //import { useQueryClient } from "@tanstack/react-query"
 
 //const storedJwt = localStorage.getItem("jwt")
-const storedUser = localStorage.getItem("user")
+
+const getStoredUser = () => {
+    try {
+        const stored = localStorage.getItem("user");
+        return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+        console.error("Failed to parse stored user:", error);
+        return null;
+    }
+}
+
 export const AuthContext = React.createContext<{
     state: AuthState
     dispatch: React.Dispatch<AuthActionType>
@@ -20,8 +30,8 @@ export const AuthContext = React.createContext<{
 })
 
 const initialState: AuthState = {
-    isAuthenticated: !!storedUser,
-    user: storedUser ? JSON.parse(storedUser) : null,
+    isAuthenticated: !!getStoredUser(),
+    user: getStoredUser(),
 }
 
 export default function AuthContextProvider({
