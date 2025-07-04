@@ -339,7 +339,7 @@ const Messaging = () => {
                                                                         <div
                                                                             className={`bg-black-5  max-w-fit rounded-[20px] p-4`}
                                                                         >
-                                                                            <p
+                                                                            <div
                                                                                 className={`${
                                                                                     isUserMessage(newItem.user)
                                                                                         ? "text-[#FFC107] bg-black-100  rounded-[16px] p-4 rounded-tr-none"
@@ -377,7 +377,7 @@ const Messaging = () => {
                                                                                         )}
                                                                                     </>
                                                                                 )}
-                                                                            </p>
+                                                                            </div>
                                                                             <p
                                                                                 className={`${isUserMessage(newItem.user) ? "text-end pr-1.5" : "text-start pl-1.5"} text-[#07305F] text-[10px] mt-2`}
                                                                             >
