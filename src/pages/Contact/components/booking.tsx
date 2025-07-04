@@ -45,9 +45,9 @@ const Booking = ({ id }: { id: string }) => {
         if (document) {
             const formData = new FormData();
             formData.append('file', document);
-            const data = await uploadFile(formData);
+            const { path } = await uploadFile(formData);
 
-            if (data === null) {
+            if (path === null) {
                 showNotification({
                     title: 'Error',
                     message: 'Failed to upload document',
@@ -56,7 +56,7 @@ const Booking = ({ id }: { id: string }) => {
                 return;
             }
 
-            uploadedDocumentKey = data;
+            uploadedDocumentKey = path;
         }
 
         const inquiry = {

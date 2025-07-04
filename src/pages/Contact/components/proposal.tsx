@@ -44,12 +44,11 @@ const Proposal = ({ id }: { id: string }) => {
         if (values.document) {
             const formData = new FormData()
             formData.append("file", values.document)
-            const data = await uploadFile(formData, (percent) =>
+            const { path } = await uploadFile(formData, (percent) =>
                 setUploadProgress(percent)
             )
-            console.log(data)
 
-            if (data === null) {
+            if (path === null) {
                 showNotification({
                     title: "Error",
                     message: "Failed to upload document",
@@ -58,7 +57,7 @@ const Proposal = ({ id }: { id: string }) => {
                 return
             }
 
-            uploadedDocumentKey = data
+            uploadedDocumentKey = path
         }
 
         console.log(uploadedDocumentKey)
