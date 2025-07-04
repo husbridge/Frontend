@@ -10,7 +10,7 @@ import {
 export const useGetChatFileUrl = (path: string) => {
     const {state}=useAuth()
     const result = useQuery({
-        queryKey: ['fileUrl'],
+        queryKey: [`fileUrl_${path}`],
         queryFn: () => getChatDownloadUrl(path, state.user?.accessToken||"")
     });
 
@@ -45,10 +45,10 @@ export const useDownloadFile = () => {
 
     return useMutation ({
         mutationFn: async (path: string) => getDownloadUrl(path, state.user?.accessToken || ""),
-        onSuccess: (data) => {
+        onSuccess: (url) => {
             // Create temporary link and trigger download
             const link = document.createElement("a");
-            link.href = data.data.url;
+            link.href = url;
             link.download = "download";
             document.body.appendChild(link);
             link.click();
