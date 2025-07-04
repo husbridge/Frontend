@@ -4,7 +4,6 @@ import { Button } from "@components/index"
 import Avatar from "@components/Layout/avatar"
 import ShareConversationModal from "@components/Modals/InquiryManagement/shareConversation"
 import useAuth from "@hooks/auth/useAuth"
-import useAwsFile from "@hooks/useAwsFile"
 import { useInvoiceStore } from "@hooks/useInvoiceStore"
 import { Drawer } from "@mantine/core"
 import { showNotification } from "@mantine/notifications"
@@ -23,6 +22,8 @@ import { PiPlusBold } from "react-icons/pi"
 import { RxDownload } from "react-icons/rx"
 import { Data } from "type/api/inquiry.types"
 import GenerateInvoiceModal from "./generateInvoice"
+import useFile from "@hooks/useFile";
+
 export interface InquiryDetailsModalProps {
     opened: boolean
     setOpened: (isOpen: boolean) => void
@@ -52,7 +53,7 @@ const InquiryDetails = ({
         shareViaNavigator,
         shareViaWhatsApp,
         copyLinkToClipboard,
-    } = useAwsFile({
+    } = useFile({
         opened: opened,
         attachDocument: data?.attachDocument || "",
     })
