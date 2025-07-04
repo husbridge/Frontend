@@ -183,3 +183,115 @@ export const bookingDetailsValidationSchema = yup.object().shape({
     subject: yup.string().required("Subject is required"),
     description: yup.string().required("Description is required"),
 })
+
+export const invoiceValidationSchema = yup.object().shape({
+    // Client Information
+    clientName: yup
+        .string()
+        .required("Client name is required")
+        .min(2, "Client name must be at least 2 characters"),
+    
+    clientEmail: yup
+        .string()
+        .email("Please enter a valid email address")
+        .required("Client email is required"),
+    
+    clientLocation: yup
+        .string()
+        .required("Client location is required"),
+    
+    clientPhoneNumber: yup
+        .string()
+        .required("Client phone number is required")
+        .matches(
+            /^[\+]?[1-9][\d]{0,15}$/,
+            "Please enter a valid phone number"
+        ),
+    
+    // Event Details
+    eventType: yup
+        .string()
+        .optional(),
+    
+    eventDate: yup
+        .date()
+        .required("Event date is required")
+        .min(new Date(), "Event date cannot be in the past"),
+    
+    // Financial Information
+    fees: yup
+        .number()
+        .required("Fees are required")
+        .positive("Fees must be a positive number")
+        .min(0.01, "Fees must be greater than 0"),
+    
+    billOption: yup
+        .string()
+        .optional(),
+    
+    logisticsFee: yup
+        .number()
+        .min(0, "Logistics fee cannot be negative")
+        .nullable()
+        .transform((value, originalValue) => {
+            // Handle empty string or null values
+            return originalValue === '' ? null : value;
+        }),
+    
+    totalFee: yup
+        .number()
+        .required("Total fee is required")
+        .positive("Total fee must be a positive number"),
+    
+    // Logistics
+    logisticInformation: yup
+        .string()
+        .nullable()
+        .max(500, "Logistics information cannot exceed 500 characters"),
+    
+    // Bank Details
+    accountNumber: yup
+        .string()
+        .required("Account number is required")
+        .matches(/^[0-9]+$/, "Account number must contain only numbers")
+        .min(10, "Account number must be at least 10 digits"),
+    
+    accountName: yup
+        .string()
+        .required("Account name is required")
+        .min(2, "Account name must be at least 2 characters"),
+    
+    bankName: yup
+        .string()
+        .required("Bank name is required"),
+    
+    // Additional Information
+    additionalTC: yup
+        .string()
+        .nullable()
+        .max(1000, "Additional terms and conditions cannot exceed 1000 characters"),
+    
+    // Personal Information (seems to be talent/user info)
+    fullName: yup
+        .string()
+        .required("Full name is required")
+        .min(2, "Full name must be at least 2 characters"),
+    
+    phoneNumber: yup
+        .string()
+        .required("Phone number is required")
+        .matches(
+            /^[\+]?[1-9][\d]{0,15}$/,
+            "Please enter a valid phone number"
+        ),
+    
+    address: yup
+        .string()
+        .required("Address is required")
+        .min(10, "Please provide a complete address"),
+    
+    email: yup
+        .string()
+        .email("Please enter a valid email address")
+        .required("Email is required"),
+});

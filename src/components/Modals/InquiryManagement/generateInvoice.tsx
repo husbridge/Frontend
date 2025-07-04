@@ -12,6 +12,7 @@ import { DecodedUser } from "@components/Layout/sidebar/clientSidebar"
 import { useQuery } from "@tanstack/react-query"
 import { CURRENCIES } from "../../../type/currency.types";
 import { fetchProfile } from "@services/auth"
+import { invoiceValidationSchema } from "../../../utils/validationSchema"
 
 export interface GenerateIvoiceModalProps {
     opened: boolean
@@ -141,7 +142,11 @@ const GenerateIvoiceModal = ({
                     onClick={() => setOpened(false)}
                 />
             </div>
-            <Formik initialValues={{}} onSubmit={() => {}}>
+            <Formik
+                initialValues={{}}
+                onSubmit={() => {}}
+                validationSchema={invoiceValidationSchema}
+            >
                 {() => (
                     <Form className="py-4 mt-4">
                         <div className="mb-6">
