@@ -44,11 +44,11 @@ const InquiryDetails = ({
 }: InquiryDetailsModalProps) => {
 
     const {
-        link,
-        fileSize,
-        fileName,
+        fileInfo,
+        fileInfoIsLoading,
+        shareableUrl,
+        shareableUrlIsLoading,
         downloadFile,
-        fileProperties,
         shareViaGmail,
         shareViaNavigator,
         shareViaWhatsApp,
@@ -56,7 +56,8 @@ const InquiryDetails = ({
     } = useFile({
         opened: opened,
         attachDocument: data?.attachDocument || "",
-    })
+    });
+
     const [openInput, setOpenInput] = useState(false)
     const [openCreateInvoice, setOpenCreateInvoice] = useState(false)
     const { sendMessage } = useSocket({})
@@ -210,7 +211,7 @@ const InquiryDetails = ({
             />
 
             <ShareConversationModal
-                link={link}
+                link={shareableUrlIsLoading ? '' : shareableUrl.url}
                 shareViaGmail={shareViaGmail}
                 shareViaNavigator={shareViaNavigator}
                 shareViaWhatsApp={shareViaWhatsApp}
@@ -523,14 +524,14 @@ const InquiryDetails = ({
                 Attachments
             </p>
 
-            {fileProperties && (
+            {!fileInfoIsLoading && (
                 <div className="flex border border-[#0000001A] rounded-[8px] p-2 justify-between flex-wrap">
                     <div className="flex flex-1">
                         <img src={PdfIcon} alt="" />
                         <div className="mx-2">
-                            <p className="sm:text-md text-sm">{fileName}</p>
+                            <p className="sm:text-md text-sm">{fileInfo.fileName}</p>
                             <p className="text-[#05050599] text-sm">
-                                {formatFileSize(fileSize)}
+                                {formatFileSize(fileInfo.fileSize)}
                             </p>
                         </div>
                     </div>
