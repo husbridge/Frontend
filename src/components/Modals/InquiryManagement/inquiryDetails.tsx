@@ -211,7 +211,7 @@ const InquiryDetails = ({
             />
 
             <ShareConversationModal
-                link={shareableUrlIsLoading ? '' : shareableUrl.url}
+                link={shareableUrlIsLoading ? '' : shareableUrl?.url}
                 shareViaGmail={shareViaGmail}
                 shareViaNavigator={shareViaNavigator}
                 shareViaWhatsApp={shareViaWhatsApp}
@@ -529,9 +529,9 @@ const InquiryDetails = ({
                     <div className="flex flex-1">
                         <img src={PdfIcon} alt="" />
                         <div className="mx-2">
-                            <p className="sm:text-md text-sm">{fileInfo.fileName}</p>
+                            <p className="sm:text-md text-sm">{fileInfo?.fileName}</p>
                             <p className="text-[#05050599] text-sm">
-                                {formatFileSize(fileInfo.fileSize)}
+                                {formatFileSize(fileInfo?.fileSize || 0)}
                             </p>
                         </div>
                     </div>
