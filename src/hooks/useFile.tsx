@@ -177,15 +177,15 @@ export const useCopyLinkToClipboard = () => {
     return useMutation({
         mutationFn: async (path: string) => {
             try {
-                const shareableUrl = await getShareableUrl(path, state.user?.accessToken || "");
-                await navigator.clipboard.writeText(shareableUrl);
+                const { url } = await getShareableUrl(path, state.user?.accessToken || "");
+                await navigator.clipboard.writeText(url);
 
                 // @todo show text copied notification
 
                 return {
                     success: true,
                     message: "Link copied to clipboard",
-                    url: shareableUrl,
+                    url: url,
                 };
             } catch (error) {
                 console.error("Error copying link:", error);
