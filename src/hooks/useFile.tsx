@@ -45,14 +45,19 @@ export const useDownloadFile = () => {
 
     return useMutation ({
         mutationFn: async (path: string) => getDownloadUrl(path, state.user?.accessToken || ""),
-        onSuccess: (url) => {
+        onSuccess: async (response) => {
+            const blob = await fetch(response.url).then(r => r.blob());
+            const url = URL.createObjectURL(blob);
+
             // Create temporary link and trigger download
             const link = document.createElement("a");
             link.href = url;
-            link.download = "download";
+            link.download = response.fileName;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
         },
         onError: (error) => {
             console.error("Error downloading file:", error);
