@@ -23,16 +23,12 @@ export const AuthContext = React.createContext<{
     dispatch: React.Dispatch<AuthActionType>
 }>({
     state: {
-        isAuthenticated: false,
-        user: null,
+        isAuthenticated: !!getStoredUser(),
+        user: getStoredUser(),
     },
     dispatch: () => {},
 })
 
-const initialState: AuthState = {
-    isAuthenticated: !!getStoredUser(),
-    user: getStoredUser(),
-}
 
 export default function AuthContextProvider({
     children,
@@ -40,6 +36,11 @@ export default function AuthContextProvider({
     children: React.ReactNode
 }) {
     const navigate = useNavigate()
+    const initialState: AuthState = {
+        isAuthenticated: !!getStoredUser(),
+        user: getStoredUser(),
+    }
+    
     //const queryClient = useQueryClient()
     const [state, dispatch] = useReducer(reducer, initialState)
 
