@@ -1,7 +1,7 @@
 // import Avatar from "@assets/icons/avatar.svg"
 import { BiEdit } from "react-icons/bi"
 import { ChangeName, LoadingState } from "@components/index"
-import { useState, useRef, ChangeEvent, useMemo } from "react"
+import { useState, useRef, ChangeEvent } from "react"
 import { fetchProfile, uploadProfileImage } from "@services/auth"
 import { useQuery } from "@tanstack/react-query"
 import useAuth from "@hooks/auth/useAuth"
@@ -32,9 +32,7 @@ const AccountPreferences = () => {
         enabled: !isClient,
         queryFn: () => fetchProfile(),
     })
-    const userState = useMemo(() => {
-        return state.user
-    }, [state.user])
+
     const { isPending, mutate } = useMutation({
         mutationFn: uploadProfileImage,
         onSuccess: (data) => {
@@ -134,48 +132,6 @@ const AccountPreferences = () => {
                             Personal Information
                         </p>
                         <hr className="my-4"/>
-
-                        {userState?.userType === "client" ? (
-                            <div className="grid sm:grid-cols-2 gap-y-6 mb-16 max-w-[600px]">
-                                <div>
-                                    <p className="text-md font-semibold">
-                                        Name
-                                    </p>
-                                    <p className="text-md my-2">
-                                        {decoded?.fullName}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-md font-semibold">
-                                        E-mail
-                                    </p>
-                                    <p className="text-md my-2 break-words">
-                                        {decoded?.email}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p className="text-md font-semibold">
-                                        Password
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                        <p className="text-lg tracking-tight">{passwordRep}</p>
-                                        <span
-                                            title="Change password"
-                                            role="button"
-                                            className="text-[#ffb432] text-sm cursor-pointer"
-                                            onClick={() => {
-                                                setName("Password")
-                                                setOpenChangeName(true)
-                                                setDefaultValue("")
-                                            }}
-                                        >
-                                            <LuPenSquare size={16}/>
-                                        </span>
-                                    </div>
-
-                                </div>
-                            </div>
-                        ) : (
                             <>
                                 <div className="grid sm:grid-cols-2 gap-y-4 mb-16">
                                     <div>
@@ -249,110 +205,113 @@ const AccountPreferences = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <p className="font-medium text-2md sm:text-3md mt-8 mb-4">
-                                    {state.user?.userType === "talent"
-                                        ? "Talent"
-                                        : state.user?.userType === "agency"
-                                          ? "Agency"
-                                          : "Manager"}{" "}
-                                    Information
-                                </p>
-                                <hr className="my-4"/>
-                                <div className="grid sm:grid-cols-2 gap-y-4">
-                                    <div>
-                                        <p className="text-md font-semibold">
-                                            {" "}
+                                {state.user?.userType !== "client" && (
+                                    <>
+                                        <p className="font-medium text-2md sm:text-3md mt-8 mb-4">
                                             {state.user?.userType === "talent"
-                                                ? "Stage "
-                                                : state.user?.userType ===
-                                                    "agency"
+                                                ? "Talent"
+                                                : state.user?.userType === "agency"
                                                   ? "Agency"
-                                                  : "Company"}{" "}
-                                            Name
+                                                  : "Manager"}{" "}
+                                            Information
                                         </p>
-                                        <p className="text-md my-2">
-                                            {data?.data.stageName ||
-                                                data?.data.agency?.agencyName ||
-                                                "-"}
-                                        </p>
-                                        {/* agency change name is not ready yet */}
-                                        {data?.data.userType === "agency" && false && (
-                                            <p
-                                                className="text-[#FFC107] underline text-sm cursor-pointer"
-                                                onClick={() => {
-                                                    setName(
-                                                        state.user?.userType ===
+                                        <hr className="my-4"/>
+                                        <div className="grid sm:grid-cols-2 gap-y-4">
+                                            <div>
+                                                <p className="text-md font-semibold">
+                                                    {" "}
+                                                    {state.user?.userType === "talent"
+                                                        ? "Stage "
+                                                        : state.user?.userType ===
                                                             "agency"
-                                                            ? "Agency name"
-                                                            : "Stage Name"
-                                                    )
-                                                    setOpenChangeName(true)
-                                                    setDefaultValue(
-                                                        data?.data.stageName ||
-                                                            ""
-                                                    )
-                                                }}
-                                            >
-                                                Change agency name
-                                            </p>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <p className="text-md font-semibold">
-                                            {state.user?.userType === "talent"
-                                                ? "Industry"
-                                                : "Registration Number"}
-                                        </p>
-                                        <p className="text-md my-2">
-                                            {data?.data.industry ||
-                                                data?.data.agency?.regNumber}
-                                        </p>
-                                        {state.user?.userType === "talent" && (
-                                            <p
+                                                          ? "Agency"
+                                                          : "Company"}{" "}
+                                                    Name
+                                                </p>
+                                                <p className="text-md my-2">
+                                                    {data?.data.stageName ||
+                                                        data?.data.agency?.agencyName ||
+                                                        "-"}
+                                                </p>
+                                                {/* agency change name is not ready yet */}
+                                                {data?.data.userType === "agency" && false && (
+                                                    <p
+                                                        className="text-[#FFC107] underline text-sm cursor-pointer"
+                                                        onClick={() => {
+                                                            setName(
+                                                                state.user?.userType ===
+                                                                    "agency"
+                                                                    ? "Agency name"
+                                                                    : "Stage Name"
+                                                            )
+                                                            setOpenChangeName(true)
+                                                            setDefaultValue(
+                                                                data?.data.stageName ||
+                                                                    ""
+                                                            )
+                                                        }}
+                                                    >
+                                                        Change agency name
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="text-md font-semibold">
+                                                    {state.user?.userType === "talent"
+                                                        ? "Industry"
+                                                        : "Registration Number"}
+                                                </p>
+                                                <p className="text-md my-2">
+                                                    {data?.data.industry ||
+                                                        data?.data.agency?.regNumber}
+                                                </p>
+                                                {state.user?.userType === "talent" && (
+                                                    <p
+                                                        className="text-[#FFC107] underline text-sm cursor-pointer"
+                                                        onClick={() => {
+                                                            setName(
+                                                                state.user?.userType ===
+                                                                    "talent"
+                                                                    ? "Industry"
+                                                                    : "Registration Number"
+                                                            )
+                                                            setOpenChangeName(true)
+                                                            setDefaultValue(
+                                                                data?.data.industry ||
+                                                                    ""
+                                                            )
+                                                        }}
+                                                    >
+                                                        Change Industry
+                                                    </p>
+                                                )}
+                                            </div>
+                                            {state.user?.userType !== "talent" && (
+                                                <div>
+                                                    <p className="text-md font-semibold">
+                                                        Address
+                                                    </p>
+                                                    <p className="text-md my-2">
+                                                        {data?.data.agency?.address ||
+                                                            ""}
+                                                    </p>
+                                                    {/* <p
                                                 className="text-[#FFC107] underline text-sm cursor-pointer"
                                                 onClick={() => {
-                                                    setName(
-                                                        state.user?.userType ===
-                                                            "talent"
-                                                            ? "Industry"
-                                                            : "Registration Number"
-                                                    )
+                                                    setName("Address")
                                                     setOpenChangeName(true)
                                                     setDefaultValue(
-                                                        data?.data.industry ||
-                                                            ""
+                                                        data?.data.agency.address || ""
                                                     )
                                                 }}
                                             >
-                                                Change Industry
-                                            </p>
-                                        )}
-                                    </div>
-                                    {state.user?.userType !== "talent" && (
-                                        <div>
-                                            <p className="text-md font-semibold">
-                                                Address
-                                            </p>
-                                            <p className="text-md my-2">
-                                                {data?.data.agency?.address ||
-                                                    ""}
-                                            </p>
-                                            {/* <p
-                                        className="text-[#FFC107] underline text-sm cursor-pointer"
-                                        onClick={() => {
-                                            setName("Address")
-                                            setOpenChangeName(true)
-                                            setDefaultValue(
-                                                data?.data.agency.address || ""
-                                            )
-                                           
-                                        }}
-                                    >
-                                        Change address
-                                    </p> */}
+                                                Change address
+                                            </p> */}
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-                                </div>
+                                    </>
+                                )}
                                 <p className="font-medium text-2md sm:text-3md mt-8 mb-6">
                                     Password Information
                                 </p>
@@ -378,7 +337,6 @@ const AccountPreferences = () => {
 
                                 </div>
                             </>
-                        )}
                     </div>
                 </div>
             )}
