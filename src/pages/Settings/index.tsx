@@ -22,7 +22,7 @@ const Settings = () => {
     return (
         <Layout>
             <div className="flex pt-24 ">
-                {state.user?.userType !== "client" && <div className=" bg-[#F5F5F5] p-2 w-[40%] sm:w-[30%] sm:p-4 md:pl-8">
+                {<div className=" bg-[#F5F5F5] p-2 w-[40%] sm:w-[30%] sm:p-4 md:pl-8">
                     <p className="text-[20px] sm:text-lg mb-10 md:ml-[-8px]">Settings</p>
                     <div
                         className="flex cursor-pointer mb-10 items-center text-md sm:text-2md"
@@ -41,23 +41,25 @@ const Settings = () => {
                             Account Preferences
                         </p>
                     </div>
-                    <div
-                        className="flex cursor-pointer mb-10 items-center sm:text-2md text-md"
-                        onClick={() => setSettings("notificationsSettings")}
-                    >
-                        <div>
-                            <LuBell
-                                size="24px"
-                                color={`${settings === "notificationsSettings" ? "text-black-100" : "#00000099"}`}
-                            />
-                        </div>
-
-                        <p
-                            className={`${settings === "notificationsSettings" ? "text-black-100" : "text-[#00000099]"} ml-2`}
+                    { state.user?.userType !== 'client' && (
+                        <div
+                            className="flex cursor-pointer mb-10 items-center sm:text-2md text-md"
+                            onClick={() => setSettings("notificationsSettings")}
                         >
-                            Notifications Settings
-                        </p>
-                    </div>
+                            <div>
+                                <LuBell
+                                    size="24px"
+                                    color={`${settings === "notificationsSettings" ? "text-black-100" : "#00000099"}`}
+                                />
+                            </div>
+
+                            <p
+                                className={`${settings === "notificationsSettings" ? "text-black-100" : "text-[#00000099]"} ml-2`}
+                            >
+                                Notifications Settings
+                            </p>
+                        </div>
+                    )}
                     <div
                         className="flex cursor-pointer mb-10 items-center sm:text-2md text-md pl-0.5"
                         onClick={() => handleLogout()}
@@ -73,11 +75,13 @@ const Settings = () => {
                         <p className=" ml-2 text-[#00000099]">Delete Account</p>
                     </div>
                 </div>}
-                <div className={`w-[60%] bg-white-100 md:p-4 h-full ${state.user?.userType === "client"? "w-full" : "sm:w-[70%]"}`}>
+                <div className={`w-[60%] bg-white-100 md:p-4 h-full ${"sm:w-[70%]"}`}>
                     {settings === "accountPreference" ? (
                         <AccountPreferences />
                     ) : (
-                        <NotificationSettings />
+                        <>
+                            { state.user?.userType !== 'client' && ( <NotificationSettings /> ) }
+                        </>
                     )}
                 </div>
             </div>
