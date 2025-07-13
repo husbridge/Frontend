@@ -1,7 +1,5 @@
-// import Avatar from "@assets/icons/avatar.svg"
-import { BiEdit } from "react-icons/bi"
 import { ChangeName, LoadingState } from "@components/index"
-import { useState, useRef, ChangeEvent } from "react"
+import { useState } from "react"
 import { fetchProfile, uploadProfileImage } from "@services/auth"
 import { useQuery } from "@tanstack/react-query"
 import useAuth from "@hooks/auth/useAuth"
@@ -9,9 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { showNotification } from "@mantine/notifications"
 import { type Error } from "../../../type/api/index"
 import { LuPenSquare } from "react-icons/lu"
-import Avatar from "@components/Layout/avatar"
 import { jwtDecode } from "jwt-decode"
 import { DecodedUser } from "@components/Layout/sidebar/clientSidebar"
+import ImageCropUpload from "@components/Layout/ImageCropUpload";
 
 
 const passwordRep = '•'.repeat(10);
@@ -25,7 +23,7 @@ const AccountPreferences = () => {
     const isClient = userType === "client";
     const decoded = isClient ? jwtDecode(state.user?.accessToken || "") as DecodedUser : null
 
-    const fileInputRef = useRef<HTMLInputElement>(null)
+    // const fileInputRef = useRef<HTMLInputElement>(null)
     const queryClient = useQueryClient()
     const { data, isLoading } = useQuery({
         queryKey: ["profile"],
@@ -81,17 +79,10 @@ const AccountPreferences = () => {
             })
         },
     })
-    const handleProfilePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-
-        if (file) {
-            // setPictureName(file.name)
-            const formData = new FormData()
-            formData.append("profile-picture", file)
-            mutate(formData)
-            e.target.value = '';
-        }
+    const handleProfilePictureUpload = (formData: FormData) => {
+        mutate(formData);
     }
+
     const username = state.user?.fullName
         ? state.user?.fullName
         : state.user?.firstName
@@ -110,25 +101,12 @@ const AccountPreferences = () => {
                             name={name}
                             defaultValue={defaultValue}
                         />
-                        <Avatar alt={isClient ? decoded?.fullName : username} imageUrl={state.user?.profilePhotoUrl} size={96}/>
-                        <label
-                            className="flex items-center mt-3 cursor-pointer mb-6 ml-2"
-                            //onClick={() => fileInputRef.current?.click()}
-                            aria-disabled={isPending}
-                        >
-                            <BiEdit size={20} />
-                            <p className="underline ml-2 font-medium text-sm">
-                                {isPending ? "Uploading..." : "Update"}
-                            </p>
-                            <input
-                                data-testid="file-upload"
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                hidden
-                                onChange={handleProfilePictureUpload}
-                            />
-                        </label>
+                        <ImageCropUpload
+                            currentImageUrl={state.user?.profilePhotoUrl}
+                            onUpload={handleProfilePictureUpload}
+                            isPending={isPending}
+                            altText={isClient ? decoded?.fullName : username}
+                        />
                         <p className="font-medium text-2md sm:text-3md my-4">
                             Personal Information
                         </p>
