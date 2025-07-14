@@ -15,6 +15,7 @@ import { showNotification } from "@mantine/notifications"
 import { useNavigate } from "react-router-dom"
 import { sendPortalOTP } from "@services/auth"
 import { useInquiryStore } from "@hooks/useInquiry";
+import { uploadFile } from "@services/storage"
 
 const Collaboration = ({ id }: { id: string }) => {
     const [step, setStep] = useState(1)
@@ -38,7 +39,26 @@ const Collaboration = ({ id }: { id: string }) => {
         },
     })
 
-    const handleValidation = (values: any) => {
+    const handleValidation = async (values: any) => {
+        let uploadedDocumentKey = "";
+
+        if (document) {
+            const formData = new FormData();
+            formData.append('file', document);
+            const { path } = await uploadFile(formData);
+
+            if (path === null) {
+                showNotification({
+                    title: 'Error',
+                    message: 'Failed to upload document',
+                    color: 'red'
+                });
+                return;
+            }
+
+            uploadedDocumentKey = path;
+        }
+
         const inquiry = {
             fullName: values.fullName,
             description: values.description,
@@ -58,11 +78,9 @@ const Collaboration = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "collaboration",
             talentID: id,
-            attachDocument: document
+            attachDocument: uploadedDocumentKey
         }
 
-        // console.log("inquiry: ", inquiry)
-        // return
         sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
 
         onSendOtp.mutate({

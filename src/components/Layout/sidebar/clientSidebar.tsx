@@ -77,7 +77,7 @@ const ClientSidebar = () => {
                 <p className="text-sm font-semibold text-white-60  px-4 ml-4 mb-4 mt-10">
                     OTHERS
                 </p>
-                {routes?.slice(7, 9).map((route, index) => (
+                {routes?.slice(6, 9).map((route, index) => (
                     <div
                         className="flex items-center text-grey-100 my-1 text-[14px] "
                         key={index}

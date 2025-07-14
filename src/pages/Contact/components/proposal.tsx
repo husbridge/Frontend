@@ -38,12 +38,12 @@ const Proposal = ({ id }: { id: string }) => {
     })
 
     const handleValidation = async (values: any) => {
-        console.log(values.document)
+        console.log(values.attachDocument)
         let uploadedDocumentKey
 
-        if (values.document) {
+        if (values.attachDocument) {
             const formData = new FormData()
-            formData.append("file", values.document)
+            formData.append("file", values.attachDocument)
             const { path } = await uploadFile(formData, (percent) =>
                 setUploadProgress(percent)
             )
