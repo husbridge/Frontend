@@ -23,6 +23,7 @@ import { RxDownload } from "react-icons/rx"
 import { Data } from "type/api/inquiry.types"
 import GenerateInvoiceModal from "./generateInvoice"
 import useFile from "@hooks/useFile";
+import { uploadChatFile } from "@services/storage"
 
 export interface InquiryDetailsModalProps {
     opened: boolean
@@ -123,6 +124,23 @@ const InquiryDetails = ({
 
     const user = state.user?.id || "";
 
+    const { mutate: sendChatMessage } = useMutation({
+        mutationFn: async () => {
+            if (invoice) {
+                const formData = new FormData();
+                formData.append('file', invoice as any);
+
+                uploadChatFile(formData, data?.chatGroupId || "");
+            }
+        },
+        onSettled: () => sendMessage(
+            messageBody,
+            user || "",
+            data?.chatGroupId || "",
+            data?.emailAddress || ""
+        )
+    });
+
     const isClient = state.user?.userType === "client"
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -150,8 +168,6 @@ const InquiryDetails = ({
     }, [wrapperRef])
 
     const handleRespond = async () => {
-        // await joinGroup(item.chatGroupId)
-
         if (!data) {
             showNotification({
                 title: "Error",
@@ -161,12 +177,7 @@ const InquiryDetails = ({
             return
         }
 
-        sendMessage(
-            messageBody,
-            user || "",
-            data?.chatGroupId || "",
-            data?.emailAddress || ""
-        )
+        sendChatMessage();
 
         mutate({
             email: data?.emailAddress || "",
