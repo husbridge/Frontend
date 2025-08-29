@@ -7,8 +7,9 @@ import { createTalent } from "@services/talents"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { addTalentValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { type Error } from "../../../type/api/index"
+import { initiatePayment, getPaymentStatus } from "@services/payment"
 
 export interface AddTalentModalProps {
     opened: boolean
@@ -20,11 +21,54 @@ type ManagerType = {
     fullName: string
 }
 
+type TalentFormData = {
+    firstName: string
+    lastName: string
+    stageName: string
+    emailAddress: string
+    phoneNumber: string
+    gender: string
+    industry: string
+}
+
 const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
     const queryClient = useQueryClient()
     const [selectedManager, setSelectedManager] = useState<ManagerType>()
+    const [paymentStatus, setPaymentStatus] = useState<'idle' | 'initiating' | 'pending' | 'success' | 'failed'>('idle')
+    const [authorizationUrl, setAuthorizationUrl] = useState<string>('')
+    const pendingTalentData = useRef<TalentFormData & { manager?: string }>()
+    const pollIntervalRef = useRef<NodeJS.Timeout>()
 
-    const { isPending, mutate } = useMutation({
+    const { mutate: initiatePaymentMutation, isPending: isInitiatingPayment } = useMutation({
+        mutationFn: initiatePayment,
+        onSuccess: (data) => {
+            const url = data?.data?.data?.authorization_url
+
+            if (url) {
+                setAuthorizationUrl(url)
+                setPaymentStatus('pending')
+                window.open(url, '_blank', 'noopener,noreferrer')
+                startPaymentPolling()
+            } else {
+                showNotification({
+                    title: "Error",
+                    message: "Failed to get payment authorization URL",
+                    color: "red",
+                })
+                setPaymentStatus('failed')
+            }
+        },
+        onError: (err: Error) => {
+            showNotification({
+                title: "Payment Error",
+                message: err.response?.data?.message || err.message,
+                color: "red",
+            })
+            setPaymentStatus('failed')
+        },
+    })
+
+    const { mutate: createTalentMutation, isPending: isCreatingTalent } = useMutation({
         mutationFn: createTalent,
         onSuccess: (data) => {
             showNotification({
@@ -32,7 +76,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                 message: data?.data.message,
                 color: "green",
             })
-            setOpened(false)
+            handleCloseModal()
             queryClient
                 .invalidateQueries({
                     queryKey: ["talents"],
@@ -45,6 +89,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                 message: err.response?.data?.message || err.message,
                 color: "red",
             })
+            setPaymentStatus('failed')
         },
     })
 
@@ -55,11 +100,146 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
 
     const managers: ManagerType[] = teamQuery.data?.data || []
 
+    const startPaymentPolling = () => {
+        pollIntervalRef.current = setInterval(() => {
+            checkPaymentStatus()
+        }, 3000)
+    }
+
+    const stopPaymentPolling = () => {
+        if (pollIntervalRef.current) {
+            clearInterval(pollIntervalRef.current)
+            pollIntervalRef.current = undefined
+        }
+    }
+
+    const checkPaymentStatus = async () => {
+        try {
+            const response = await getPaymentStatus()
+            const status = response?.data.data.hasPaymentMethod
+            if (status) {
+                setPaymentStatus('success')
+                stopPaymentPolling()
+
+                if (pendingTalentData.current) {
+                    createTalentMutation(pendingTalentData.current)
+                }
+            }
+        } catch (error) {
+            console.error('Error checking payment status:', error)
+        }
+    }
+    const handleCloseModal = () => {
+        setOpened(false)
+        setPaymentStatus('idle')
+        setAuthorizationUrl('')
+        pendingTalentData.current = undefined
+        stopPaymentPolling()
+    }
+
+    const handleFormSubmit = async (values: TalentFormData) => {
+        const talentData = {
+            ...values,
+            manager: selectedManager?._id,
+        }
+
+        pendingTalentData.current = talentData
+
+        try {
+            const response = await getPaymentStatus()
+            const hasPaymentMethod = response?.data.data.hasPaymentMethod
+
+            if (hasPaymentMethod) {
+                createTalentMutation(talentData)
+            } else {
+                setPaymentStatus('initiating')
+                initiatePaymentMutation({ callback_url: `${window.location.origin}/payment-callback` })
+            }
+        } catch (error) {
+            showNotification({
+                title: "Error",
+                message: "Failed to check payment status",
+                color: "red",
+            })
+        }
+    }
+
+    const retryPayment = async () => {
+        if (pendingTalentData.current) {
+            try {
+                const response = await getPaymentStatus()
+                const hasPaymentMethod = response?.data.data.hasPaymentMethod
+
+                if (hasPaymentMethod) {
+                    createTalentMutation(pendingTalentData.current)
+                } else {
+                    setPaymentStatus('initiating')
+                    initiatePaymentMutation({ callback_url: `${window.location.origin}/payment-callback` })
+                }
+            } catch (error) {
+                showNotification({
+                    title: "Error",
+                    message: "Failed to check payment status",
+                    color: "red",
+                })
+            }
+        }
+    }
+
+    const isPending = isInitiatingPayment || isCreatingTalent || paymentStatus === 'pending'
+
+    const getButtonText = () => {
+        switch (paymentStatus) {
+            case 'initiating':
+                return 'Initiating Payment...'
+            case 'pending':
+                return 'Waiting for Payment...'
+            case 'success':
+                return isCreatingTalent ? 'Adding Talent...' : 'Payment Successful'
+            case 'failed':
+                return 'Retry Action'
+            default:
+                return 'Add Talent'
+        }
+    }
+
+    const getStatusMessage = () => {
+        switch (paymentStatus) {
+            case 'pending':
+                return (
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-blue-700 text-sm">
+                            Please complete your payment in the opened window.
+                            We'll automatically proceed once payment is confirmed.
+                        </p>
+                        {authorizationUrl && (
+                            <button
+                                onClick={() => window.open(authorizationUrl, '_blank', 'noopener,noreferrer')}
+                                className="text-blue-600 underline text-sm mt-2"
+                            >
+                                Reopen payment window
+                            </button>
+                        )}
+                    </div>
+                )
+            case 'failed':
+                return (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-red-700 text-sm">
+                            Payment failed. Please try again.
+                        </p>
+                    </div>
+                )
+            default:
+                return null
+        }
+    }
+
     return (
         <Modal
             opened={opened}
             withCloseButton={false}
-            onClose={() => setOpened(false)}
+            onClose={handleCloseModal}
             size="550px"
             centered
             radius={30}
@@ -80,9 +260,12 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                     src={Close}
                     alt=""
                     className="flex-none cursor-pointer"
-                    onClick={() => setOpened(false)}
+                    onClick={handleCloseModal}
                 />
             </div>
+
+            {getStatusMessage()}
+
             <Formik
                 initialValues={{
                     firstName: "",
@@ -94,12 +277,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                     industry: "",
                 }}
                 validationSchema={addTalentValidationSchema}
-                onSubmit={(values) =>
-                    mutate({
-                        ...values,
-                        manager: selectedManager?._id,
-                    })
-                }
+                onSubmit={handleFormSubmit}
             >
                 {() => (
                     <Form className="py-4 mt-4">
@@ -108,7 +286,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="First Name"
                                 control="input"
                                 name="firstName"
-                                //placeholder="enter your email address"
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -121,7 +299,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Last Name"
                                 control="input"
                                 name="lastName"
-                                //placeholder="enter your email address"
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -135,8 +313,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Stage Name (optional)"
                                 control="input"
                                 name="stageName"
-                                //placeholder="enter your password"
-
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -148,8 +325,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Email"
                                 control="input"
                                 name="emailAddress"
-                                //placeholder="enter your password"
-
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -161,6 +337,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Mobile Number"
                                 control="input"
                                 name="phoneNumber"
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -176,6 +353,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 }))}
                                 placeholder="Search managers"
                                 searchable
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 styles={{
                                     input: {
                                         borderRadius: "80px",
@@ -203,6 +381,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 control="select"
                                 name="gender"
                                 placeholder="Select Gender"
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -219,6 +398,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Industry"
                                 control="input"
                                 name="industry"
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -229,10 +409,11 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                         <Button
                             variant="primary"
                             className="px-6 text-white-100  w-full rounded-[40px] mt-10"
-                            type="submit"
-                            disabled={isPending}
+                            type={paymentStatus === 'failed' ? 'button' : 'submit'}
+                            onClick={paymentStatus === 'failed' ? retryPayment : undefined}
+                            disabled={isPending || paymentStatus === 'success'}
                         >
-                            {isPending ? "Adding..." : "Add Talent"}
+                            {getButtonText()}
                         </Button>
                     </Form>
                 )}
