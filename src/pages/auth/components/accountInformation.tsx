@@ -12,16 +12,16 @@ import useAuth from "@hooks/auth/useAuth"
 const AccountInformation = ({
     userType,
 }: {
-    userType: "admin" | "manager" | "talent"|"agency"
+    userType: "admin" | "manager" | "talent" | "agency"
 }) => {
     const { showPassword, displayPasswordIcon } = useShowPassword()
-    const { showPassword: showPassword2, displayPasswordIcon:displayPasswordIcon2 } = useShowPassword()
+    const { showPassword: showPassword2, displayPasswordIcon: displayPasswordIcon2 } = useShowPassword()
     const navigate = useNavigate()
     const { state } = useAuth()
     const { isPending, mutate, variables } = useMutation({
         mutationFn: signup,
         onSuccess: (data) => {
-            navigate("/confirm-email-address", {state:{email: variables?.emailAddress}});
+            navigate("/confirm-email-address", { state: { email: variables?.emailAddress, userType: userType } });
             showNotification({
                 title: "Success",
                 message: data.data.message,
@@ -37,12 +37,12 @@ const AccountInformation = ({
         },
     })
 
-    
-        if(state.isAuthenticated){
-            navigate("/dashboard")
-            return;
-        }
-    
+
+    if (state.isAuthenticated) {
+        navigate("/dashboard")
+        return;
+    }
+
     return (
         <div className="mt-20 mb-4">
             <h3 className="font-semibold leading-8 text-[28px] sm:text-2lg">
@@ -56,7 +56,7 @@ const AccountInformation = ({
                     email: "",
                     password: "",
                     confirmPassword: "",
-                   
+
                 }}
                 validationSchema={accountValidationSchema}
                 onSubmit={(values) =>
