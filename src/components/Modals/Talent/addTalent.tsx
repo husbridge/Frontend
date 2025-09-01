@@ -89,7 +89,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                 message: err.response?.data?.message || err.message,
                 color: "red",
             })
-            setPaymentStatus('failed')
+            setPaymentStatus("idle")
         },
     })
 
@@ -199,7 +199,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
             case 'failed':
                 return 'Retry Action'
             default:
-                return 'Add Talent'
+                return isCreatingTalent ? 'Adding Talent...' : 'Add Talent'
         }
     }
 
@@ -279,14 +279,14 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                 validationSchema={addTalentValidationSchema}
                 onSubmit={handleFormSubmit}
             >
-                {() => (
+                {({ isSubmitting }) => (
                     <Form className="py-4 mt-4">
                         <div className="mb-6">
                             <FormControls
                                 label="First Name"
                                 control="input"
                                 name="firstName"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -299,7 +299,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Last Name"
                                 control="input"
                                 name="lastName"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -313,7 +313,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Stage Name (optional)"
                                 control="input"
                                 name="stageName"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -325,7 +325,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Email"
                                 control="input"
                                 name="emailAddress"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -337,7 +337,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Mobile Number"
                                 control="input"
                                 name="phoneNumber"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -353,7 +353,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 }))}
                                 placeholder="Search managers"
                                 searchable
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 styles={{
                                     input: {
                                         borderRadius: "80px",
@@ -381,7 +381,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 control="select"
                                 name="gender"
                                 placeholder="Select Gender"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -398,7 +398,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                                 label="Industry"
                                 control="input"
                                 name="industry"
-                                disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                disabled={paymentStatus === 'pending' || paymentStatus === 'success' || isSubmitting}
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
                                     input: "text-black-100 text-[14px]",
@@ -411,7 +411,7 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
                             className="px-6 text-white-100  w-full rounded-[40px] mt-10"
                             type={paymentStatus === 'failed' ? 'button' : 'submit'}
                             onClick={paymentStatus === 'failed' ? retryPayment : undefined}
-                            disabled={isPending || paymentStatus === 'success'}
+                            disabled={isPending || paymentStatus === 'success' || isSubmitting}
                         >
                             {getButtonText()}
                         </Button>
