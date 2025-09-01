@@ -95,6 +95,7 @@ export interface Data {
     _id?: string
     hasAgency?: boolean
     agency?: any
+    hasPaymentMethod?: boolean
 }
 export interface ProfileRequest {
     fullName?: string
