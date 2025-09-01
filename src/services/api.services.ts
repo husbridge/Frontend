@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === "production"
 
 export const frontendUrl = () => window.location.origin
 
-const BASE_URL = !isProduction
+const BASE_URL = isProduction
     ? "https://husridge-server.onrender.com/api/"
     : "http://localhost:8084/api/"
 
