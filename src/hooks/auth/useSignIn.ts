@@ -132,12 +132,24 @@ export function useSignin() {
 
                 const response = await getPaymentStatus()
                 const status = response?.data.data.hasPaymentMethod
+                const userData = {
+                    ...data.data,
+                    hasPaymentMethod: status || false
+                }
+
+                if (data.data.userType !== "talent") {
+                    dispatch({
+                        type: "SET_USER_DATA",
+                        payload: userData,
+                    })
+                    localStorage.setItem("user", JSON.stringify(userData))
+                    
+                    const from = location.state?.from?.pathname || "/dashboard"
+                    navigate(from, { replace: true })
+                    return
+                }
 
                 if (status) {
-                    const userData = {
-                        ...data.data,
-                        hasPaymentMethod: status
-                    }
                     
                     dispatch({
                         type: "SET_USER_DATA",

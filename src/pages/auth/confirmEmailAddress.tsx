@@ -74,14 +74,14 @@ const ConfirmEmailAddress = () => {
         mutationFn: verifyOTP,
         onSuccess: async (data) => {
             setUserDataAfterVerification(data.data.data)
+            setAccessToken(data.data.data.accessToken || "")
 
-            if (data.data.data.registrationStage === "completed") {
+            if (data.data.data.registrationStage === "completed" || data.data.data.userType !== "talent") {
                 saveUserDataAfterPayment(data.data.data)
-                navigate("/dashboard")
+                setOpenModal(true)
                 return
             }
 
-            setAccessToken(data.data.data.accessToken || "")
 
             try {
                 const paymentResponse = await getPaymentStatus()
@@ -302,7 +302,7 @@ const ConfirmEmailAddress = () => {
             case 'failed':
                 return 'Payment required - try again'
             default:
-                return isPending ? "Verifying..." : "Verify & Proceed to Payment"
+                return isPending ? "Verifying..." : "Verify"
         }
     }
 
@@ -318,7 +318,6 @@ const ConfirmEmailAddress = () => {
     useEffect(() => {
         handleTimerStart()
 
-        // Cleanup polling on component unmount
         return () => {
             stopPaymentPolling()
         }
