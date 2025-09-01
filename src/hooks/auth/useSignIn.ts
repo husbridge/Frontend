@@ -128,13 +128,15 @@ export function useSignin() {
         onSuccess: async ({ data }) => {
             if (data.data !== null) {
                 setAccessToken(data.data?.accessToken)
-                
                 setPendingUserData(data.data)
-                
-                if (data.data.hasPaymentMethod) {
+
+                const response = await getPaymentStatus()
+                const status = response?.data.data.hasPaymentMethod
+
+                if (status) {
                     const userData = {
                         ...data.data,
-                        hasPaymentMethod: data.data.hasPaymentMethod || false
+                        hasPaymentMethod: status
                     }
                     
                     dispatch({

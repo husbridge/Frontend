@@ -27,18 +27,14 @@ const ConfirmEmailAddress = () => {
 
     const { dispatch } = useAuth()
 
-    // Function to save user data after payment completion
     const saveUserDataAfterPayment = (userData: any) => {
-        // Set access token
         setAccessToken(userData.accessToken || "")
 
-        // Save to localStorage
         localStorage.setItem("user", JSON.stringify({
             ...userData,
             hasAgency: !!userData.agency
         }))
 
-        // Dispatch to auth context
         dispatch({
             type: "SET_USER_DATA",
             payload: userData,
@@ -77,27 +73,25 @@ const ConfirmEmailAddress = () => {
     const { isPending, mutate } = useMutation({
         mutationFn: verifyOTP,
         onSuccess: async (data) => {
-            // Store user data temporarily - don't save to localStorage/auth context yet
             setUserDataAfterVerification(data.data.data)
 
-            // If registration is already completed, save user data and navigate
             if (data.data.data.registrationStage === "completed") {
                 saveUserDataAfterPayment(data.data.data)
                 navigate("/dashboard")
                 return
             }
 
+            setAccessToken(data.data.data.accessToken || "")
+
             try {
                 const paymentResponse = await getPaymentStatus()
                 const hasPaymentMethod = paymentResponse?.data.data.hasPaymentMethod
 
                 if (hasPaymentMethod) {
-                    // Payment already exists, save user data and show modal
                     saveUserDataAfterPayment(data.data.data)
+                    setPaymentStatus('success')
                     setOpenModal(true)
                 } else {
-                    // No payment method exists, initiate payment
-                    // Don't save user data yet - wait for payment completion
                     setPaymentStatus('initiating')
                     initiatePaymentMutation({ callback_url: `${window.location.origin}/payment-callback` })
                 }
@@ -155,13 +149,20 @@ const ConfirmEmailAddress = () => {
     const checkPaymentStatus = async () => {
         try {
             const response = await getPaymentStatus()
-            const status = response?.data.data.hasPaymentMethod
-            if (status && userDataAfterVerification) {
+            const hasPaymentMethod = response?.data.data.hasPaymentMethod
+
+            if (hasPaymentMethod && userDataAfterVerification) {
                 setPaymentStatus('success')
                 stopPaymentPolling()
 
                 // Payment successful - NOW save the user data
                 saveUserDataAfterPayment(userDataAfterVerification)
+
+                showNotification({
+                    title: "Payment Successful",
+                    message: "Your payment has been processed successfully!",
+                    color: "green",
+                })
 
                 // Show the modal to proceed
                 setOpenModal(true)
@@ -173,6 +174,11 @@ const ConfirmEmailAddress = () => {
 
     const retryPayment = async () => {
         try {
+            // Ensure we have access token for payment APIs
+            if (userDataAfterVerification?.accessToken) {
+                setAccessToken(userDataAfterVerification.accessToken)
+            }
+
             const response = await getPaymentStatus()
             const hasPaymentMethod = response?.data.data.hasPaymentMethod
 
@@ -217,6 +223,17 @@ const ConfirmEmailAddress = () => {
 
     const getPaymentStatusMessage = () => {
         switch (paymentStatus) {
+            case 'initiating':
+                return (
+                    <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p className="text-yellow-700 text-sm font-medium">
+                            Preparing Payment
+                        </p>
+                        <p className="text-yellow-600 text-sm mt-1">
+                            Setting up your payment. Please wait...
+                        </p>
+                    </div>
+                )
             case 'pending':
                 return (
                     <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -261,7 +278,7 @@ const ConfirmEmailAddress = () => {
                             Payment Successful!
                         </p>
                         <p className="text-green-600 text-sm mt-1">
-                            Your payment has been processed successfully. You can now proceed.
+                            Your payment has been processed successfully. You can now create your profile.
                         </p>
                     </div>
                 )
@@ -277,15 +294,15 @@ const ConfirmEmailAddress = () => {
 
         switch (paymentStatus) {
             case 'initiating':
-                return 'Initiating Payment...'
+                return 'Setting up payment...'
             case 'pending':
-                return 'Waiting for Payment...'
+                return 'Complete payment to continue'
             case 'success':
                 return 'Create Profile'
             case 'failed':
-                return 'Payment Required'
+                return 'Payment required - try again'
             default:
-                return isPending ? "Creating..." : "Create Profile"
+                return isPending ? "Verifying..." : "Verify & Proceed to Payment"
         }
     }
 
@@ -294,7 +311,8 @@ const ConfirmEmailAddress = () => {
             return false
         }
 
-        return isPending || isInitiatingPayment || (paymentStatus === 'pending') || (paymentStatus === 'failed')
+        // Disable if currently processing verification, initiating payment, or payment is pending/failed
+        return isPending || isInitiatingPayment || paymentStatus === 'pending' || paymentStatus === 'failed'
     }
 
     useEffect(() => {
