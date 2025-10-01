@@ -2,6 +2,7 @@ import axios from "axios"
 import { Error } from "../type/api"
 
 const isProduction = process.env.NODE_ENV === "production"
+console.log(isProduction)
 
 export const frontendUrl = () => window.location.origin
 
