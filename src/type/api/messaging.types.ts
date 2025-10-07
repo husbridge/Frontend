@@ -6,15 +6,15 @@ export interface MessagingResponse {
 }
 
 export enum MessageType {
-    TEXT = 'text',
-    FILE = 'file',
+    TEXT = "text",
+    FILE = "file",
 }
 
 interface MessageMetadata {
-    contentType: string;
-    key: string;
-    originalName: string;
-    url: string;
+    contentType: string
+    key: string
+    originalName: string
+    url: string
 }
 
 export interface Data {

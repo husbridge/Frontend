@@ -22,7 +22,7 @@ import { PiPlusBold } from "react-icons/pi"
 import { RxDownload } from "react-icons/rx"
 import { Data } from "type/api/inquiry.types"
 import GenerateInvoiceModal from "./generateInvoice"
-import useFile from "@hooks/useFile";
+import useFile from "@hooks/useFile"
 import { uploadChatFile } from "@services/storage"
 
 export interface InquiryDetailsModalProps {
@@ -43,7 +43,6 @@ const InquiryDetails = ({
     data,
     fromMessaging,
 }: InquiryDetailsModalProps) => {
-
     const {
         fileInfo,
         fileInfoIsLoading,
@@ -57,7 +56,7 @@ const InquiryDetails = ({
     } = useFile({
         opened: opened,
         attachDocument: data?.attachDocument || "",
-    });
+    })
 
     const [openInput, setOpenInput] = useState(false)
     const [openCreateInvoice, setOpenCreateInvoice] = useState(false)
@@ -122,24 +121,25 @@ const InquiryDetails = ({
         },
     })
 
-    const user = state.user?.id || "";
+    const user = state.user?.id || ""
 
     const { mutate: sendChatMessage } = useMutation({
         mutationFn: async () => {
             if (invoice) {
-                const formData = new FormData();
-                formData.append('file', invoice as any);
+                const formData = new FormData()
+                formData.append("file", invoice as any)
 
-                uploadChatFile(formData, data?.chatGroupId || "");
+                uploadChatFile(formData, data?.chatGroupId || "")
             }
         },
-        onSettled: () => sendMessage(
-            messageBody,
-            user || "",
-            data?.chatGroupId || "",
-            data?.emailAddress || ""
-        )
-    });
+        onSettled: () =>
+            sendMessage(
+                messageBody,
+                user || "",
+                data?.chatGroupId || ""
+                // data?.emailAddress || ""
+            ),
+    })
 
     const isClient = state.user?.userType === "client"
 
@@ -177,7 +177,7 @@ const InquiryDetails = ({
             return
         }
 
-        sendChatMessage();
+        sendChatMessage()
 
         mutate({
             email: data?.emailAddress || "",
@@ -222,7 +222,7 @@ const InquiryDetails = ({
             />
 
             <ShareConversationModal
-                link={shareableUrlIsLoading ? '' : shareableUrl?.url}
+                link={shareableUrlIsLoading ? "" : shareableUrl?.url}
                 shareViaGmail={shareViaGmail}
                 shareViaNavigator={shareViaNavigator}
                 shareViaWhatsApp={shareViaWhatsApp}
@@ -316,7 +316,7 @@ const InquiryDetails = ({
                                 className="mt-2 cursor-pointer"
                                 onClick={() => setOpenPop(true)}
                             />
-                            
+
                         </div>
 
                         <Button
@@ -540,7 +540,9 @@ const InquiryDetails = ({
                     <div className="flex flex-1">
                         <img src={PdfIcon} alt="" />
                         <div className="mx-2">
-                            <p className="sm:text-md text-sm">{fileInfo?.fileName}</p>
+                            <p className="sm:text-md text-sm">
+                                {fileInfo?.fileName}
+                            </p>
                             <p className="text-[#05050599] text-sm">
                                 {formatFileSize(fileInfo?.fileSize || 0)}
                             </p>

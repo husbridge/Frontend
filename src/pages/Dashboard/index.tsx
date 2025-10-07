@@ -213,7 +213,7 @@ const Dashboard = () => {
                                 {state.user?.firstName || state.user?.fullName}
                             </p>
                             <div className="flex">
-                                {!["talent", "client", "manager"].includes(
+                                {!["talent", "client"].includes(
                                     userType || ""
                                 ) && (
                                     <Button
