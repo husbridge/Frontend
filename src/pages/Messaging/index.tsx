@@ -27,8 +27,8 @@ import {
 import { Data } from "type/api/inquiry.types"
 import { Data as ChatData } from "type/api/messaging.types"
 import Dialog from "./components/dialog"
-import DownloadFileButton from "./components/downloadButton";
-import ImageWithAwsHook from "./components/imageWithAwsHook";
+import DownloadFileButton from "./components/downloadButton"
+import ImageWithAwsHook from "./components/imageWithAwsHook"
 import { useSocket } from "./hooks/useSocket"
 
 import Avatar from "@components/Layout/avatar"
@@ -101,37 +101,38 @@ const Messaging = () => {
         data: inquiryData,
         isLoading: isLoadingInquiryData,
         error: portalInquiryError,
-    } = useGetPortalInquiries(state.user?.userType || "");
+    } = useGetPortalInquiries(state.user?.userType || "")
 
-    const userId = state.user?.id || "";
+    const userId = state.user?.id || ""
 
     const isUserMessage = (newItemUser: string) => {
         const identifiers = [
             activeGroup?._id,
             state.user?.uniqueUsername,
-            userId
+            userId,
         ]
-        return identifiers.some((data) => data === newItemUser);
+        return identifiers.some((data) => data === newItemUser)
     }
 
     const { mutate: fileMutate } = useMutation({
-        mutationFn: (data: FormData) => uploadChatFile(data, activeGroup?.chatGroupId || ""),
-        onSuccess: (data) => console.log(`==Upload result ${data.data}`)
-    });
+        mutationFn: (data: FormData) =>
+            uploadChatFile(data, activeGroup?.chatGroupId || ""),
+        onSuccess: (data) => console.log(`==Upload result ${data.data}`),
+    })
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+        const file = e.target.files?.[0]
 
-        const formData = new FormData();
-        formData.append('file', file as any);
+        const formData = new FormData()
+        formData.append("file", file as any)
 
-        fileMutate(formData);
+        fileMutate(formData)
 
-        e.target.value = '';
+        e.target.value = ""
     }
 
     const isImage = (contentType: string) => {
-        return contentType && contentType.startsWith('image/');
+        return contentType && contentType.startsWith("image/")
     }
 
     const matches = useMediaQuery("(min-width: 768px)")
@@ -154,7 +155,7 @@ const Messaging = () => {
     }, [containerRef, messages, showMessage, newMessages])
 
     const handleSendMessage = () => {
-        console.log(`=== userId - ${userId}`);
+        console.log(`=== userId - ${userId}`)
         sendMessage(
             message,
             userId,
@@ -187,7 +188,6 @@ const Messaging = () => {
             return () => clearInterval(intervalId)
         }
     }, [showMessage, setMessageCount, activeGroup])
-
 
     return (
         <Layout>
@@ -320,7 +320,7 @@ const Messaging = () => {
                                                                     }
                                                                 )}
                                                             </p>
-                                                            { newMessages[
+                                                            {newMessages[
                                                                 item
                                                             ].map(
                                                                 (
@@ -332,7 +332,9 @@ const Messaging = () => {
                                                                             index
                                                                         }
                                                                         className={`${
-                                                                            isUserMessage(newItem.user)
+                                                                            isUserMessage(
+                                                                                newItem.user
+                                                                            )
                                                                                 ? "lg:ml-64 ml-20 flex justify-end mr-6"
                                                                                 : "ml-6 lg:mr-64 mr-20 "
                                                                         }`}
@@ -343,19 +345,41 @@ const Messaging = () => {
                                                                         >
                                                                             <div
                                                                                 className={`${
-                                                                                    isUserMessage(newItem.user)
+                                                                                    isUserMessage(
+                                                                                        newItem.user
+                                                                                    )
                                                                                         ? "text-[#FFC107] bg-black-100  rounded-[16px] p-4 rounded-tr-none"
                                                                                         : "text-[#01070E] rounded-tl-none rounded-[16px] bg-[#F5F5F5] p-4"
                                                                                 } text-sm`}
                                                                             >
-                                                                                {newItem.type === "file" ? (
+                                                                                {newItem.type ===
+                                                                                "file" ? (
                                                                                     <div className="space-y-3">
-                                                                                        {isImage(newItem.metadata.contentType) ? (
-                                                                                            <ImageWithAwsHook newItem={newItem} />
+                                                                                        {isImage(
+                                                                                            newItem
+                                                                                                .metadata
+                                                                                                .contentType
+                                                                                        ) ? (
+                                                                                            <ImageWithAwsHook
+                                                                                                newItem={
+                                                                                                    newItem
+                                                                                                }
+                                                                                            />
                                                                                         ) : (
                                                                                             <>
-                                                                                                <DownloadFileButton newItem={newItem} opened={showMessage} />
-                                                                                                { newItem.metadata.key }
+                                                                                                <DownloadFileButton
+                                                                                                    newItem={
+                                                                                                        newItem
+                                                                                                    }
+                                                                                                    opened={
+                                                                                                        showMessage
+                                                                                                    }
+                                                                                                />
+                                                                                                {
+                                                                                                    newItem
+                                                                                                        .metadata
+                                                                                                        .key
+                                                                                                }
                                                                                             </>
                                                                                         )}
                                                                                     </div>

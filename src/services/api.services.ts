@@ -1,18 +1,19 @@
 import axios from "axios"
 import { Error } from "../type/api"
 
-const isProduction = process.env.NODE_ENV === "production"
-console.log(isProduction)
+// const isProduction = process.env.NODE_ENV === "production"
 
 export const frontendUrl = () => window.location.origin
 
-const BASE_URL = isProduction
-    ? "https://husridge-server.onrender.com/api/"
-    : "http://localhost:8084/api/"
+const BASE_URL = "https://husridge-server.onrender.com/api/"
+//isProduction
+//  ? "https://husridge-server.onrender.com/api/"
+//: "http://localhost:8084/api/"
 
-export const MESSAGING_BASE_URL = isProduction
-    ? "https://messaging-chat-new.onrender.com"
-    : "http://localhost:3000"
+export const MESSAGING_BASE_URL = "https://messaging-chat-new.onrender.com"
+// isProduction
+//     ? "https://messaging-chat-new.onrender.com"
+//     : "http://localhost:3000"
 
 let EXPIRYINTERCEPTOR: number
 
