@@ -136,8 +136,8 @@ const InquiryDetails = ({
             sendMessage(
                 messageBody,
                 user || "",
-                data?.chatGroupId || ""
-                // data?.emailAddress || ""
+                data?.chatGroupId || "",
+                data?.emailAddress || ""
             ),
     })
 

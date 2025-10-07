@@ -8,11 +8,8 @@ import { ShareResponse } from "@hooks/useAwsFile"
 import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
 import { Modal } from "@mantine/core"
 import { Chats } from "@pages/Messaging/components/dialog"
-import {
-    //  DecodedUser,
-    useSocket,
-} from "@pages/Messaging/hooks/useSocket"
-// import { jwtDecode } from "jwt-decode"
+import { DecodedUser, useSocket } from "@pages/Messaging/hooks/useSocket"
+import { jwtDecode } from "jwt-decode"
 import { useEffect } from "react"
 import { Data } from "type/api/inquiry.types"
 
@@ -37,7 +34,7 @@ const ShareConversationModal = ({
 }: ShareConversationModalProps) => {
     const { state } = useAuth()
     const { sendMessage, joinGroup } = useSocket({})
-    // const decoded = jwtDecode(state.user?.accessToken || "") as DecodedUser
+    const decoded = jwtDecode(state.user?.accessToken || "") as DecodedUser
     const handleShare = async (shareFunction: () => Promise<ShareResponse>) => {
         try {
             const result = await shareFunction()
@@ -79,12 +76,7 @@ const ShareConversationModal = ({
         setOpened(false)
         const user = state.user?.id || ""
 
-        sendMessage(
-            link,
-            user || "",
-            val.chatGroupId || ""
-            // decoded.email
-        )
+        sendMessage(link, user || "", val.chatGroupId || "", decoded.email)
     }
 
     return (
