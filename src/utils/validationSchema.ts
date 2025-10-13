@@ -21,7 +21,7 @@ export const accountValidationSchema = yup.object().shape({
     confirmPassword: yup
         .string()
         .required("Please confirm your password")
-        //@ts-expect-error ignore null
+        //@ts-expect-error ignore null reference
         .oneOf([yup.ref("password"), null], "Password does not match"),
 })
 export const confirmEmailAddressSchema = yup.object().shape({
