@@ -18,7 +18,7 @@ const AgencyInformation = ({
     handleClick: () => void
 }) => {
     const navigate = useNavigate()
-    const [countries, setCountries] = useState([])
+    const [countries, setCountries] = useState<any[]>([])
     const [isLoading, setIsloading] = useState(false)
     const [states, setStates] = useState([])
 
@@ -46,11 +46,10 @@ const AgencyInformation = ({
 
     const handleCountryChange = (country: string) => {
         //try {
-        //@ts-expect-error
+
         const stateOptions = countries
-            .find((item: any) => item.label === country)
-            //@ts-expect-error
-            .value.states.map((state) => ({
+            ?.find((item: any) => item.label === country)
+            ?.value.states.map((state: { name: string }) => ({
                 value: state.name,
                 label: state.name,
             }))
@@ -142,6 +141,7 @@ const AgencyInformation = ({
                                 label="Registration Number"
                                 control="input"
                                 name="regNumber"
+                                minLength={10}
                                 //placeholder="enter your email address"
                                 classNames={{
                                     mainRoot: " border  border-black-20 px-2",
@@ -183,8 +183,7 @@ const AgencyInformation = ({
                                 name="country"
                                 options={countries}
                                 isLoading={isLoading}
-                                onChange={(val) => {
-                                    //@ts-expect-error
+                                onChange={(val: any) => {
                                     handleCountryChange(val.label)
                                     setFieldValue("state", {
                                         label: "",

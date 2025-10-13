@@ -152,3 +152,19 @@ export function formatFileSize(fileSizeInBytes: number) {
         return `${sizeInKB}kB`
     }
 }
+
+// Regex pattern to match a valid CAC number format.
+// It checks for the prefixes (RC, BN, IT, LP, LLP) followed by one or more digits.
+export const cacPattern: RegExp = /^(RC|BN|IT|LP|LLP)\s?\d+$/i
+
+/**
+ * Validates the format of a CAC registration number.
+ * This function performs a basic format check using a regex and does not verify
+ * the number's existence or the business's active status with the CAC.
+ */
+export function isValidCacNumber(cacNumber: string): boolean {
+    if (!cacNumber || typeof cacNumber !== "string") {
+        return false
+    }
+    return cacPattern.test(cacNumber.trim())
+}
