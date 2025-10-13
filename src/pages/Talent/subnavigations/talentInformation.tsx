@@ -27,7 +27,10 @@ import { fetchProfile } from "@services/auth"
 import { fetchSingleUser } from "@services/manager"
 import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import { CopyToClipboard } from "react-copy-to-clipboard"
+import { CopyToClipboard as BaseCopyToClipboard } from "react-copy-to-clipboard"
+import React from "react"
+const CopyToClipboard: React.FC<any> = (props) =>
+    React.createElement(BaseCopyToClipboard as unknown as any, props)
 import { FaAngleRight } from "react-icons/fa6"
 import { RiLinksFill } from "react-icons/ri"
 import { Link, useNavigate, useParams } from "react-router-dom"
