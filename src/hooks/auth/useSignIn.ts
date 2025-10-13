@@ -5,116 +5,99 @@ import { showNotification } from "@mantine/notifications"
 import useAuth from "./useAuth"
 import { setAccessToken } from "@services/api.services"
 import { useNavigate, useLocation } from "react-router-dom"
-import { initiatePayment, getPaymentStatus } from "@services/payment"
-import { useState, useRef, useEffect } from "react"
+import { useState, useEffect } from "react"
+import { useBilling } from "@contexts/payments/billing"
 
 export function useSignin() {
     const { dispatch } = useAuth()
+    const {
+        initiatePayment,
+        checkPaymentStatus,
+        isInitiatingPayment,
+        isCheckingStatus,
+        hasPaymentMethod,
+        isPolling,
+        stopPolling,
+        error,
+    } = useBilling()
     const location = useLocation()
     const navigate = useNavigate()
-    const [paymentStatus, setPaymentStatus] = useState<'idle' | 'initiating' | 'pending' | 'success' | 'failed'>('idle')
-    const [authorizationUrl, setAuthorizationUrl] = useState<string>('')
+    const [paymentStatus, setPaymentStatus] = useState<
+        "idle" | "initiating" | "pending" | "success" | "failed"
+    >("idle")
+
     const [pendingUserData, setPendingUserData] = useState<any>(null)
-    const pollIntervalRef = useRef<NodeJS.Timeout>()
 
-    const { mutate: initiatePaymentMutation, isPending: isInitiatingPayment } = useMutation({
-        mutationFn: initiatePayment,
-        onSuccess: (data) => {
-            const url = data?.data?.data?.authorization_url
+    // Watch for hasPaymentMethod changes during polling
+    useEffect(() => {
+        if (
+            hasPaymentMethod &&
+            pendingUserData &&
+            paymentStatus === "pending"
+        ) {
+            setPaymentStatus("success")
 
-            if (url) {
-                setAuthorizationUrl(url)
-                setPaymentStatus('pending')
-                window.open(url, '_blank', 'noopener,noreferrer')
-                startPaymentPolling()
-            } else {
-                showNotification({
-                    title: "Error",
-                    message: "Failed to get payment authorization URL",
-                    color: "red",
-                })
-                setPaymentStatus('failed')
+            const userData = {
+                ...pendingUserData,
+                hasPaymentMethod: true,
             }
-        },
-        onError: (err: Error) => {
-            showNotification({
-                title: "Payment Error",
-                message: err.response?.data?.message || err.message,
-                color: "red",
+
+            dispatch({
+                type: "SET_USER_DATA",
+                payload: userData,
             })
-            setPaymentStatus('failed')
-        },
-    })
+            localStorage.setItem("user", JSON.stringify(userData))
 
-    const startPaymentPolling = () => {
-        pollIntervalRef.current = setInterval(() => {
-            checkPaymentStatus()
-        }, 3000)
-    }
+            showNotification({
+                title: "Payment Successful",
+                message: "Your payment has been confirmed!",
+                color: "green",
+            })
 
-    const stopPaymentPolling = () => {
-        if (pollIntervalRef.current) {
-            clearInterval(pollIntervalRef.current)
-            pollIntervalRef.current = undefined
+            const from = location.state?.from?.pathname || "/dashboard"
+            navigate(from, { replace: true })
         }
-    }
-
-    const checkPaymentStatus = async () => {
-        try {
-            const response = await getPaymentStatus()
-            const status = response?.data.data.hasPaymentMethod
-            if (status) {
-                setPaymentStatus('success')
-                stopPaymentPolling()
-                
-                if (pendingUserData) {
-                    const userData = {
-                        ...pendingUserData,
-                        hasPaymentMethod: true // Update to reflect payment completion
-                    }
-                    
-                    dispatch({
-                        type: "SET_USER_DATA",
-                        payload: userData,
-                    })
-                    localStorage.setItem("user", JSON.stringify(userData))
-                    
-                    const from = location.state?.from?.pathname || "/dashboard"
-                    navigate(from, { replace: true })
-                }
-            }
-        } catch (error) {
-            console.error('Error checking payment status:', error)
-        }
-    }
+    }, [
+        hasPaymentMethod,
+        pendingUserData,
+        paymentStatus,
+        dispatch,
+        location,
+        navigate,
+    ])
 
     const retryPayment = async () => {
         try {
-            const response = await getPaymentStatus()
-            const hasPaymentMethod = response?.data.data.hasPaymentMethod
+            setPaymentStatus("pending")
+            checkPaymentStatus()
 
-            if (hasPaymentMethod) {
-                setPaymentStatus('success')
-                if (pendingUserData) {
+            // Wait a bit for the status to update
+            setTimeout(() => {
+                if (hasPaymentMethod && pendingUserData) {
+                    setPaymentStatus("success")
                     const userData = {
                         ...pendingUserData,
-                        hasPaymentMethod: true
+                        hasPaymentMethod: true,
                     }
-                    
+
                     dispatch({
                         type: "SET_USER_DATA",
                         payload: userData,
                     })
                     localStorage.setItem("user", JSON.stringify(userData))
-                    
+
                     const from = location.state?.from?.pathname || "/dashboard"
                     navigate(from, { replace: true })
+                } else {
+                    setPaymentStatus("initiating")
+                    initiatePayment({
+                        callback_url: `${window.location.origin}/payment-callback`,
+                    })
+                    setPaymentStatus("pending")
                 }
-            } else {
-                setPaymentStatus('initiating')
-                initiatePaymentMutation({ callback_url: `${window.location.origin}/payment-callback` })
-            }
+            }, 1000)
         } catch (error) {
+            setPaymentStatus("failed")
             showNotification({
                 title: "Error",
                 message: "Failed to check payment status",
@@ -130,39 +113,50 @@ export function useSignin() {
                 setAccessToken(data.data?.accessToken)
                 setPendingUserData(data.data)
 
-                const response = await getPaymentStatus()
-                const status = response?.data.data.hasPaymentMethod
-                const userData = {
-                    ...data.data,
-                    hasPaymentMethod: status || false
-                }
+                // Check payment status first
+                checkPaymentStatus()
 
-                if (data.data.userType !== "talent") {
-                    dispatch({
-                        type: "SET_USER_DATA",
-                        payload: userData,
-                    })
-                    localStorage.setItem("user", JSON.stringify(userData))
-                    
-                    const from = location.state?.from?.pathname || "/dashboard"
-                    navigate(from, { replace: true })
-                    return
-                }
+                // Wait for the status check to complete
+                setTimeout(() => {
+                    const userData = {
+                        ...data.data,
+                        hasPaymentMethod: hasPaymentMethod || false,
+                    }
 
-                if (status) {
-                    
-                    dispatch({
-                        type: "SET_USER_DATA",
-                        payload: userData,
-                    })
-                    localStorage.setItem("user", JSON.stringify(userData))
-                    
-                    const from = location.state?.from?.pathname || "/dashboard"
-                    navigate(from, { replace: true })
-                } else {
-                    setPaymentStatus('initiating')
-                    initiatePaymentMutation({ callback_url: `${window.location.origin}/payment-callback` })
-                }
+                    // For non-talent users, allow access to the dashboard
+                    if (data.data.userType !== "talent") {
+                        dispatch({
+                            type: "SET_USER_DATA",
+                            payload: userData,
+                        })
+                        localStorage.setItem("user", JSON.stringify(userData))
+
+                        const from =
+                            location.state?.from?.pathname || "/dashboard"
+                        navigate(from, { replace: true })
+                        return
+                    }
+
+                    // For talent users, only allow access if they have a payment method
+                    if (hasPaymentMethod) {
+                        dispatch({
+                            type: "SET_USER_DATA",
+                            payload: userData,
+                        })
+                        localStorage.setItem("user", JSON.stringify(userData))
+
+                        const from =
+                            location.state?.from?.pathname || "/dashboard"
+                        navigate(from, { replace: true })
+                    } else {
+                        // If talent user doesn't have a payment method, initiate payment
+                        setPaymentStatus("initiating")
+                        initiatePayment({
+                            callback_url: `${window.location.origin}/payment-callback`,
+                        })
+                        setPaymentStatus("pending")
+                    }
+                }, 500)
             }
         },
         onError: (err: Error) => {
@@ -174,19 +168,23 @@ export function useSignin() {
         },
     })
 
-    // Cleanup effect
+    // Cleanup polling on unmount
     useEffect(() => {
         return () => {
-            stopPaymentPolling()
+            if (isPolling) {
+                stopPolling()
+            }
         }
-    }, [])
+    }, [isPolling, stopPolling])
 
     return {
         ...mutation,
         paymentStatus,
-        authorizationUrl,
+        retryPayment,
         isInitiatingPayment,
-        retryPayment
+        isCheckingStatus,
+        isPolling,
+        error,
     }
 }
 
@@ -201,6 +199,6 @@ export function useClientSignin() {
             })
         },
     })
-    
+
     return mutation
 }

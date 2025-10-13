@@ -74,8 +74,6 @@ const Dashboard = () => {
         queryFn: () => fetchInquiries(),
     })
 
-    console.log(inquiryData)
-
     const userState = useMemo(() => {
         return state.user
     }, [state.user])

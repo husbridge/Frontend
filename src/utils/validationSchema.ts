@@ -1,4 +1,5 @@
 import * as yup from "yup"
+import { isValidCacNumber } from "./helpers"
 
 export const accountValidationSchema = yup.object().shape({
     email: yup
@@ -20,14 +21,21 @@ export const accountValidationSchema = yup.object().shape({
     confirmPassword: yup
         .string()
         .required("Please confirm your password")
-        //@ts-expect-error
+        //@ts-expect-error ignore null
         .oneOf([yup.ref("password"), null], "Password does not match"),
 })
 export const confirmEmailAddressSchema = yup.object().shape({
     code: yup.string().required("OTP is required "),
 })
 export const agencyValidationSchema = yup.object().shape({
-    regNumber: yup.string().required("Registration number is required"),
+    regNumber: yup
+        .string()
+        .required("Registration number is required")
+        .test(
+            "valid-cac-format",
+            "Please enter a valid CAC number (RC/BN/IT/LP/LLP + digits)",
+            (value) => (value ? isValidCacNumber(value) : false)
+        ),
     agencyName: yup.string().required("Agency name is required"),
 
     industry: yup.string().required("Industry is required"),
@@ -88,7 +96,7 @@ export const resetPasswordSchema = yup.object().shape({
     confirmPassword: yup
         .string()
         .required("Please confirm your password")
-        //@ts-expect-error
+        //@ts-expect-error ignore null
         .oneOf([yup.ref("password"), null], "Password does not match"),
 })
 
@@ -196,22 +204,15 @@ export const invoiceValidationSchema = yup.object().shape({
         .email("Please enter a valid email address")
         .required("Client email is required"),
 
-    clientLocation: yup
-        .string()
-        .required("Client location is required"),
+    clientLocation: yup.string().required("Client location is required"),
 
     clientPhoneNumber: yup
         .string()
         .required("Client phone number is required")
-        .matches(
-            /^[\+]?[1-9][\d]{0,20}$/,
-            "Please enter a valid phone number"
-        ),
+        .matches(/^[1-9][\d]{0,20}$/, "Please enter a valid phone number"),
 
     // Event Details
-    eventType: yup
-        .string()
-        .optional(),
+    eventType: yup.string().optional(),
 
     eventDate: yup
         .date()
@@ -224,10 +225,8 @@ export const invoiceValidationSchema = yup.object().shape({
         .required("Fees are required")
         .positive("Fees must be a positive number")
         .min(0.01, "Fees must be greater than 0"),
-    
-    billOption: yup
-        .string()
-        .optional(),
+
+    billOption: yup.string().optional(),
 
     logisticsFee: yup
         .number()
@@ -235,7 +234,7 @@ export const invoiceValidationSchema = yup.object().shape({
         .nullable()
         .transform((value, originalValue) => {
             // Handle empty string or null values
-            return originalValue === '' ? null : value;
+            return originalValue === "" ? null : value
         }),
 
     totalFee: yup
@@ -259,38 +258,36 @@ export const invoiceValidationSchema = yup.object().shape({
         .string()
         .required("Account name is required")
         .min(2, "Account name must be at least 2 characters"),
-    
-    bankName: yup
-        .string()
-        .required("Bank name is required"),
-    
+
+    bankName: yup.string().required("Bank name is required"),
+
     // Additional Information
     additionalTC: yup
         .string()
         .nullable()
-        .max(1000, "Additional terms and conditions cannot exceed 1000 characters"),
-    
+        .max(
+            1000,
+            "Additional terms and conditions cannot exceed 1000 characters"
+        ),
+
     // Personal Information (seems to be talent/user info)
     fullName: yup
         .string()
         .required("Full name is required")
         .min(2, "Full name must be at least 2 characters"),
-    
+
     phoneNumber: yup
         .string()
         .required("Phone number is required")
-        .matches(
-            /^[\+]?[1-9][\d]{0,15}$/,
-            "Please enter a valid phone number"
-        ),
-    
+        .matches(/^[1-9][\d]{0,15}$/, "Please enter a valid phone number"),
+
     address: yup
         .string()
         .required("Address is required")
         .min(10, "Please provide a complete address"),
-    
+
     email: yup
         .string()
         .email("Please enter a valid email address")
         .required("Email is required"),
-});
+})

@@ -3,7 +3,7 @@ import { FormControls, Button, AccountCreatedModal } from "@components/index"
 import { Formik, Form } from "formik"
 import { useNavigate, useLocation } from "react-router-dom"
 import { MdArrowBack } from "react-icons/md"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { verifyOTP, resendOTP } from "@services/auth"
 import { useMutation } from "@tanstack/react-query"
 import { showNotification } from "@mantine/notifications"
@@ -13,7 +13,7 @@ import useAuth from "@hooks/auth/useAuth"
 import { setAccessToken } from "@services/api.services"
 import useTimer from "@hooks/auth/useTimer"
 import { useForgetPassword } from "@hooks/auth/useForgetPassword"
-import { initiatePayment, getPaymentStatus } from "@services/payment"
+import { useBilling } from "@contexts/payments/billing"
 
 const ConfirmEmailAddress = () => {
     const { handleTimerStart, time, minutes, seconds } = useTimer()
@@ -21,61 +21,106 @@ const ConfirmEmailAddress = () => {
     const [paymentStatus, setPaymentStatus] = useState<
         "idle" | "initiating" | "pending" | "success" | "failed"
     >("idle")
-    const [authorizationUrl, setAuthorizationUrl] = useState<string>("")
     const [userDataAfterVerification, setUserDataAfterVerification] =
         useState<any>(null)
     const navigate = useNavigate()
     const location = useLocation()
-    const pollIntervalRef = useRef<NodeJS.Timeout>()
 
     const { dispatch } = useAuth()
 
-    const saveUserDataAfterPayment = (userData: any) => {
-        setAccessToken(userData.accessToken || "")
+    // Use billing context
+    const {
+        initiatePayment,
+        checkPaymentStatus,
+        hasPaymentMethod,
+        isInitiatingPayment,
+        isPolling,
+        stopPolling,
+        onPaymentEvent,
+    } = useBilling()
 
-        localStorage.setItem(
-            "user",
-            JSON.stringify({
-                ...userData,
-                hasAgency: !!userData.agency,
+    const saveUserDataAfterPayment = useCallback(
+        (userData: any) => {
+            setAccessToken(userData.accessToken || "")
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify({
+                    ...userData,
+                    hasAgency: !!userData.agency,
+                })
+            )
+
+            dispatch({
+                type: "SET_USER_DATA",
+                payload: userData,
             })
-        )
+        },
+        [dispatch]
+    )
 
-        dispatch({
-            type: "SET_USER_DATA",
-            payload: userData,
-        })
-    }
+    // Watch for payment confirmation
+    useEffect(() => {
+        if (
+            hasPaymentMethod &&
+            paymentStatus === "pending" &&
+            userDataAfterVerification
+        ) {
+            setPaymentStatus("success")
+            stopPolling()
 
-    const { mutate: initiatePaymentMutation, isPending: isInitiatingPayment } =
-        useMutation({
-            mutationFn: initiatePayment,
-            onSuccess: (data) => {
-                const url = data?.data?.data?.authorization_url
+            saveUserDataAfterPayment(userDataAfterVerification)
 
-                if (url) {
-                    setAuthorizationUrl(url)
-                    setPaymentStatus("pending")
-                    window.open(url, "_blank", "noopener,noreferrer")
-                    startPaymentPolling()
-                } else {
+            showNotification({
+                title: "Payment Successful",
+                message: "Your payment has been processed successfully!",
+                color: "green",
+            })
+
+            setOpenModal(true)
+        }
+    }, [
+        hasPaymentMethod,
+        paymentStatus,
+        userDataAfterVerification,
+        stopPolling,
+        saveUserDataAfterPayment,
+    ])
+
+    // Listen to payment events from Paystack popup
+    useEffect(() => {
+        const unsubscribe = onPaymentEvent((type) => {
+            switch (type) {
+                case "success":
                     showNotification({
-                        title: "Error",
-                        message: "Failed to get payment authorization URL",
+                        title: "Payment Processing",
+                        message: "Verifying your payment...",
+                        color: "blue",
+                    })
+                    break
+                case "cancelled":
+                    setPaymentStatus("failed")
+                    showNotification({
+                        title: "Payment Cancelled",
+                        message:
+                            "You cancelled the payment. Please try again to continue registration.",
+                        color: "orange",
+                    })
+                    break
+                case "error":
+                    setPaymentStatus("failed")
+                    showNotification({
+                        title: "Payment Error",
+                        message:
+                            "An error occurred during payment. Please try again.",
                         color: "red",
                     })
-                    setPaymentStatus("failed")
-                }
-            },
-            onError: (err: Error) => {
-                showNotification({
-                    title: "Payment Error",
-                    message: err.response?.data?.message || err.message,
-                    color: "red",
-                })
-                setPaymentStatus("failed")
-            },
+                    break
+            }
         })
+
+        return unsubscribe
+    }, [onPaymentEvent])
 
     const { isPending, mutate } = useMutation({
         mutationFn: verifyOTP,
@@ -83,6 +128,7 @@ const ConfirmEmailAddress = () => {
             setUserDataAfterVerification(data.data.data)
             setAccessToken(data.data.data.accessToken || "")
 
+            // Non-talent users or completed registrations can proceed immediately
             if (
                 data.data.data.registrationStage === "completed" ||
                 data.data.data.userType !== "talent"
@@ -92,28 +138,23 @@ const ConfirmEmailAddress = () => {
                 return
             }
 
-            try {
-                const paymentResponse = await getPaymentStatus()
-                const hasPaymentMethod =
-                    paymentResponse?.data.data.hasPaymentMethod
+            // For talent users, check payment status
+            checkPaymentStatus()
 
+            // Wait for payment status to be retrieved
+            setTimeout(() => {
                 if (hasPaymentMethod) {
                     saveUserDataAfterPayment(data.data.data)
                     setPaymentStatus("success")
                     setOpenModal(true)
                 } else {
                     setPaymentStatus("initiating")
-                    initiatePaymentMutation({
-                        callbackUrl: `${window.location.origin}/payment-callback`,
+                    initiatePayment({
+                        callback_url: `${window.location.origin}/payment-callback`,
                     })
+                    setPaymentStatus("pending")
                 }
-            } catch (error) {
-                showNotification({
-                    title: "Error",
-                    message: "Failed to check payment status",
-                    color: "red",
-                })
-            }
+            }, 500)
         },
         onError: (err: Error) => {
             showNotification({
@@ -145,55 +186,16 @@ const ConfirmEmailAddress = () => {
     const { isPending: isLoadingForgetPassword, mutate: mutateForgetPassword } =
         useForgetPassword()
 
-    const startPaymentPolling = () => {
-        pollIntervalRef.current = setInterval(() => {
-            checkPaymentStatus()
-        }, 3000)
-    }
-
-    const stopPaymentPolling = () => {
-        if (pollIntervalRef.current) {
-            clearInterval(pollIntervalRef.current)
-            pollIntervalRef.current = undefined
-        }
-    }
-
-    const checkPaymentStatus = async () => {
-        try {
-            const response = await getPaymentStatus()
-            const hasPaymentMethod = response?.data.data.hasPaymentMethod
-
-            if (hasPaymentMethod && userDataAfterVerification) {
-                setPaymentStatus("success")
-                stopPaymentPolling()
-
-                // Payment successful - NOW save the user data
-                saveUserDataAfterPayment(userDataAfterVerification)
-
-                showNotification({
-                    title: "Payment Successful",
-                    message: "Your payment has been processed successfully!",
-                    color: "green",
-                })
-
-                // Show the modal to proceed
-                setOpenModal(true)
-            }
-        } catch (error) {
-            console.error("Error checking payment status:", error)
-        }
-    }
-
     const retryPayment = async () => {
-        try {
-            // Ensure we have access token for payment APIs
-            if (userDataAfterVerification?.accessToken) {
-                setAccessToken(userDataAfterVerification.accessToken)
-            }
+        // Ensure we have access token for payment APIs
+        if (userDataAfterVerification?.accessToken) {
+            setAccessToken(userDataAfterVerification.accessToken)
+        }
 
-            const response = await getPaymentStatus()
-            const hasPaymentMethod = response?.data.data.hasPaymentMethod
+        // Check payment status
+        checkPaymentStatus()
 
+        setTimeout(() => {
             if (hasPaymentMethod && userDataAfterVerification) {
                 // Payment exists, save user data and show modal
                 saveUserDataAfterPayment(userDataAfterVerification)
@@ -202,17 +204,12 @@ const ConfirmEmailAddress = () => {
             } else {
                 // Retry payment initiation
                 setPaymentStatus("initiating")
-                initiatePaymentMutation({
+                initiatePayment({
                     callback_url: `${window.location.origin}/payment-callback`,
                 })
+                setPaymentStatus("pending")
             }
-        } catch (error) {
-            showNotification({
-                title: "Error",
-                message: "Failed to check payment status",
-                color: "red",
-            })
-        }
+        }, 500)
     }
 
     const handleResend = () => {
@@ -255,23 +252,10 @@ const ConfirmEmailAddress = () => {
                             Payment Required
                         </p>
                         <p className="text-blue-600 text-sm mt-1">
-                            Please complete your payment in the opened window to
-                            proceed to the next step.
+                            {isPolling
+                                ? "Verifying your payment. Please wait..."
+                                : "Please complete your payment in the opened window to proceed."}
                         </p>
-                        {authorizationUrl && (
-                            <button
-                                onClick={() =>
-                                    window.open(
-                                        authorizationUrl,
-                                        "_blank",
-                                        "noopener,noreferrer"
-                                    )
-                                }
-                                className="text-blue-600 underline text-sm mt-2 hover:text-blue-800"
-                            >
-                                Reopen payment window
-                            </button>
-                        )}
                     </div>
                 )
             case "failed":
@@ -321,7 +305,9 @@ const ConfirmEmailAddress = () => {
             case "initiating":
                 return "Setting up payment..."
             case "pending":
-                return "Complete payment to continue"
+                return isPolling
+                    ? "Verifying payment..."
+                    : "Complete payment to continue"
             case "success":
                 return "Create Profile"
             case "failed":
@@ -345,13 +331,16 @@ const ConfirmEmailAddress = () => {
         )
     }
 
+    // Cleanup on unmount
     useEffect(() => {
         handleTimerStart()
 
         return () => {
-            stopPaymentPolling()
+            if (isPolling) {
+                stopPolling()
+            }
         }
-    }, [])
+    }, [isPolling, stopPolling, handleTimerStart])
 
     return (
         <div className="flex">

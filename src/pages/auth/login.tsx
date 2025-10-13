@@ -15,59 +15,74 @@ const Login: React.FC = () => {
         data,
         variables,
         paymentStatus,
-        authorizationUrl,
         isInitiatingPayment,
-        retryPayment
+        isCheckingStatus,
+        error,
+        retryPayment,
+        isPolling,
     } = useSignin()
     const { showPassword, displayPasswordIcon } = useShowPassword()
 
     useEffect(() => {
         if (data?.data.data === null) {
-            navigate("/confirm-email-address", { state: { email: variables?.username } })
+            navigate("/confirm-email-address", {
+                state: { email: variables?.username },
+            })
             return
         }
-    }, [data])
+    }, [data, variables?.username, navigate])
+
+    const searchParams = new URLSearchParams(location.search)
+    const redirectUrl = searchParams.get("redirect_url")
+
+    useEffect(() => {
+        if (redirectUrl) {
+            navigate(redirectUrl)
+        }
+    }, [redirectUrl, navigate])
 
     const getPaymentStatusMessage = () => {
         switch (paymentStatus) {
-            case 'pending':
+            case "pending":
                 return (
                     <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <p className="text-blue-700 text-sm font-medium">
                             Payment Method Required
                         </p>
                         <p className="text-blue-600 text-sm mt-1">
-                            Please add your payment method in the opened window to complete login.
+                            Please add your payment method in the opened window
+                            to complete login.
                         </p>
-                        {authorizationUrl && (
-                            <button
-                                onClick={() => window.open(authorizationUrl, '_blank', 'noopener,noreferrer')}
-                                className="text-blue-600 underline text-sm mt-2 hover:text-blue-800"
-                            >
-                                Reopen payment window
-                            </button>
-                        )}
+                        <button
+                            onClick={retryPayment}
+                            className="text-blue-600 underline text-sm mt-2 hover:text-blue-800"
+                        >
+                            Reopen payment window
+                        </button>
                     </div>
                 )
-            case 'failed':
+            case "failed":
                 return (
                     <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                         <p className="text-red-700 text-sm font-medium">
                             Payment Setup Failed
                         </p>
                         <p className="text-red-600 text-sm mt-1">
-                            Could not set up payment method. Please try again to complete login.
+                            Could not set up payment method. Please try again to
+                            complete login.
                         </p>
                         <button
                             onClick={retryPayment}
                             className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
                             disabled={isInitiatingPayment}
                         >
-                            {isInitiatingPayment ? 'Retrying...' : 'Retry Payment Setup'}
+                            {isInitiatingPayment
+                                ? "Retrying..."
+                                : "Retry Payment Setup"}
                         </button>
                     </div>
                 )
-            case 'success':
+            case "success":
                 return (
                     <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
                         <p className="text-green-700 text-sm font-medium">
@@ -85,21 +100,28 @@ const Login: React.FC = () => {
 
     const getSubmitButtonText = () => {
         switch (paymentStatus) {
-            case 'initiating':
-                return 'Setting up Payment...'
-            case 'pending':
-                return 'Waiting for Payment Setup...'
-            case 'success':
-                return 'Login Successful'
-            case 'failed':
-                return 'Payment Required'
+            case "initiating":
+                return "Setting up Payment..."
+            case "pending":
+                return "Waiting for Payment Setup..."
+            case "success":
+                return "Login Successful"
+            case "failed":
+                return "Payment Required"
             default:
                 return isPending ? "Loading" : "Proceed"
         }
     }
 
     const isSubmitDisabled = () => {
-        return isPending || isInitiatingPayment || paymentStatus === 'pending' || paymentStatus === 'success'
+        return (
+            isPending ||
+            isPolling ||
+            paymentStatus === "pending" ||
+            paymentStatus === "success" ||
+            isInitiatingPayment ||
+            isCheckingStatus
+        )
     }
 
     return (
@@ -118,7 +140,14 @@ const Login: React.FC = () => {
                     </p>
 
                     {/* Payment Status Message */}
-                    {paymentStatus !== 'idle' && getPaymentStatusMessage()}
+                    {paymentStatus !== "idle" && getPaymentStatusMessage()}
+                    {error && (
+                        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-red-700 text-sm font-medium">
+                                {error}
+                            </p>
+                        </div>
+                    )}
 
                     <Formik
                         initialValues={{
@@ -137,7 +166,10 @@ const Login: React.FC = () => {
                                         label="Email"
                                         control="input"
                                         name="username"
-                                        disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                        disabled={
+                                            paymentStatus === "pending" ||
+                                            paymentStatus === "success"
+                                        }
                                         classNames={{
                                             mainRoot:
                                                 " border  border-black-20 px-2 w-full",
@@ -152,9 +184,14 @@ const Login: React.FC = () => {
                                         label="Password"
                                         control="input"
                                         name="password"
-                                        type={showPassword ? "text" : "password"}
+                                        type={
+                                            showPassword ? "text" : "password"
+                                        }
                                         suffixIcon={displayPasswordIcon()}
-                                        disabled={paymentStatus === 'pending' || paymentStatus === 'success'}
+                                        disabled={
+                                            paymentStatus === "pending" ||
+                                            paymentStatus === "success"
+                                        }
                                         classNames={{
                                             mainRoot:
                                                 " border  border-black-20 px-2",
@@ -179,8 +216,10 @@ const Login: React.FC = () => {
                         <Link to="/client-login">Client login</Link>
                     </div>
                     <p className="text-center text-md mt-28 text-[#475569]">
-                        Don't have an account? {" "}
-                        <Link to="/welcome" className="underline font-semibold">Sign Up!</Link>
+                        Don't have an account?{" "}
+                        <Link to="/welcome" className="underline font-semibold">
+                            Sign Up!
+                        </Link>
                     </p>
                 </div>
             </div>
