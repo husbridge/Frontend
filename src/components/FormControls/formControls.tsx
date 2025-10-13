@@ -89,6 +89,7 @@ function InputProp(props: formInterface) {
         </Field>
     )
 }
+
 // function PhoneNumberInput(props: any) {
 //     const {
 //         suffixIcon,
@@ -151,15 +152,16 @@ function InputProp(props: formInterface) {
 //         </Field>
 //     )
 // }
+
 function DatePickerInput(props: any) {
     const {
-        suffixIcon,
-        prefixIcon,
+        // suffixIcon,
+        // prefixIcon,
         classNames,
         name,
-        type,
-        onClick,
-        disabled,
+        // type,
+        // onClick,
+        // disabled,
         className,
         label,
         labelClassName,
@@ -169,13 +171,13 @@ function DatePickerInput(props: any) {
 
         ...rest
     } = props
-    const [date, setDate] = useState<Date>(currentDate)
+    const [date, setDate] = useState<Date | null>(currentDate ?? null)
     return (
         <Field name={name}>
             {({
                 meta,
                 form: { setFieldValue, touched, errors },
-            }: FieldProps<string>) => (
+            }: FieldProps<Date | null>) => (
                 <div
                     className={`flex flex-col w-full ${classNames?.wrapper} ${
                         touched[name as string] && errors[name as string]
@@ -194,12 +196,12 @@ function DatePickerInput(props: any) {
                     <DatePicker
                         {...rest}
                         selected={date}
-                        onChange={(date: Date) => {
-                            setDate(date)
-                            setFieldValue(name, date)
-                            onChange && onChange(date)
+                        onChange={(newDate: Date | null) => {
+                            setDate(newDate)
+                            setFieldValue(name, newDate)
+                            onChange && onChange(newDate)
                         }}
-                        className={`w-full text-[14px] outline-none w-full mt-1 rounded-3xl h-12 ${
+                        className={`w-full text-[14px] outline-none mt-1 rounded-3xl h-12 ${
                             classNames?.mainRoot
                                 ? classNames?.mainRoot
                                 : "rounded-3xl"
@@ -217,18 +219,19 @@ function DatePickerInput(props: any) {
         </Field>
     )
 }
+
 function OTPInput(props: any) {
     const {
         classNames,
         name,
-        type,
+        // type,
         //enablereinitialize,
-        onClick,
-        disabled,
+        // onClick,
+        // disabled,
         className,
         label,
         labelClassName,
-        placeholder,
+        // placeholder,
         ...rest
     } = props
 
@@ -280,13 +283,13 @@ function OTPInput(props: any) {
 }
 function FileInputProp(props: formInterface) {
     const {
-        suffixIcon,
-        prefixIcon,
+        // suffixIcon,
+        // prefixIcon,
         classNames,
         name,
-        type,
+        // type,
         //enablereinitialize,
-        onClick,
+        // onClick,
         disabled,
         className,
         label,
@@ -540,17 +543,17 @@ function SelectInput(props: ISelectProps) {
 }
 function CustomSelect(props: formInterface) {
     const {
-        className,
+        // className,
         name,
-        children,
-        suffixIcon,
+        // children,
+        // suffixIcon,
         label,
-        defaultValue,
-        classNames,
+        // defaultValue,
+        // classNames,
         labelClassName,
         onChange,
         options,
-        isSearchable,
+        // isSearchable,
         isClearable,
         isLoading,
         placeholder,
@@ -604,12 +607,11 @@ function CustomSelect(props: formInterface) {
                         // isSearchable={isSearchable}
                         //value={field.value}
                         name={name}
-                        //@ts-expect-error
+                        //@ts-expect-error formInterface
                         options={options}
                         placeholder={placeholder}
-                      
                         onChange={(val) => {
-                            //@ts-expect-error
+                            //@ts-expect-error formInterface
                             onChange && onChange(val)
                             setFieldValue(name, val)
                         }}
@@ -682,10 +684,10 @@ export default function FormControls({ control, ...rest }: formInterface) {
         // case "phoneNumber":
         //     return <PhoneNumberInput {...rest} />
         case "select":
-            // @ts-expect-error
+            // @ts-expect-error ISelectProps
             return <SelectInput {...rest} />
         case "customselect":
-            //// @ts-expect-error
+            //// @ts-expect-error formInterface
             return <CustomSelect control="customselect" {...rest} />
         case "switch":
             return <SwitchInput {...rest} />

@@ -7,7 +7,10 @@ import { frontendUrl } from "@services/api.services"
 import { fetchTalents } from "@services/talents"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
-import { CopyToClipboard } from "react-copy-to-clipboard"
+import { CopyToClipboard as BaseCopyToClipboard } from "react-copy-to-clipboard"
+import React from "react"
+const CopyToClipboard: React.FC<any> = (props) =>
+    React.createElement(BaseCopyToClipboard as unknown as any, props)
 import { BiSearch } from "react-icons/bi"
 import { CgSpinner } from "react-icons/cg"
 import { IoCopyOutline } from "react-icons/io5"

@@ -29,7 +29,10 @@ import { useGetEvents } from "@hooks/useEvent"
 import { Alert } from "@mantine/core"
 import { frontendUrl } from "@services/api.services"
 import { fetchInquiries } from "@services/inquiry"
-import { CopyToClipboard } from "react-copy-to-clipboard"
+import { CopyToClipboard as BaseCopyToClipboard } from "react-copy-to-clipboard"
+import React from "react"
+const CopyToClipboard: React.FC<any> = (props) =>
+    React.createElement(BaseCopyToClipboard as unknown as any, props)
 import { BsFillInfoCircleFill } from "react-icons/bs"
 import { useNavigate } from "react-router-dom"
 import { Data as InquiryData } from "type/api/inquiry.types"
