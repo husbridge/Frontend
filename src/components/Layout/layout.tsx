@@ -8,6 +8,7 @@ import { AiOutlineClose } from "react-icons/ai"
 import { LayoutProps } from "../../type/Layout/layout-interface"
 import Navbar from "./navbar/navbar"
 import Sidebar from "./sidebar/sidebar"
+import SupportFab from "@components/Core/Fab/SupportFab"
 
 const Layout = ({ children, pageTitle, search }: LayoutProps) => {
     const { state } = useAuth()
@@ -94,6 +95,7 @@ const Layout = ({ children, pageTitle, search }: LayoutProps) => {
                     >
                         {children}
                     </main>
+                    <SupportFab />
                 </div>
             </div>
         </>
