@@ -1,17 +1,17 @@
 import { Layout } from "@components/index"
-import NotificationSettings from "./components/notificationSettings"
-import AccountPreferences from "./components/accountPreferences"
+// import NotificationSettings from "./components/notificationSettings"
+import AccountInformation from "./components/accountInformation"
 import { useState } from "react"
 import useAuth from "@hooks/auth/useAuth"
 import { useNavigate } from "react-router-dom"
-import { LuBell, LuLogOut, LuTrash2 } from "react-icons/lu"
+import { LuLogOut } from "react-icons/lu"
 import { BiUserCircle } from "react-icons/bi"
 
 const Settings = () => {
     const navigate = useNavigate()
-    const [settings, setSettings] = useState("accountPreference")
+    const [settings, setSettings] = useState("accountInformation")
 
-    const { dispatch, state } = useAuth()
+    const { dispatch } = useAuth()
 
     const handleLogout = () => {
         localStorage.removeItem("user")
@@ -30,22 +30,22 @@ const Settings = () => {
                         </p>
                         <div
                             className="flex cursor-pointer mb-10 items-center text-md sm:text-2md"
-                            onClick={() => setSettings("accountPreference")}
+                            onClick={() => setSettings("accountInformation")}
                         >
                             <div>
                                 <BiUserCircle
                                     size="24px"
-                                    color={`${settings === "accountPreference" ? "text-black-100" : "#00000099"}`}
+                                    color={`${settings === "accountInformation" ? "text-black-100" : "#00000099"}`}
                                 />
                             </div>
 
                             <p
-                                className={`${settings === "accountPreference" ? "text-black-100" : "text-[#00000099]"} ml-2`}
+                                className={`${settings === "accountInformation" ? "text-black-100" : "text-[#00000099]"} ml-2`}
                             >
-                                Account Preferences
+                                Account Information
                             </p>
                         </div>
-                        {state.user?.userType !== "client" && (
+                        {/* {state.user?.userType !== "client" && (
                             <div
                                 className="flex cursor-pointer mb-10 items-center sm:text-2md text-md"
                                 onClick={() =>
@@ -65,7 +65,7 @@ const Settings = () => {
                                     Notifications Settings
                                 </p>
                             </div>
-                        )}
+                        )} */}
                         <div
                             className="flex cursor-pointer mb-10 items-center sm:text-2md text-md pl-0.5"
                             onClick={() => handleLogout()}
@@ -76,24 +76,25 @@ const Settings = () => {
                             />
                             <p className=" ml-2 text-[#00000099]">Log Out</p>
                         </div>
-                        <div className="flex cursor-pointer mb-10 sm:text-2md text-md">
+                        {/* <div className="flex cursor-pointer mb-10 sm:text-2md text-md">
                             <LuTrash2 size="24px" color={`#00000099`} />
                             <p className=" ml-2 text-[#00000099]">
                                 Delete Account
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 }
                 <div
                     className={`w-[60%] bg-white-100 md:p-4 h-full ${"sm:w-[70%]"}`}
                 >
-                    {settings === "accountPreference" ? (
-                        <AccountPreferences />
+                    {settings === "accountInformation" ? (
+                        <AccountInformation />
                     ) : (
                         <>
-                            {state.user?.userType !== "client" && (
-                                <NotificationSettings />
-                            )}
+                            {/* {state.user?.userType !== "client" && (
+                                // <NotificationSettings />
+                                <></>
+                            )} */}
                         </>
                     )}
                 </div>
