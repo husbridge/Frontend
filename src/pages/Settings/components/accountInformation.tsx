@@ -13,7 +13,7 @@ import { FaPenSquare } from "react-icons/fa"
 
 const passwordRep = "•".repeat(10)
 
-const AccountPreferences = () => {
+const AccountInformation = () => {
     const [openChangeName, setOpenChangeName] = useState(false)
     const [defaultValue, setDefaultValue] = useState("")
     const [name, setName] = useState("")
@@ -53,12 +53,12 @@ const AccountPreferences = () => {
                     hasAgency: state.user.hasAgency,
                 }
 
-                localStorage.setItem("user", JSON.stringify(user)),
+                ;(localStorage.setItem("user", JSON.stringify(user)),
                     state.user &&
                         dispatch({
                             type: "UPDATE_USER_DATA",
                             payload: user,
-                        })
+                        }))
             }
             showNotification({
                 title: "Success",
@@ -335,4 +335,4 @@ const AccountPreferences = () => {
     )
 }
 
-export default AccountPreferences
+export default AccountInformation
