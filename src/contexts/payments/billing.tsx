@@ -14,6 +14,7 @@ import {
     initiatePayment as initiatePaystackPayment,
     getPaymentStatus,
 } from "@services/payment"
+import PaymentInformationModal from "@components/Modals/Payment/PaymentInformationModal"
 
 type PaymentEventType = "success" | "cancelled" | "error"
 type PaymentEventCallback = (type: PaymentEventType, data?: any) => void
@@ -24,6 +25,7 @@ interface BillingContextType {
     startPolling: () => void
     stopPolling: () => void
     onPaymentEvent: (callback: PaymentEventCallback) => () => void
+    proceedWithPayment: () => void
     isInitiatingPayment: boolean
     isCheckingStatus: boolean
     hasPaymentMethod: boolean
@@ -41,6 +43,11 @@ function BillingProvider({ children }: BillingProviderProps) {
     const pollingInterval = useRef<NodeJS.Timeout>()
     const [isPolling, setIsPolling] = useState(false)
     const [hasPaymentMethod, setHasPaymentMethod] = useState(false)
+    const [showPaymentInfoModal, setShowPaymentInfoModal] = useState(false)
+    const [pendingPaymentDetails, setPendingPaymentDetails] = useState<Record<
+        string,
+        any
+    > | null>(null)
 
     // Mutation for checking payment status
     const {
@@ -49,7 +56,7 @@ function BillingProvider({ children }: BillingProviderProps) {
         error: statusError,
     } = useMutation({
         mutationFn: getPaymentStatus,
-        onSuccess: (response) => {
+        onSuccess: (response: any) => {
             const paymentMethodExists =
                 response?.data?.data?.hasPaymentMethod ||
                 response?.data?.hasPaymentMethod
@@ -65,11 +72,28 @@ function BillingProvider({ children }: BillingProviderProps) {
         },
     })
 
-    // Mutation for initiating payment
+    // Mutation for initiating payment (shows info modal first)
     const {
         mutate: initiatePaymentMutate,
         isPending: isInitiatingPayment,
         error: initiationError,
+    } = useMutation({
+        mutationFn: async (paymentDetails?: Record<string, any>) => {
+            // Store payment details and show info modal
+            setPendingPaymentDetails(paymentDetails || {})
+            setShowPaymentInfoModal(true)
+            return { showModal: true }
+        },
+        onError: (err: any) => {
+            console.error("Payment initiation failed:", err.message)
+        },
+    })
+
+    // Mutation for actual Paystack payment
+    const {
+        mutate: proceedWithPaymentMutate,
+        isPending: isProceedingWithPayment,
+        error: paymentError,
     } = useMutation({
         mutationFn: async (paymentDetails?: Record<string, any>) => {
             const response = await initiatePaystackPayment(paymentDetails)
@@ -80,7 +104,7 @@ function BillingProvider({ children }: BillingProviderProps) {
             }
             return response.data
         },
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             const { access_code } = data
             const popup = new PaystackPop()
 
@@ -135,6 +159,15 @@ function BillingProvider({ children }: BillingProviderProps) {
         setIsPolling(false)
     }, [])
 
+    // Function to proceed with actual payment after user confirms
+    const proceedWithPayment = useCallback(() => {
+        setShowPaymentInfoModal(false)
+        if (pendingPaymentDetails) {
+            proceedWithPaymentMutate(pendingPaymentDetails)
+            setPendingPaymentDetails(null)
+        }
+    }, [pendingPaymentDetails, proceedWithPaymentMutate])
+
     // Cleanup on unmount
     useEffect(() => {
         return () => {
@@ -158,11 +191,15 @@ function BillingProvider({ children }: BillingProviderProps) {
         checkPaymentStatus: checkPaymentStatusMutate,
         startPolling,
         stopPolling,
-        isInitiatingPayment,
+        proceedWithPayment,
+        isInitiatingPayment: isInitiatingPayment || isProceedingWithPayment,
         isCheckingStatus,
         hasPaymentMethod,
         isPolling,
-        error: getErrorMessage(initiationError) || getErrorMessage(statusError),
+        error:
+            getErrorMessage(initiationError) ||
+            getErrorMessage(statusError) ||
+            getErrorMessage(paymentError),
         onPaymentEvent: () => {
             return () => {}
         },
@@ -171,6 +208,10 @@ function BillingProvider({ children }: BillingProviderProps) {
     return (
         <BillingContext.Provider value={value}>
             {children}
+            <PaymentInformationModal
+                opened={showPaymentInfoModal}
+                setOpened={setShowPaymentInfoModal}
+            />
         </BillingContext.Provider>
     )
 }
