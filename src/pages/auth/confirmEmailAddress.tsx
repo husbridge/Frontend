@@ -416,7 +416,7 @@ const ConfirmEmailAddress = () => {
                 </Formik>
 
                 <p className="mt-6 text-[16px] text-[#475569]">
-                    Didn&apos;t receive any code?{" "}
+                    Didn&apos;t receive code?{" "}
                     <span
                         className="text-[#47556978] cursor-pointer pr-2"
                         onClick={() => time === 0 && handleResend()}

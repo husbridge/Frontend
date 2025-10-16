@@ -80,12 +80,12 @@ function BillingProvider({ children }: BillingProviderProps) {
     } = useMutation({
         mutationFn: async (paymentDetails?: Record<string, any>) => {
             // Store payment details and show info modal
+            if (hasPaymentMethod) {
+                return { showModal: false }
+            }
             setPendingPaymentDetails(paymentDetails || {})
             setShowPaymentInfoModal(true)
             return { showModal: true }
-        },
-        onError: (err: any) => {
-            console.error("Payment initiation failed:", err.message)
         },
     })
 

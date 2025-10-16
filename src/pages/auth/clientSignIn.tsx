@@ -1,7 +1,7 @@
 import LeftBackground from "./components/leftBackground"
 import { FormControls, Button } from "@components/index"
 import { Formik, Form } from "formik"
-import { Link, useLocation,  } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useClientSignin } from "@hooks/auth/useSignIn"
 import { useEffect } from "react"
 import { clientLoginValidationSchema } from "@utils/validationSchema"
@@ -10,12 +10,12 @@ import { setAccessToken } from "@services/api.services"
 import useAuth from "@hooks/auth/useAuth"
 
 const ClientLogin: React.FC = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
     const { dispatch } = useAuth()
-    const location = useLocation();
-    const { mutate, isPending, data} = useClientSignin();
-    const searchParams = new URLSearchParams(location.search);
-    const redirectUrl = searchParams.get("redirect_url");
+    const location = useLocation()
+    const { mutate, isPending, data } = useClientSignin()
+    const searchParams = new URLSearchParams(location.search)
+    const redirectUrl = searchParams.get("redirect_url")
 
     useEffect(() => {
         if (data) {
@@ -46,10 +46,10 @@ const ClientLogin: React.FC = () => {
                     userType: "client",
                 })
             )
-            navigate(redirectUrl || "/inquiry-management");
-         }
+            navigate(redirectUrl || "/inquiry-management")
+        }
     }, [data])
-    
+
     return (
         <div className="flex ">
             <div className="md:block hidden w-[30%]">
@@ -105,10 +105,9 @@ const ClientLogin: React.FC = () => {
                                 variant="primary"
                                 className="px-6 text-white-100  w-full rounded-[40px] mt-10"
                                 type="submit"
-                               disabled={isPending}
+                                disabled={isPending}
                             >
-                                {isPending ?"Loading":"Proceed"}
-                                
+                                {isPending ? "Loading" : "Proceed"}
                             </Button>
                         </Form>
                     )}

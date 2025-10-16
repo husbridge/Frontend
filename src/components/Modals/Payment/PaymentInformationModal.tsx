@@ -68,7 +68,7 @@ const PaymentInformationModal = ({
                     </Button>
                     <Button
                         onClick={handleContinue}
-                        className="px-6 text-white-100 bg-black-100 rounded-[40px] mt-10 hover:bg-black-50 transition-colors duration-300"
+                        className="px-6 text-white-100 bg-yellow-500 rounded-[40px] mt-10 hover:bg-yellow-600 transition-colors duration-300"
                     >
                         Continue
                     </Button>
