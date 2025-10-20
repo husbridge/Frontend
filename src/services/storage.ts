@@ -36,25 +36,39 @@ export const uploadFile = async (
 
 export const uploadChatFile = async (
     file: FormData,
-    key: string
+    key: string,
+    onProgress?: (percent: number) => void
 ) => {
     const token = JSON.parse(localStorage.getItem("user") || "{}").accessToken
-    const response = await axiosMessagingInstance.post(`/files/file-upload/${key}`, file, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            contentType: "multipart/form-data",
+
+    const response = await axiosMessagingInstance.post(
+        `/files/file-upload/${key}`,
+        file,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                contentType: "multipart/form-data",
+            },
+            onUploadProgress: (progressEvent) => {
+                if (onProgress) {
+                    const percent = Math.round(
+                        (progressEvent.loaded * 100) /
+                            (progressEvent.total ?? 1)
+                    )
+                    onProgress(percent)
+                }
+            },
         }
-    });
+    )
 
     if (response.status >= 300) {
         showNotification({
             title: "Error",
             message: response.data.message || "Failed to upload file",
             color: "red",
-        });
-        return null;
+        })
+        return null
     }
 
-    return response.data.data;
-    
+    return response.data.data
 }

@@ -13,7 +13,7 @@ const BASE_URL = //"https://husridge-server.onrender.com/api/"
 export const MESSAGING_BASE_URL = //"https://messaging-chat-new.onrender.com"
     isProduction
         ? "https://messaging-chat-new.onrender.com"
-        : "http://localhost:3000"
+        : "http://localhost:4040"
 
 let EXPIRYINTERCEPTOR: number
 

@@ -29,6 +29,8 @@ import { Data as ChatData } from "type/api/messaging.types"
 import Dialog from "./components/dialog"
 import DownloadFileButton from "./components/downloadButton"
 import ImageWithAwsHook from "./components/imageWithAwsHook"
+import ImagePreviewModal from "./components/ImagePreviewModal"
+import ImageMessageSkeleton from "./components/ImageMessageSkeleton"
 import { useSocket } from "./hooks/useSocket"
 
 import Avatar from "@components/Layout/avatar"
@@ -38,6 +40,7 @@ import { jwtDecode } from "jwt-decode"
 import { MdAttachFile } from "react-icons/md"
 import { useMutation } from "@tanstack/react-query"
 import { uploadChatFile } from "@services/storage"
+import { showNotification } from "@mantine/notifications"
 dayjs.extend(calendar)
 
 export type DecodedUser = {
@@ -84,6 +87,19 @@ const Messaging = () => {
     const [showMobileChat, setShowMobileChat] = useState(false)
     const { sendMessage, joinGroup } = useSocket({ setMessages })
 
+    // Image preview states
+    const [previewImage, setPreviewImage] = useState<string | null>(null)
+    const [showImagePreview, setShowImagePreview] = useState(false)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+    const [showPreSendPreview, setShowPreSendPreview] = useState(false)
+
+    // Upload progress states
+    const [isUploading, setIsUploading] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(0)
+    const [uploadingFileName, setUploadingFileName] = useState<string | null>(
+        null
+    )
+
     const [showInquiry, setShowInquiry] = useState(false)
     const {
         isLoading,
@@ -115,18 +131,62 @@ const Messaging = () => {
     }
 
     const { mutate: fileMutate } = useMutation({
-        mutationFn: (data: FormData) =>
-            uploadChatFile(data, activeGroup?.chatGroupId || ""),
-        onSuccess: (data) => console.log(`==Upload result ${data.data}`),
+        mutationFn: ({ formData }: { formData: FormData }) =>
+            uploadChatFile(
+                formData,
+                activeGroup?.chatGroupId || "",
+                (percent) => {
+                    setUploadProgress(percent)
+                }
+            ),
+        onSuccess: (data) => {
+            console.log(`==Upload result ${data.data}`)
+            setIsUploading(false)
+            setUploadProgress(0)
+            setUploadingFileName(null)
+        },
+        onError: (error) => {
+            console.error("Upload failed:", error)
+            setIsUploading(false)
+            setUploadProgress(0)
+            setUploadingFileName(null)
+            showNotification({
+                title: "Upload failed",
+                message: "Failed to upload file. Please try again.",
+                color: "red",
+            })
+        },
     })
 
     const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
+        if (!file) return
 
-        const formData = new FormData()
-        formData.append("file", file as any)
+        // Prevent multiple uploads
+        if (isUploading) {
+            showNotification({
+                title: "Upload in progress",
+                message: "Please wait for the current upload to complete",
+                color: "yellow",
+            })
+            return
+        }
 
-        fileMutate(formData)
+        // Check if it's an image
+        if (file.type.startsWith("image/")) {
+            setSelectedFile(file)
+            setShowPreSendPreview(true)
+        } else {
+            // Handle non-image files with progress
+            setIsUploading(true)
+            setUploadingFileName(file.name)
+            setUploadProgress(0)
+
+            const formData = new FormData()
+            formData.append("file", file)
+
+            fileMutate({ formData })
+        }
 
         e.target.value = ""
     }
@@ -155,13 +215,20 @@ const Messaging = () => {
     }, [containerRef, messages, showMessage, newMessages])
 
     const handleSendMessage = () => {
+        const roomId = activeGroup?.chatGroupId || ""
+        if (!message?.trim()) return
+        if (!roomId) {
+            console.error("No active roomId; select a chat first.")
+            return
+        }
+
         console.log(`=== userId - ${userId}`)
-        sendMessage(
+        sendMessage({
             message,
             userId,
-            activeGroup?.chatGroupId || "",
-            decoded.email
-        )
+            roomId,
+            senderEmail: decoded.email,
+        })
         setMessage("")
     }
 
@@ -171,6 +238,26 @@ const Messaging = () => {
         setActiveGroup(item)
         removeChatGroupId(item.chatGroupId)
         joinGroup(item.chatGroupId)
+    }
+
+    const handleSendImage = () => {
+        if (!selectedFile || !activeGroup?.chatGroupId) return
+
+        setIsUploading(true)
+        setUploadingFileName(selectedFile.name)
+        setUploadProgress(0)
+
+        const formData = new FormData()
+        formData.append("file", selectedFile)
+
+        fileMutate({ formData })
+        setSelectedFile(null)
+        setShowPreSendPreview(false)
+    }
+
+    const handleImageClick = (imageUrl: string) => {
+        setPreviewImage(imageUrl)
+        setShowImagePreview(true)
     }
 
     useEffect(() => {
@@ -364,6 +451,9 @@ const Messaging = () => {
                                                                                                 newItem={
                                                                                                     newItem
                                                                                                 }
+                                                                                                onImageClick={
+                                                                                                    handleImageClick
+                                                                                                }
                                                                                             />
                                                                                         ) : (
                                                                                             <>
@@ -420,6 +510,24 @@ const Messaging = () => {
                                                         </div>
                                                     )
                                                 )}
+
+                                                {/* Uploading skeleton message */}
+                                                {isUploading &&
+                                                    uploadingFileName && (
+                                                        <div className="mt-4">
+                                                            <ImageMessageSkeleton
+                                                                fileName={
+                                                                    uploadingFileName
+                                                                }
+                                                                progress={
+                                                                    uploadProgress
+                                                                }
+                                                                isUserMessage={
+                                                                    true
+                                                                }
+                                                            />
+                                                        </div>
+                                                    )}
                                             </div>
                                         </div>
 
@@ -427,12 +535,20 @@ const Messaging = () => {
                                             {/* //w-[90%] md:w-[calc(70%-150px)] lg:w-[calc(60%-200px)] xl:w-[calc(70%-250px)] */}
                                             <div className="mx-4 overflow-x-hidden  w-full bg-[#F2F2F2]  rounded-[15px]  relative  pl-4 h-14 items-center flex">
                                                 <div
-                                                    className="pr-2"
+                                                    className={`pr-2 ${isUploading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                                                     onClick={() => {
-                                                        ref.current?.click()
+                                                        if (!isUploading) {
+                                                            ref.current?.click()
+                                                        }
                                                     }}
                                                 >
-                                                    <MdAttachFile color="#292D32" />
+                                                    <MdAttachFile
+                                                        color={
+                                                            isUploading
+                                                                ? "#ccc"
+                                                                : "#292D32"
+                                                        }
+                                                    />
                                                     <input
                                                         data-testid="file-upload"
                                                         // ref={fileInputRef}
@@ -440,6 +556,7 @@ const Messaging = () => {
                                                         hidden
                                                         onChange={handleUpload}
                                                         ref={ref}
+                                                        disabled={isUploading}
                                                     />
                                                 </div>
                                                 <div className="flex flex-1 justify-between w-full">
@@ -489,6 +606,31 @@ const Messaging = () => {
                     </div>
                 </>
             )}
+
+            {/* Image Preview Modals */}
+            <ImagePreviewModal
+                opened={showPreSendPreview}
+                onClose={() => {
+                    setShowPreSendPreview(false)
+                    setSelectedFile(null)
+                }}
+                imageUrl={selectedFile ? URL.createObjectURL(selectedFile) : ""}
+                onSend={handleSendImage}
+                isPreview={true}
+                isUploading={isUploading}
+            />
+
+            <ImagePreviewModal
+                opened={showImagePreview}
+                onClose={() => {
+                    setShowImagePreview(false)
+                    setPreviewImage(null)
+                }}
+                imageUrl={previewImage || ""}
+                onSend={() => {}} // No send action for post-send viewing
+                isPreview={false}
+                isUploading={false}
+            />
         </Layout>
     )
 }

@@ -123,8 +123,6 @@ const NewMessageModal = ({ opened, setOpened }: NewMessageModalProps) => {
                                 </Button>
                             </div>
                         </div>
-
-                        
                     </Form>
                 )}
             </Formik>

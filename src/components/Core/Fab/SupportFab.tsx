@@ -1,10 +1,13 @@
 import { useState } from "react"
+import { useLocation } from "react-router-dom"
 import { Tooltip } from "@mantine/core"
 import SupportModal from "@components/Modals/Support"
 import { createSupportTicket } from "@services/support"
 import { notifications } from "@mantine/notifications"
 
 const SupportFab = () => {
+    const location = useLocation()
+    const isMessagingRoute = location.pathname.startsWith("/messaging")
     const [opened, setOpened] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -38,6 +41,8 @@ const SupportFab = () => {
             setIsSubmitting(false)
         }
     }
+
+    if (isMessagingRoute) return null
 
     return (
         <>

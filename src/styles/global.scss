@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,500;0,600;0,700;0,800;0,900;1,500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,500;0,600;0,700;0,800;0,900;1,500&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,14 +35,14 @@
 }
 
 .btn--primary {
-    @apply bg-black-100 text-yellow-100 text-sm sm:text-md  ;
+    @apply bg-black-100 text-yellow-100 text-sm sm:text-md;
 }
-.btn--primary{
+.btn--primary {
     @apply disabled:bg-neutral-10 disabled:text-neutral-40 disabled:cursor-not-allowed;
 }
 
 .btn--black {
-    @apply bg-black-100 text-white-100 text-md sm:text-2md ;
+    @apply bg-black-100 text-white-100 text-md sm:text-2md;
 }
 
 .btn--transparent {
@@ -57,8 +57,8 @@
 .btn--gray {
     @apply bg-[#FAFAFA] py-2 border border-black-30 text-black-100 text-md sm:text-2md;
 }
-.btn--white{
-    @apply bg-[#E5E5E5] text-md sm:text-2md py-2 text-black-100
+.btn--white {
+    @apply bg-[#E5E5E5] text-md sm:text-2md py-2 text-black-100;
 }
 
 .btn--clear {
@@ -70,9 +70,8 @@
 }
 
 .btn--red {
-    @apply  text-[#707070] border border-[#FF5C5C] text-sm md:text-2md lg:text-md ;
+    @apply text-[#707070] border border-[#FF5C5C] text-sm md:text-2md lg:text-md;
 }
-
 
 body {
     margin: 0;
@@ -91,19 +90,17 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
 }
 
-.no-scrollbar::-webkit-scrollbar { 
-    display: none; 
-} 
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
 // .btn {
 //     @apply tex min-w-[140px];
 // }
-.mantine-Pagination-control{
-    color: #40D57B;
+.mantine-Pagination-control {
+    color: #40d57b;
     //background-color: yellow;
-    
 }
 @media only screen and (max-width: 768px) {
     // .fc-list-event {
@@ -150,69 +147,69 @@ body {
 
 @media screen and (max-width: 768px) {
     .fc-toolbar.fc-header-toolbar {
-      //flex-direction: column;
-      //order: 2;
-      font-size: 10px;
+        //flex-direction: column;
+        //order: 2;
+        font-size: 10px;
     }
     .fc-toolbar-chunk {
-      display: table-row;
-      text-align: center;
-      padding: 5px 0;
+        display: table-row;
+        text-align: center;
+        padding: 5px 0;
     }
-  }
-  @media screen and (max-width: 450px) {
-  .fc-toolbar-title{
-    //padding-top: 100px;
-    text-align: center !important;
-  }
-  .fc-toolbar.fc-header-toolbar {
-    display: block !important;
-  }
-
-.fc-button-group{
-    display: flex;
-    justify-content: flex-end !important;
-    position: absolute !important;
-    right: 20px;
-    top:8px
-    //margin-top: -10px;
 }
-   }
+@media screen and (max-width: 450px) {
+    .fc-toolbar-title {
+        //padding-top: 100px;
+        text-align: center !important;
+    }
+    .fc-toolbar.fc-header-toolbar {
+        display: block !important;
+    }
 
-  .fc .fc-timegrid-slot {
+    .fc-button-group {
+        display: flex;
+        justify-content: flex-end !important;
+        position: absolute !important;
+        right: 20px;
+        top: 8px;
+        //margin-top: -10px;
+    }
+}
+
+.fc .fc-timegrid-slot {
     height: 50px !important;
-  }
+}
 
-  th.fc-col-header-cell {
+th.fc-col-header-cell {
     padding: 16px;
     font-size: 16px;
-  }
+}
 
-  .fc-timegrid-event {
+.fc-timegrid-event {
     border: none;
     border-radius: 4px;
-  }
+}
 
-  .fc-event-main {
+.fc-event-main {
     border-top: 4px solid #00c34f;
     border-radius: 4px 4px 0px 0px;
-  }
+}
 
-  .appointment-event {
+.appointment-event {
     padding: 5px;
     height: 100%;
-  }
-  .code {
-    @apply h-[35px] sm:h-[70px] lg:w-[80px] md:w-[70px] w-[40px] #{!important} ;
 }
-  
+.code {
+    @apply h-[35px] sm:h-[70px] lg:w-[80px] md:w-[70px] w-[40px] !important;
+}
+
 /* Calendar Header for Month and Year */
 .calendar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 15px;
-    background-color: #F3F3F3;
+    background-color: #f3f3f3;
     color: black;
     font-weight: bold;
 }
@@ -220,8 +217,6 @@ body {
 .calendar-header-title {
     font-size: 1.2rem;
 }
-
-
 
 /* Days Header */
 .days-header {
@@ -231,25 +226,25 @@ body {
     background-color: #f0f0f0;
     padding: 10px 15px;
     border-radius: 8px;
-  }
-  
-  .arrow-button {
+}
+
+.arrow-button {
     background-color: transparent;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
     color: #333;
-  }
-  
-  /* Days container */
-  .days-container {
+}
+
+/* Days container */
+.days-container {
     display: flex;
     justify-content: space-between;
     flex-grow: 1;
     margin: 0 10px;
-  }
-  
-  .day-box {
+}
+
+.day-box {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -258,34 +253,36 @@ body {
     padding: 10px 5px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  .day-box:hover {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+.day-box:hover {
     background-color: #ddd;
-  }
-  
-  .day-name {
+}
+
+.day-name {
     font-size: 0.8rem;
     color: #555;
     margin-bottom: 5px;
-  }
-  
-  .day-number {
+}
+
+.day-number {
     font-size: 1.2rem;
     color: #000;
-  }
-  
-  /* Selected date styling */
-  .selected {
+}
+
+/* Selected date styling */
+.selected {
     background-color: #000;
     color: #fff;
-  }
-  
-  .selected .day-name,
-  .selected .day-number {
+}
+
+.selected .day-name,
+.selected .day-number {
     color: #fff;
-  }
+}
 /* Calendar body */
 .calendar-body {
     padding: 15px;
@@ -295,27 +292,40 @@ body {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-  }
-  
-  .weekday-item {
+}
+
+.weekday-item {
     text-align: center;
     padding: 10px;
     cursor: pointer;
-  }
-  
-  .weekday-item.selected {
+}
+
+.weekday-item.selected {
     background-color: black;
     color: white;
     border-radius: 50%;
-  }
-  
-  .weekday-name {
+}
+
+.weekday-name {
     font-size: 14px;
     color: gray;
-  }
-  
-  .date-digit {
+}
+
+.date-digit {
     font-size: 18px;
     font-weight: bold;
-  }
-  
+}
+
+/* Shimmer animation for skeleton loading */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 2s infinite;
+}

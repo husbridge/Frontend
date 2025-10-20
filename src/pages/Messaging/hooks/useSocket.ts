@@ -82,37 +82,44 @@ export const useSocket = ({
         initializeSocket()
     }, [initializeSocket])
 
+    type SendMessageArgs = {
+        message: string
+        userId: string
+        roomId: string
+        senderEmail: string
+    }
+
     const sendMessage = useCallback(
-        (
-            message: string,
-            user: string,
-            roomId: string,
-            senderEmail: string
-        ) => {
-            if (socket) {
-                console.log(user, senderEmail, roomId)
-                socket.emit(
-                    "message",
-                    { message, user, roomId, senderEmail },
-                    (response: any) => {
-                        console.log("sending ", message)
-                        console.log("resp", response)
-                        if (response.status === "ok") {
-                            console.log("Message sent successfully!")
-                        } else {
-                            console.error(
-                                "Message failed to send:",
-                                response.error
-                            )
-                            showNotification({
-                                title: "Error",
-                                message: "Message failed to send.",
-                                color: "red",
-                            })
-                        }
-                    }
-                )
+        ({ message, userId, roomId, senderEmail }: SendMessageArgs) => {
+            if (!socket) {
+                console.error("Socket is not initialized.")
+                return
             }
+
+            // Log in a clear order to avoid confusion
+            console.log("sendMessage:", { userId, senderEmail, roomId })
+
+            socket.emit(
+                "message",
+                { message, user: userId, roomId, senderEmail },
+                (response: any) => {
+                    console.log("sending ", message)
+                    console.log("resp", response)
+                    if (response?.status === "ok") {
+                        console.log("Message sent successfully!")
+                    } else {
+                        console.error(
+                            "Message failed to send:",
+                            response?.error
+                        )
+                        showNotification({
+                            title: "Error",
+                            message: "Message failed to send.",
+                            color: "red",
+                        })
+                    }
+                }
+            )
         },
         [socket]
     )
