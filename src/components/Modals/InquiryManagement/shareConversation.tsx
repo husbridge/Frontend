@@ -76,7 +76,12 @@ const ShareConversationModal = ({
         setOpened(false)
         const user = state.user?.id || ""
 
-        sendMessage(link, user || "", val.chatGroupId || "", decoded.email)
+        sendMessage({
+            message: link,
+            userId: user || "",
+            roomId: val.chatGroupId || "",
+            senderEmail: decoded.email,
+        })
     }
 
     return (

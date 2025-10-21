@@ -133,12 +133,12 @@ const InquiryDetails = ({
             }
         },
         onSettled: () =>
-            sendMessage(
-                messageBody,
-                user || "",
-                data?.chatGroupId || "",
-                data?.emailAddress || ""
-            ),
+            sendMessage({
+                message: messageBody,
+                userId: user || "",
+                roomId: data?.chatGroupId || "",
+                senderEmail: data?.emailAddress || "",
+            }),
     })
 
     const isClient = state.user?.userType === "client"
