@@ -79,10 +79,17 @@ function BillingProvider({ children }: BillingProviderProps) {
         error: initiationError,
     } = useMutation({
         mutationFn: async (paymentDetails?: Record<string, any>) => {
-            // Store payment details and show info modal
-            if (hasPaymentMethod) {
+            const statusResponse = await getPaymentStatus()
+            const paymentMethodExists =
+                statusResponse?.data?.data?.hasPaymentMethod ||
+                statusResponse?.data?.hasPaymentMethod
+            setHasPaymentMethod(paymentMethodExists)
+
+            if (paymentMethodExists) {
                 return { showModal: false }
             }
+
+            // Store payment details and show info modal
             setPendingPaymentDetails(paymentDetails || {})
             setShowPaymentInfoModal(true)
             return { showModal: true }
