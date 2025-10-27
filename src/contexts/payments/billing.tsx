@@ -15,6 +15,7 @@ import {
     getPaymentStatus,
 } from "@services/payment"
 import PaymentInformationModal from "@components/Modals/Payment/PaymentInformationModal"
+import { showNotification } from "@mantine/notifications"
 
 type PaymentEventType = "success" | "cancelled" | "error"
 type PaymentEventCallback = (type: PaymentEventType, data?: any) => void
@@ -117,6 +118,11 @@ function BillingProvider({ children }: BillingProviderProps) {
 
             popup.resumeTransaction(access_code, {
                 onSuccess: (transaction: any) => {
+                    showNotification({
+                        title: "Payment Successful",
+                        message: "Your payment has been confirmed!",
+                        color: "green",
+                    })
                     console.log("Payment successful:", transaction)
                     // Start polling to verify on backend
                     startPolling()

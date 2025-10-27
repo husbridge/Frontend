@@ -14,13 +14,14 @@ export const fetchChats = async (roomId: string, access: string) => {
 }
 
 export const getChatDownloadUrl = async (path: string, access: string) => {
+    // console.log(path, access, "nothing")
     const response = await axiosMessagingInstance.get(
         `/files/download/${path}`,
         {
             headers: {
                 Authorization: `Bearer ${access}`,
-            }
+            },
         }
-    );
+    )
     return response.data
 }

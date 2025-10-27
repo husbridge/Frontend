@@ -1,5 +1,5 @@
 import { Modal, Button, Group } from "@mantine/core"
-import { IconX } from "@tabler/icons-react"
+import { IconX, IconDownload } from "@tabler/icons-react"
 
 interface ImagePreviewModalProps {
     opened: boolean
@@ -23,6 +23,23 @@ const ImagePreviewModal = ({
         onClose()
     }
 
+    const handleDownload = async () => {
+        try {
+            const response = await fetch(imageUrl)
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = `image-${Date.now()}.jpg` // Default filename with timestamp
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error("Failed to download image:", error)
+        }
+    }
+
     return (
         <Modal
             opened={opened}
@@ -32,12 +49,25 @@ const ImagePreviewModal = ({
             withCloseButton={false}
         >
             <div className="relative">
-                <button
-                    onClick={onClose}
-                    className="absolute top-2 right-2 z-10 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70"
-                >
-                    <IconX size={20} />
-                </button>
+                <div className="absolute top-2 right-2 z-10 flex gap-2">
+                    {/* Download button - only show for post-send viewing */}
+                    {!isPreview && (
+                        <button
+                            onClick={handleDownload}
+                            className="bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70"
+                            title="Download image"
+                        >
+                            <IconDownload size={20} />
+                        </button>
+                    )}
+                    <button
+                        onClick={onClose}
+                        className="bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70"
+                        title="Close"
+                    >
+                        <IconX size={20} />
+                    </button>
+                </div>
 
                 <div className="space-y-4">
                     <img

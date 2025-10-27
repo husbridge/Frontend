@@ -531,52 +531,58 @@ const InquiryDetails = ({
                 Budget Proposal
             </p> */}
             {/* <p className="">$200,000</p> */}
-            <p className="bg-[#F7F7F7] my-4 p-2 w-full text-[14px] font-semibold">
-                Attachments
-            </p>
 
-            {!fileInfoIsLoading && (
-                <div className="flex border border-[#0000001A] rounded-[8px] p-2 justify-between flex-wrap">
-                    <div className="flex flex-1">
-                        <img src={PdfIcon} alt="" />
-                        <div className="mx-2">
-                            <p className="sm:text-md text-sm">
-                                {fileInfo?.fileName}
-                            </p>
-                            <p className="text-[#05050599] text-sm">
-                                {formatFileSize(fileInfo?.fileSize || 0)}
-                            </p>
+            {!fileInfoIsLoading && fileInfo && (
+                <>
+                    <p className="bg-[#F7F7F7] my-4 p-2 w-full text-[14px] font-semibold">
+                        Attachments
+                    </p>
+                    <div className="flex border border-[#0000001A] rounded-[8px] p-2 justify-between flex-wrap">
+                        <div className="flex flex-1">
+                            <img src={PdfIcon} alt="" />
+                            <div className="mx-2">
+                                <p className="sm:text-md text-sm debug">
+                                    {fileInfo?.fileName}
+                                </p>
+                                <p className="text-[#05050599] text-sm">
+                                    {formatFileSize(fileInfo?.fileSize || 0)}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex items-center flex-end  ">
-                        <div
-                            className="flex  items-center "
-                            onClick={downloadFile}
-                        >
-                            <RxDownload
-                                color="#D95B0E"
-                                size={22}
-                                style={{ marginRight: "5px" }}
-                            />
-                            <p className="cursor-pointer text-sm">Download</p>
-                        </div>
-                        <div className="flex px-2 items-center">
-                            <FiShare2
-                                color="#D95B0E"
-                                size={22}
-                                style={{ marginRight: "5px" }}
-                            />
-                            <a
-                                href="#"
-                                onClick={() => {
-                                    setOpenShareConversationModal(true)
-                                }}
+                        <div className="flex items-center flex-end  ">
+                            <div
+                                className="flex  items-center "
+                                onClick={downloadFile}
                             >
-                                <p className="cursor-pointer text-sm">Share</p>
-                            </a>
+                                <RxDownload
+                                    color="#D95B0E"
+                                    size={22}
+                                    style={{ marginRight: "5px" }}
+                                />
+                                <p className="cursor-pointer text-sm">
+                                    Download
+                                </p>
+                            </div>
+                            <div className="flex px-2 items-center">
+                                <FiShare2
+                                    color="#D95B0E"
+                                    size={22}
+                                    style={{ marginRight: "5px" }}
+                                />
+                                <a
+                                    href="#"
+                                    onClick={() => {
+                                        setOpenShareConversationModal(true)
+                                    }}
+                                >
+                                    <p className="cursor-pointer text-sm">
+                                        Share
+                                    </p>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
         </Drawer>
     )

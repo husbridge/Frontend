@@ -17,34 +17,32 @@ const VerificationInformation = () => {
     const [loading, setLoading] = useState(false)
     const { isPending, mutate } = useMutation({
         mutationFn: createProfile,
-        onSuccess: ({data}) => {
-            if (state.user){
-                const user={ accessToken: state.user.accessToken,
+        onSuccess: ({ data }) => {
+            if (state.user) {
+                const user = {
+                    accessToken: state.user.accessToken,
                     refreshToken: state.user.refreshToken,
                     id: state.user.id,
                     profilePhotoUrl: state.user.profilePhotoUrl,
                     fullName: state.user.fullName,
                     firstName: state.user.firstName,
                     lastName: state.user.lastName,
-                    registrationStage: data.data?.registrationStage||"",
-                    isVerified:state.user.isVerified,
+                    registrationStage: data.data?.registrationStage || "",
+                    isVerified: state.user.isVerified,
                     permissions: state.user.permissions,
                     userType: state.user.userType,
-                    uniqueUsername:state.user.uniqueUsername,
-                    userStatus: state.user.userStatus
+                    uniqueUsername: state.user.uniqueUsername,
+                    userStatus: state.user.userStatus,
                 }
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(user)
-                ),
+                ;(localStorage.setItem("user", JSON.stringify(user)),
                     state.user &&
                         dispatch({
                             type: "UPDATE_USER_DATA",
-                            payload: user
-                        })
+                            payload: user,
+                        }))
             }
 
-            window.location.href = `https://identity.dojah.io/?widget_id=${config.dojahWidgetId}&metadata[user_id]=${data.data._id}`
+            window.location.href = `https://identity.dojah.io?widget_id=${config.dojahWidgetId}&metadata[user_id]=${data.data._id}`
         },
         onError: (err: Error) => {
             showNotification({
@@ -77,13 +75,12 @@ const VerificationInformation = () => {
                     mobileNumber: "",
                 }}
                 validationSchema={verificationValidationSchema}
-                onSubmit={(values) =>{
+                onSubmit={(values) => {
                     setLoading(true)
                     mutate({
                         phoneNumber: values.mobileNumber,
                     })
-                }
-                }
+                }}
             >
                 {() => (
                     <Form className="py-4 mt-4">
@@ -136,7 +133,7 @@ const VerificationInformation = () => {
                             type="submit"
                             disabled={isPending || loading}
                         >
-                            {(isPending || loading) ? "Loading..." : "Verify ID"}
+                            {isPending || loading ? "Loading..." : "Verify ID"}
                         </Button>
                     </Form>
                 )}

@@ -48,12 +48,6 @@ export function useSignin() {
             })
             localStorage.setItem("user", JSON.stringify(userData))
 
-            showNotification({
-                title: "Payment Successful",
-                message: "Your payment has been confirmed!",
-                color: "green",
-            })
-
             const from = location.state?.from?.pathname || "/dashboard"
             navigate(from, { replace: true })
         }

@@ -140,7 +140,7 @@ const Messaging = () => {
                 }
             ),
         onSuccess: (data) => {
-            console.log(`==Upload result ${data.data}`)
+            console.log(`<======Upload result=======>\n\n${data}\n\n`)
             setIsUploading(false)
             setUploadProgress(0)
             setUploadingFileName(null)
@@ -181,6 +181,7 @@ const Messaging = () => {
             setIsUploading(true)
             setUploadingFileName(file.name)
             setUploadProgress(0)
+            // console.log(file.name, file.type)
 
             const formData = new FormData()
             formData.append("file", file)
@@ -222,7 +223,7 @@ const Messaging = () => {
             return
         }
 
-        console.log(`=== userId - ${userId}`)
+        // console.log(`=== userId - ${userId}`)
         sendMessage({
             message,
             userId,

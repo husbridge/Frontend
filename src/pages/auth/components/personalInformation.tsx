@@ -17,35 +17,33 @@ const PersonalInformation = () => {
     const { isPending, mutate } = useMutation({
         mutationFn: createProfile,
         onSuccess: ({ data }) => {
-            if (state.user){
-            const user={ accessToken: state.user.accessToken,
-                refreshToken: state.user.refreshToken,
-                id: state.user.id,
-                profilePhotoUrl: state.user.profilePhotoUrl,
-                fullName: data.data.fullName || "",
-                firstName: state.user.firstName,
-                lastName: state.user.lastName,
-                registrationStage: data.data?.registrationStage||"",
-                isVerified:state.user.isVerified,
-                permissions: state.user.permissions,
-                userType: state.user.userType,
-                uniqueUsername:state.user.uniqueUsername,
-                userStatus: state.user.userStatus
-            }
+            if (state.user) {
+                const user = {
+                    accessToken: state.user.accessToken,
+                    refreshToken: state.user.refreshToken,
+                    id: state.user.id,
+                    profilePhotoUrl: state.user.profilePhotoUrl,
+                    fullName: data.data.fullName || "",
+                    firstName: state.user.firstName,
+                    lastName: state.user.lastName,
+                    registrationStage: data.data?.registrationStage || "",
+                    isVerified: state.user.isVerified,
+                    permissions: state.user.permissions,
+                    userType: state.user.userType,
+                    uniqueUsername: state.user.uniqueUsername,
+                    userStatus: state.user.userStatus,
+                }
 
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(user)
-                ),
+                ;(localStorage.setItem("user", JSON.stringify(user)),
                     state.user &&
                         dispatch({
                             type: "UPDATE_USER_DATA",
-                            payload: user
-                        })
+                            payload: user,
+                        }))
             }
-            
 
-            window.location.href = `https://identity.dojah.io/?widget_id=${config.dojahWidgetId}&metadata[user_id]=${data.data._id}`  
+            //
+            window.location.href = `https://identity.dojah.io?widget_id=${config.dojahWidgetId}&metadata[user_id]=${data.data._id}`
         },
         onError: (err: Error) => {
             showNotification({
@@ -81,7 +79,7 @@ const PersonalInformation = () => {
                     mobileNumber: "",
                 }}
                 validationSchema={personalValidationSchema}
-                onSubmit={(values) =>{
+                onSubmit={(values) => {
                     setLoading(true)
                     mutate({
                         fullName: values.fullName,
@@ -145,13 +143,13 @@ const PersonalInformation = () => {
                                 labelClassName="text-[#000]"
                             />
                         </div> */}
-                       <Button
+                        <Button
                             variant="primary"
                             className="px-6 text-white-100  w-full rounded-[40px] mt-10"
                             type="submit"
                             disabled={isPending || loading}
                         >
-                            {(isPending || loading) ? "Loading..." : "Verify ID"}
+                            {isPending || loading ? "Loading..." : "Verify ID"}
                         </Button>
                     </Form>
                 )}

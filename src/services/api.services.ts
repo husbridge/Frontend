@@ -5,12 +5,12 @@ const isProduction = process.env.NODE_ENV === "production"
 
 export const frontendUrl = () => window.location.origin
 
-const BASE_URL = //"https://husridge-server.onrender.com/api/"
+const BASE_URL = // "https://husridge-server.onrender.com/api/"
     isProduction
         ? "https://husridge-server.onrender.com/api/"
         : "http://localhost:8084/api/"
 
-export const MESSAGING_BASE_URL = //"https://messaging-chat-new.onrender.com"
+export const MESSAGING_BASE_URL = // "https://messaging-chat-new.onrender.com"
     isProduction
         ? "https://messaging-chat-new.onrender.com"
         : "http://localhost:4040"
