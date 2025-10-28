@@ -32,5 +32,9 @@ export const routes = [
         link: "/team",
     },
     { name: "Settings", Icon: SettingsIcon, link: "/settings" },
-    { name: "Help & Support", Icon: HelpIcon, link: "/help&support" },
+    {
+        name: "Help & Support",
+        Icon: HelpIcon,
+        link: "https://husridge.com/contact",
+    },
 ]
