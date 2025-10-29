@@ -1,5 +1,6 @@
 import Close from "@assets/icons/close.svg"
 import { Button, FormControls } from "@components/index"
+import { useBilling } from "@contexts/payments/billing"
 import { Modal, Select } from "@mantine/core"
 import { showNotification } from "@mantine/notifications"
 import { fetchManagers } from "@services/manager"
@@ -7,9 +8,8 @@ import { createTalent } from "@services/talents"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { addTalentValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
-import { useState, useRef, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { type Error } from "../../../type/api/index"
-import { useBilling } from "@contexts/payments/billing"
 
 export interface AddTalentModalProps {
     opened: boolean
@@ -39,10 +39,9 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
     >("idle")
     const pendingTalentData = useRef<TalentFormData & { manager?: string }>()
 
-    // Use billing context
     const {
         initiatePayment,
-        checkPaymentStatus,
+        // checkPaymentStatus,
         hasPaymentMethod,
         isInitiatingPayment,
         isPolling,
@@ -145,28 +144,28 @@ const AddTalent = ({ opened, setOpened }: AddTalentModalProps) => {
         pendingTalentData.current = talentData
 
         // Check current payment status first
-        checkPaymentStatus()
+        // checkPaymentStatus()
 
-        // Wait a moment for status to update
-        setTimeout(() => {
-            if (hasPaymentMethod) {
-                // Already has payment method, create talent directly
-                createTalentMutation(talentData)
-            } else {
-                // Need to initiate payment
-                setPaymentStatus("initiating")
-                initiatePayment({
-                    callback_url: `${window.location.origin}/payment-callback`,
-                })
-                setPaymentStatus("pending")
-            }
-        }, 300)
+        createTalentMutation(talentData)
+        // setTimeout(() => {
+        //     if (hasPaymentMethod) {
+        //         // Already has payment method, create talent directly
+        //         createTalentMutation(talentData)
+        //     } else {
+        //         // Need to initiate payment
+        //         setPaymentStatus("initiating")
+        //         initiatePayment({
+        //             callback_url: `${window.location.origin}/payment-callback`,
+        //         })
+        //         setPaymentStatus("pending")
+        //     }
+        // }, 300)
     }
 
     const retryPayment = async () => {
         if (pendingTalentData.current) {
             // Check if payment was completed in the meantime
-            checkPaymentStatus()
+            // checkPaymentStatus()
 
             setTimeout(() => {
                 if (hasPaymentMethod) {
