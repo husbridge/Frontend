@@ -1,26 +1,15 @@
-import LeftBackground from "./components/leftBackground"
-import { FormControls, Button } from "@components/index"
-import { Formik, Form } from "formik"
-import { Link, useNavigate } from "react-router-dom"
+import { Button, FormControls } from "@components/index"
 import { useSignin } from "@hooks/auth/useSignIn"
-import { useEffect } from "react"
-import { loginValidationSchema } from "@utils/validationSchema"
 import useShowPassword from "@utils/useShowPassword"
+import { loginValidationSchema } from "@utils/validationSchema"
+import { Form, Formik } from "formik"
+import { useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import LeftBackground from "./components/leftBackground"
 
 const Login: React.FC = () => {
     const navigate = useNavigate()
-    const {
-        mutate,
-        isPending,
-        data,
-        variables,
-        paymentStatus,
-        isInitiatingPayment,
-        isCheckingStatus,
-        error,
-        retryPayment,
-        isPolling,
-    } = useSignin()
+    const { mutate, isPending, data, variables } = useSignin()
     const { showPassword, displayPasswordIcon } = useShowPassword()
 
     useEffect(() => {
@@ -41,91 +30,16 @@ const Login: React.FC = () => {
         }
     }, [redirectUrl, navigate])
 
-    const getPaymentStatusMessage = () => {
-        switch (paymentStatus) {
-            case "pending":
-                return (
-                    <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-blue-700 text-sm font-medium">
-                            Payment Method Required
-                        </p>
-                        <p className="text-blue-600 text-sm mt-1">
-                            Please add your payment method in the opened window
-                            to complete login.
-                        </p>
-                        <button
-                            onClick={retryPayment}
-                            className="text-blue-600 underline text-sm mt-2 hover:text-blue-800"
-                        >
-                            Reopen payment window
-                        </button>
-                    </div>
-                )
-            case "failed":
-                return (
-                    <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-red-700 text-sm font-medium">
-                            Payment Setup Failed
-                        </p>
-                        <p className="text-red-600 text-sm mt-1">
-                            Could not set up payment method. Please try again to
-                            complete login.
-                        </p>
-                        <button
-                            onClick={retryPayment}
-                            className="mt-2 px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
-                            disabled={isInitiatingPayment}
-                        >
-                            {isInitiatingPayment
-                                ? "Retrying..."
-                                : "Retry Payment Setup"}
-                        </button>
-                    </div>
-                )
-            case "success":
-                return (
-                    <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-green-700 text-sm font-medium">
-                            Payment Method Added Successfully!
-                        </p>
-                        <p className="text-green-600 text-sm mt-1">
-                            Redirecting to dashboard...
-                        </p>
-                    </div>
-                )
-            default:
-                return null
-        }
-    }
-
     const getSubmitButtonText = () => {
-        switch (paymentStatus) {
-            case "initiating":
-                return "Setting up Payment..."
-            case "pending":
-                return "Waiting for Payment Setup..."
-            case "success":
-                return "Login Successful"
-            case "failed":
-                return "Payment Required"
-            default:
-                return isPending ? "Loading" : "Proceed"
-        }
+        return isPending ? "Loading" : "Proceed"
     }
 
     const isSubmitDisabled = () => {
-        return (
-            isPending ||
-            isPolling ||
-            paymentStatus === "pending" ||
-            paymentStatus === "success" ||
-            isInitiatingPayment ||
-            isCheckingStatus
-        )
+        return isPending
     }
 
     return (
-        <div className="flex h-scre">
+        <div className="flex h-screen">
             <div className="md:block hidden w-[30%]">
                 <LeftBackground />
             </div>
@@ -138,16 +52,6 @@ const Login: React.FC = () => {
                     <p className="text-3md text-black-50 font-normal mt-4 mb-8">
                         Login to your Husridge account
                     </p>
-
-                    {/* Payment Status Message */}
-                    {paymentStatus !== "idle" && getPaymentStatusMessage()}
-                    {error && (
-                        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-red-700 text-sm font-medium">
-                                {error}
-                            </p>
-                        </div>
-                    )}
 
                     <Formik
                         initialValues={{
@@ -166,10 +70,6 @@ const Login: React.FC = () => {
                                         label="Email"
                                         control="input"
                                         name="username"
-                                        disabled={
-                                            paymentStatus === "pending" ||
-                                            paymentStatus === "success"
-                                        }
                                         classNames={{
                                             mainRoot:
                                                 " border  border-black-20 px-2 w-full",
@@ -188,10 +88,6 @@ const Login: React.FC = () => {
                                             showPassword ? "text" : "password"
                                         }
                                         suffixIcon={displayPasswordIcon()}
-                                        disabled={
-                                            paymentStatus === "pending" ||
-                                            paymentStatus === "success"
-                                        }
                                         classNames={{
                                             mainRoot:
                                                 " border  border-black-20 px-2",
