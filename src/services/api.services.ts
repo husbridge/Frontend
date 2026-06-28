@@ -17,9 +17,7 @@ export const MESSAGING_BASE_URL = "https://messaging-chat-new.onrender.com"
 
 let EXPIRYINTERCEPTOR: number
 
-const axiosInstance = axios.create({
-    baseURL: BASE_URL,
-})
+const axiosInstance = axios.create({ baseURL: BASE_URL })
 
 export const axiosMessagingInstance = axios.create({
     baseURL: MESSAGING_BASE_URL,
