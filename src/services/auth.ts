@@ -177,3 +177,39 @@ export const deletePortfolioMedia = (mediaId: string) => {
         `/profile/portfolio-media/${mediaId}`
     )
 }
+
+// Manager/agency editing a managed talent's profile/portfolio on their behalf
+export const updateTalentProfile = ({
+    userId,
+    data,
+}: {
+    userId: string
+    data: ProfileRequest
+}) => {
+    return axiosInstance.put<ProfileResponse>(`/profile/${userId}`, data)
+}
+
+export const uploadTalentPortfolioMedia = ({
+    userId,
+    data,
+}: {
+    userId: string
+    data: FormData
+}) => {
+    return axiosInstance.post<ProfileResponse>(
+        `/profile/${userId}/portfolio-media`,
+        data
+    )
+}
+
+export const deleteTalentPortfolioMedia = ({
+    userId,
+    mediaId,
+}: {
+    userId: string
+    mediaId: string
+}) => {
+    return axiosInstance.delete<ProfileResponse>(
+        `/profile/${userId}/portfolio-media/${mediaId}`
+    )
+}

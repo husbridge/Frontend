@@ -48,6 +48,23 @@ export interface Data {
     registrationStage: string
     userStatus: string
     createdAt: string
+    bio?: string
+    socialLinks?: {
+        instagram?: string
+        tiktok?: string
+        twitter?: string
+        youtube?: string
+        website?: string
+    }
+    tags?: string[]
+    portfolioMedia?: {
+        _id: string
+        url: string
+        type: "image"
+        caption?: string
+        order?: number
+        uploadedAt?: string
+    }[]
 }
 
 export interface CreateManagerRequest {

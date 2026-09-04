@@ -37,6 +37,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { Data as InquiryData } from "type/api/inquiry.types"
 import { Data } from "../../../type/api/event.types"
 import { frontendUrl } from "@services/api.services"
+import PortfolioInformation from "@pages/Settings/components/portfolioInformation"
 
 const TalentInformation = () => {
     const [username, setUsername] = useState("")
@@ -281,6 +282,13 @@ const TalentInformation = () => {
                                     />
                                 ))}
                             </div>
+                            {id && (
+                                <PortfolioInformation
+                                    data={data?.data}
+                                    targetUserId={id}
+                                    invalidateQueryKeys={[["singleUser", id]]}
+                                />
+                            )}
                             <div className="flex justify-between mb-4 mt-10">
                                 <p className="sm:text-[20px] text-[14px] font-medium">
                                     Upcoming Events{" "}
