@@ -5,6 +5,7 @@ import {
     EventDetailModal,
     Input,
     SetReminderModal,
+    SyncCalendarModal,
 } from "@components/index"
 import { EventClickArg, EventContentArg, EventInput } from "@fullcalendar/core"
 import { EventImpl } from "@fullcalendar/core/internal"
@@ -76,6 +77,7 @@ const Calendar = ({
     filters: any
 }) => {
     const [addEvent, setAddEvent] = useState(false)
+    const [syncCalendar, setSyncCalendar] = useState(false)
     const [openEventDetails, setOpenEventDetails] = useState(false)
     const [openSetReminder, setOpenSetReminder] = useState(false)
     const [eventsData, setEventsData] = useState<EventInput[]>([])
@@ -191,6 +193,10 @@ const Calendar = ({
                 event={singleEvent}
             />
             <AddEvent opened={addEvent} setOpened={setAddEvent} />
+            <SyncCalendarModal
+                opened={syncCalendar}
+                setOpened={setSyncCalendar}
+            />
             <div className="flex justify-between items-center mt-4">
                 <p className="text-3md sm:text-[20px] lg:text-lg md:mb-0 mb-4">
                     Calendar
@@ -231,6 +237,13 @@ const Calendar = ({
                         onClick={showAllEvents}
                     >
                         {isShowingAllEvents ? "Default View" : "All Events"}
+                    </Button>
+                    <Button
+                        className="flex text-black-100 h-11"
+                        variant="white"
+                        onClick={() => setSyncCalendar(true)}
+                    >
+                        Sync Calendar
                     </Button>
                     <Button
                         className="flex text-white-100"

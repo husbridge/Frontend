@@ -58,6 +58,61 @@ const Contact = () => {
                                 </p>
                             )}
                         </section>
+                        {(data?.data.bio ||
+                            (data?.data.portfolioMedia &&
+                                data.data.portfolioMedia.length > 0) ||
+                            (data?.data.socialLinks &&
+                                Object.values(data.data.socialLinks).some(
+                                    Boolean
+                                ))) && (
+                            <section className="px-8 mb-6">
+                                {data?.data.bio && (
+                                    <p className="text-md text-black-100 whitespace-pre-line mb-4">
+                                        {data.data.bio}
+                                    </p>
+                                )}
+                                {data?.data.socialLinks &&
+                                    Object.values(data.data.socialLinks).some(
+                                        Boolean
+                                    ) && (
+                                        <div className="flex flex-wrap gap-4 mb-4">
+                                            {Object.entries(
+                                                data.data.socialLinks
+                                            )
+                                                .filter(([, url]) => url)
+                                                .map(([platform, url]) => (
+                                                    <a
+                                                        key={platform}
+                                                        href={url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-sm text-[#475569] underline capitalize"
+                                                    >
+                                                        {platform}
+                                                    </a>
+                                                ))}
+                                        </div>
+                                    )}
+                                {data?.data.portfolioMedia &&
+                                    data.data.portfolioMedia.length > 0 && (
+                                        <div className="flex flex-wrap gap-3">
+                                            {data.data.portfolioMedia.map(
+                                                (item) => (
+                                                    <img
+                                                        key={item._id}
+                                                        src={item.url}
+                                                        alt={
+                                                            item.caption ||
+                                                            "Portfolio photo"
+                                                        }
+                                                        className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg"
+                                                    />
+                                                )
+                                            )}
+                                        </div>
+                                    )}
+                            </section>
+                        )}
                         <Tabs
                             variant="unstyled"
                             defaultValue="singleAddition"

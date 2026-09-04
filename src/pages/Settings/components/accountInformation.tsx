@@ -10,6 +10,7 @@ import { jwtDecode } from "jwt-decode"
 import { DecodedUser } from "@components/Layout/sidebar/clientSidebar"
 import ImageCropUpload from "@components/Layout/ImageCropUpload"
 import { FaPenSquare } from "react-icons/fa"
+import PortfolioInformation from "./portfolioInformation"
 
 const passwordRep = "•".repeat(10)
 
@@ -301,6 +302,9 @@ const AccountInformation = () => {
                                         )}
                                     </div>
                                 </>
+                            )}
+                            {state.user?.userType === "talent" && (
+                                <PortfolioInformation data={data?.data} />
                             )}
                             <p className="font-medium text-2md sm:text-3md mt-8 mb-6">
                                 Password Information

@@ -117,6 +117,15 @@ export interface ProfileRequest {
         latitude?: number
         longitude?: number
     }
+    bio?: string
+    socialLinks?: {
+        instagram?: string
+        tiktok?: string
+        twitter?: string
+        youtube?: string
+        website?: string
+    }
+    tags?: string[]
 }
 export interface ProfileResponse {
     statusCode: number
@@ -154,6 +163,23 @@ export interface ProfileResponse {
             latitude?: number
             longitude?: number
         }
+        bio?: string
+        socialLinks?: {
+            instagram?: string
+            tiktok?: string
+            twitter?: string
+            youtube?: string
+            website?: string
+        }
+        tags?: string[]
+        portfolioMedia?: {
+            _id: string
+            url: string
+            type: "image"
+            caption?: string
+            order?: number
+            uploadedAt?: string
+        }[]
         agency: {
             _id: string
             agencyName: string
@@ -234,6 +260,23 @@ export interface PublicProfileResponse {
         manager: Data
         industry: string
         stageName: string
+        bio?: string
+        socialLinks?: {
+            instagram?: string
+            tiktok?: string
+            twitter?: string
+            youtube?: string
+            website?: string
+        }
+        tags?: string[]
+        portfolioMedia?: {
+            _id: string
+            url: string
+            type: "image"
+            caption?: string
+            order?: number
+            uploadedAt?: string
+        }[]
     }
 }
 export interface NotificationSettingsResponse {

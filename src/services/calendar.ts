@@ -44,3 +44,20 @@ export const deleteEvent = async (calendarId:string) => {
     const response = await axiosInstance.delete<{code:string, message:string}>(`/event/${calendarId}`)
     return response.data
 }
+
+export interface CalendarFeedResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: {
+        token: string
+        feedUrl: string
+    }
+}
+
+export const fetchCalendarFeed = async () => {
+    const response = await axiosInstance.get<CalendarFeedResponse>(
+        "/event/calendar-feed-token"
+    )
+    return response.data
+}

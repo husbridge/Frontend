@@ -167,3 +167,13 @@ export const uploadProfileImage = (data: FormData) => {
         data
     )
 }
+
+export const uploadPortfolioMedia = (data: FormData) => {
+    return axiosInstance.post<ProfileResponse>("/profile/portfolio-media", data)
+}
+
+export const deletePortfolioMedia = (mediaId: string) => {
+    return axiosInstance.delete<ProfileResponse>(
+        `/profile/portfolio-media/${mediaId}`
+    )
+}
