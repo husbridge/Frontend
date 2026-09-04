@@ -3,17 +3,53 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import {
     createProfile,
     deletePortfolioMedia,
+    deleteTalentPortfolioMedia,
+    updateTalentProfile,
     uploadPortfolioMedia,
+    uploadTalentPortfolioMedia,
 } from "@services/auth"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { showNotification } from "@mantine/notifications"
 import { type Error } from "../../../type/api/index"
-import { type ProfileResponse } from "../../../type/api/auth.types"
 
-const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
+interface PortfolioData {
+    bio?: string
+    socialLinks?: {
+        instagram?: string
+        tiktok?: string
+        twitter?: string
+        youtube?: string
+        website?: string
+    }
+    tags?: string[]
+    portfolioMedia?: {
+        _id: string
+        url: string
+        type: "image"
+        caption?: string
+        order?: number
+        uploadedAt?: string
+    }[]
+}
+
+interface PortfolioInformationProps {
+    data?: PortfolioData
+    // When set, edits are made on behalf of this talent (manager/agency use)
+    // instead of the logged-in user's own profile.
+    targetUserId?: string
+    // Query key(s) to refetch after a save so the parent page's data updates.
+    invalidateQueryKeys?: string[][]
+}
+
+const PortfolioInformation = ({
+    data,
+    targetUserId,
+    invalidateQueryKeys = [["profile"]],
+}: PortfolioInformationProps) => {
     const queryClient = useQueryClient()
     const initialized = useRef(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const isManaged = Boolean(targetUserId)
 
     const [bio, setBio] = useState("")
     const [instagram, setInstagram] = useState("")
@@ -34,17 +70,24 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
         }
     }, [data])
 
+    const invalidateAll = () => {
+        invalidateQueryKeys.forEach((key) => {
+            queryClient.invalidateQueries({ queryKey: key }).finally(() => false)
+        })
+    }
+
     const { isPending: isSaving, mutate: saveProfile } = useMutation({
-        mutationFn: createProfile,
+        mutationFn: isManaged
+            ? (payload: Parameters<typeof createProfile>[0]) =>
+                  updateTalentProfile({ userId: targetUserId!, data: payload })
+            : createProfile,
         onSuccess: ({ data }) => {
             showNotification({
                 title: "Success",
                 message: data.message,
                 color: "green",
             })
-            queryClient
-                .invalidateQueries({ queryKey: ["profile"] })
-                .finally(() => false)
+            invalidateAll()
         },
         onError: (err: Error) => {
             showNotification({
@@ -56,16 +99,20 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
     })
 
     const { isPending: isUploading, mutate: uploadMedia } = useMutation({
-        mutationFn: uploadPortfolioMedia,
+        mutationFn: isManaged
+            ? (formData: FormData) =>
+                  uploadTalentPortfolioMedia({
+                      userId: targetUserId!,
+                      data: formData,
+                  })
+            : uploadPortfolioMedia,
         onSuccess: () => {
             showNotification({
                 title: "Success",
-                message: "Photo added to your portfolio",
+                message: "Photo added to the portfolio",
                 color: "green",
             })
-            queryClient
-                .invalidateQueries({ queryKey: ["profile"] })
-                .finally(() => false)
+            invalidateAll()
         },
         onError: (err: Error) => {
             showNotification({
@@ -77,11 +124,15 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
     })
 
     const { mutate: removeMedia } = useMutation({
-        mutationFn: deletePortfolioMedia,
+        mutationFn: isManaged
+            ? (mediaId: string) =>
+                  deleteTalentPortfolioMedia({
+                      userId: targetUserId!,
+                      mediaId,
+                  })
+            : deletePortfolioMedia,
         onSuccess: () => {
-            queryClient
-                .invalidateQueries({ queryKey: ["profile"] })
-                .finally(() => false)
+            invalidateAll()
         },
         onError: (err: Error) => {
             showNotification({
