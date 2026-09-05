@@ -19,6 +19,9 @@ const EditTalent = ({ opened, setOpened, activeId }: EditTalentModalProps) => {
     const { data, isLoading } = useQuery({
         queryKey: ["singleUser", activeId],
         queryFn: () => fetchSingleUser({ id: activeId }),
+        // Same /profile route family as Dashboard's ["profile"] query — see
+        // that one's comment (production incident, retry storm).
+        retry: 1,
     })
     return (
         <Modal

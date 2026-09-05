@@ -80,12 +80,19 @@ const TalentInformation = () => {
         queryKey: ["singleUser", id],
         queryFn: () => fetchSingleUser({ id: id || "" }),
         enabled: id ? true : false,
+        // Same /profile route family as the ["profile"] query below — see
+        // that one's comment.
+        retry: 1,
     })
 
     const { data: profileData, isLoading: isLoadingProfile } = useQuery({
         queryKey: ["profile"],
         queryFn: () => fetchProfile(),
         enabled: !id ? true : false,
+        // Capped after a production incident where a 500 on GET /profile
+        // caused an indefinite retry storm (hundreds of failed requests) —
+        // TanStack Query's default is 3 retries with exponential backoff.
+        retry: 1,
     })
 
     const { data: inquiries, isLoading: isLoadingInquiries } =
@@ -220,7 +227,12 @@ const TalentInformation = () => {
                             </p>
                             {(data?.data.verificationTypeValue as string) !==
                                 "pending" && (
-                                <div className="flex gap-2">
+                                <div className="flex gap-2 flex-wrap">
+                                    {/* flex-wrap: this row holds 3 buttons
+                                        (Magic Link, Edit Profile, My Page)
+                                        instead of the original 2 — without
+                                        it they overflowed horizontally
+                                        under ~430px. */}
                                     <CopyToClipboard
                                         onCopy={() => {
                                             setCopied(true)
@@ -249,6 +261,26 @@ const TalentInformation = () => {
                                     >
                                         Edit Profile
                                     </Button>
+                                    {/* Phase 1 Step 5: manager access to a
+                                        roster talent's public page (My
+                                        Page — Identity/About/Portfolio/
+                                        Reach/Track record, plus publish).
+                                        One entry point, not a separate
+                                        button per section — canEditTalentProfile
+                                        is enforced server-side. */}
+                                    {id && (
+                                        <Button
+                                            className="flex ml-2 !text-sm"
+                                            variant="border"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/talents/${id}/my-page`
+                                                )
+                                            }
+                                        >
+                                            My Page
+                                        </Button>
+                                    )}
                                     {copied && (
                                         <div className="absolute left-30 mt-10">
                                             <Alert

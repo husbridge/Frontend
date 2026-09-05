@@ -61,7 +61,16 @@ const Sidebar = () => {
                     >
                         <NavLink
                             //end
-                            to={route?.link}
+                            to={
+                                // A talent's "Talents" nav slot is their one
+                                // top-level entry point to My Page (Phase 1
+                                // Step 5) — not the roster list, which only
+                                // makes sense for a manager/agency.
+                                state.user?.userType === "talent" &&
+                                route?.name === "Talents"
+                                    ? "/my-page"
+                                    : route?.link
+                            }
                             key={index}
                             className={({ isActive }) =>
                                 isActive
@@ -73,7 +82,7 @@ const Sidebar = () => {
                             <div className="flex items-center gap-5 w-full">
                                 <route.Icon />
                                 <span className=" body-regular font-normal">
-                                    {state.user?.userType === "talent" && route?.name === "Talents" ? "My Profile" : route?.name}
+                                    {state.user?.userType === "talent" && route?.name === "Talents" ? "My Page" : route?.name}
                                 </span>
                             </div>
                         </NavLink>
