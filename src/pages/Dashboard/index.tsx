@@ -209,11 +209,11 @@ const Dashboard = () => {
                         )}
 
                         <div className="sm:flex justify-between items-center pt-2 ">
-                            <p className="text-3md sm:text-lg md:mb-0 mb-4">
+                            <p className="text-3md sm:text-lg sm:mb-0 mb-4">
                                 Hello{" "}
                                 {state.user?.firstName || state.user?.fullName}
                             </p>
-                            <div className="flex">
+                            <div className="flex flex-wrap gap-2">
                                 {!["talent", "client"].includes(
                                     userType || ""
                                 ) && (
@@ -240,7 +240,7 @@ const Dashboard = () => {
                                         text={`${frontendUrl()}/contact/${data?.data.uniqueUsername}`}
                                     >
                                         <Button
-                                            className="flex ml-4"
+                                            className="flex"
                                             variant="clear"
                                         >
                                             <RiLinksFill
@@ -252,7 +252,7 @@ const Dashboard = () => {
                                     </CopyToClipboard>
                                 ) : (
                                     <Button
-                                        className="flex ml-4"
+                                        className="flex"
                                         variant="clear"
                                         onClick={() => setOpened(true)}
                                     >

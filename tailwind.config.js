@@ -2,6 +2,22 @@
 export default {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     theme: {
+        // Matches Mantine's default breakpoints exactly (Mantine uses em
+        // units internally: 36em/48em/62em/75em/88em at a 16px root font
+        // size == these px values) so a Tailwind `sm:`/`md:`/`lg:`/`xl:`
+        // class and a Mantine component's responsive prop switch at the
+        // same viewport width instead of silently disagreeing. This
+        // REPLACES Tailwind's own defaults (sm:640/md:768/lg:1024/xl:1280)
+        // — every existing sm:/md:/lg:/xl: class in the app (182/98/23/13
+        // usages respectively, `2xl:` and `xs:` unused) now triggers at a
+        // different width. See the Phase 1 Step 4 PR description.
+        screens: {
+            xs: "576px",
+            sm: "768px",
+            md: "992px",
+            lg: "1200px",
+            xl: "1408px",
+        },
         extend: {
             colors: {
                 primary: {

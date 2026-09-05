@@ -1,4 +1,4 @@
-import logo from "@assets/icons/logo.svg"
+import Logo from "./Logo"
 import useAuth from "@hooks/auth/useAuth"
 import { useGetInquiries, useGetPortalInquiries } from "@hooks/useInquiry"
 import { Drawer } from "@mantine/core"
@@ -77,11 +77,7 @@ const Layout = ({ children, pageTitle, search }: LayoutProps) => {
                                         size="24px"
                                     />
                                 </div>
-                                <img
-                                    src={logo}
-                                    alt="Project x"
-                                    className="w-fit"
-                                />
+                                <Logo />
                                 <hr className="text-neutral-5 mt-5" />
                             </div>
                             <div className="w-full h-3/4 md:h-[500px] overflow-y-auto md:pt-[75px]">

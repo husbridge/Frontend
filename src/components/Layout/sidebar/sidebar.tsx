@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import logo from "@assets/icons/logo.svg"
+import Logo from "../Logo"
 import { routes } from "./utils/route"
 import styles from "./sidebar.module.scss"
 import LogoutIcon from "./assets/logOut"
@@ -38,7 +38,7 @@ const Sidebar = () => {
     return (
         <div className="bg-black-100">
             <div className="py-[1.63rem] px-3 hidden lg:block w-full mx-auto pl-8 bg-black-100">
-                <img src={logo} alt="Project x" className="w-fit" />
+                <Logo />
                 <div className="flex mt-10">
                     <Avatar alt={username} size={48} link={'/settings'} imageUrl={state.user?.profilePhotoUrl} className=""/>
                     <div className="text-white-100 ml-2">
