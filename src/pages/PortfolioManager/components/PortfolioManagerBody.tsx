@@ -107,7 +107,10 @@ const PortfolioManagerBody = ({ userId }: PortfolioManagerBodyProps) => {
     if (isLoading) return <LoadingState />
 
     return (
-        <Stack gap="lg" className="max-w-4xl">
+        // No max-width — this is a media grid, not a form; capping it
+        // wastes the extra columns a wide screen could otherwise show
+        // (see the grid's cols breakpoints below).
+        <Stack gap="lg">
             <div className="flex items-center justify-between">
                 <Text size="lg" fw={600}>
                     Portfolio ({items.length}/30)
@@ -133,7 +136,10 @@ const PortfolioManagerBody = ({ userId }: PortfolioManagerBodyProps) => {
                     building completeness.
                 </Text>
             ) : (
-                <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }} spacing="md">
+                <SimpleGrid
+                    cols={{ base: 1, xs: 2, md: 3, lg: 4, xl: 5 }}
+                    spacing="md"
+                >
                     {items.map((item, index) => (
                         <div
                             key={item._id}
