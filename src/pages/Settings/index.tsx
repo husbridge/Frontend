@@ -1,17 +1,27 @@
 import { Layout } from "@components/index"
 // import NotificationSettings from "./components/notificationSettings"
 import AccountInformation from "./components/accountInformation"
+import ProfileSetupBody from "@pages/ProfileSetup/components/ProfileSetupBody"
+import PortfolioManagerBody from "@pages/PortfolioManager/components/PortfolioManagerBody"
 import { useState } from "react"
 import useAuth from "@hooks/auth/useAuth"
 import { useNavigate } from "react-router-dom"
-import { LuLogOut } from "react-icons/lu"
+import { LuLayers, LuLogOut } from "react-icons/lu"
 import { BiUserCircle } from "react-icons/bi"
+import { HiOutlineSparkles } from "react-icons/hi2"
 
 const Settings = () => {
     const navigate = useNavigate()
     const [settings, setSettings] = useState("accountInformation")
 
-    const { dispatch } = useAuth()
+    const { state, dispatch } = useAuth()
+    // Profile setup/portfolio are talent/agency self-service concerns — a
+    // manager's own account has no public profile (see
+    // isPublishableUserType in husridge-server); they manage a roster
+    // talent's profile/portfolio from that talent's page instead (Phase 1
+    // Step 5).
+    const canSetUpProfile =
+        state.user?.userType === "talent" || state.user?.userType === "agency"
 
     const handleLogout = () => {
         localStorage.removeItem("user")
@@ -66,6 +76,42 @@ const Settings = () => {
                                 </p>
                             </div>
                         )} */}
+                        {canSetUpProfile && (
+                            <div
+                                className="flex cursor-pointer mb-10 items-center text-md sm:text-2md"
+                                onClick={() => setSettings("profileSetup")}
+                            >
+                                <div>
+                                    <HiOutlineSparkles
+                                        size="24px"
+                                        color={`${settings === "profileSetup" ? "text-black-100" : "#00000099"}`}
+                                    />
+                                </div>
+                                <p
+                                    className={`${settings === "profileSetup" ? "text-black-100" : "text-[#00000099]"} ml-2`}
+                                >
+                                    Profile Setup
+                                </p>
+                            </div>
+                        )}
+                        {canSetUpProfile && (
+                            <div
+                                className="flex cursor-pointer mb-10 items-center text-md sm:text-2md"
+                                onClick={() => setSettings("portfolio")}
+                            >
+                                <div>
+                                    <LuLayers
+                                        size="24px"
+                                        color={`${settings === "portfolio" ? "text-black-100" : "#00000099"}`}
+                                    />
+                                </div>
+                                <p
+                                    className={`${settings === "portfolio" ? "text-black-100" : "text-[#00000099]"} ml-2`}
+                                >
+                                    Portfolio
+                                </p>
+                            </div>
+                        )}
                         <div
                             className="flex cursor-pointer mb-10 items-center sm:text-2md text-md pl-0.5"
                             onClick={() => handleLogout()}
@@ -89,6 +135,10 @@ const Settings = () => {
                 >
                     {settings === "accountInformation" ? (
                         <AccountInformation />
+                    ) : settings === "profileSetup" && canSetUpProfile ? (
+                        <ProfileSetupBody />
+                    ) : settings === "portfolio" && canSetUpProfile ? (
+                        <PortfolioManagerBody />
                     ) : (
                         <>
                             {/* {state.user?.userType !== "client" && (

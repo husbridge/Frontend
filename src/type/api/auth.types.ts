@@ -97,6 +97,42 @@ export interface Data {
     agency?: any
     hasPaymentMethod?: boolean
 }
+// Phase 1 Step 2 structured profile fields (husridge-server IUpdateProfile).
+// `PUT /profile` (and `/profile/:userId` for a manager) merges field by
+// field — a request that only sets a subset of these leaves the rest
+// untouched server-side, which is what lets the Step 5 wizard PUT one step
+// at a time without clobbering the others.
+export type SocialPlatform =
+    | "instagram"
+    | "tiktok"
+    | "twitter"
+    | "youtube"
+    | "website"
+    | "other"
+
+export type AudienceBand =
+    | ""
+    | "under_1k"
+    | "1k_10k"
+    | "10k_50k"
+    | "50k_100k"
+    | "100k_500k"
+    | "500k_plus"
+
+export interface SocialAccount {
+    _id?: string
+    platform: SocialPlatform
+    handle?: string
+    url?: string
+    audienceBand?: AudienceBand
+}
+
+export interface Brand {
+    _id?: string
+    name: string
+    logoUrl?: string
+}
+
 export interface ProfileRequest {
     fullName?: string
     firstName?: string
@@ -126,6 +162,70 @@ export interface ProfileRequest {
         website?: string
     }
     tags?: string[]
+    professionalTitle?: string
+    shortBio?: string
+    longBio?: string
+    primaryCategory?: string
+    categories?: string[]
+    skills?: string[]
+    city?: string
+    serviceAreas?: string[]
+    socialAccounts?: SocialAccount[]
+    yearsExperience?: number
+    brands?: Brand[]
+}
+
+// Wire shape for ProfileResponse.data.missingFields (husridge-server
+// ProfileDto, Step 5 review round: `{key, label}` — no `present` (already
+// pre-filtered to missing-only) and `key` not `field`. Render verbatim,
+// don't re-map field names to labels client-side.
+export interface MissingFieldItem {
+    key: string
+    label: string
+}
+
+export type PortfolioMediaType = "image" | "video"
+export type PortfolioMediaProvider =
+    | "cloudinary"
+    | "youtube"
+    | "instagram"
+    | "tiktok"
+export type PortfolioVisibility = "public" | "hidden"
+
+export interface PortfolioMediaEntry {
+    url: string
+    type: PortfolioMediaType
+    thumbnailUrl?: string
+    provider: PortfolioMediaProvider
+}
+
+export interface PortfolioItem {
+    _id: string
+    media: PortfolioMediaEntry[]
+    title: string
+    description: string
+    role: string
+    clientName: string
+    category: string
+    date: string
+    sortOrder: number
+    visibility: PortfolioVisibility
+    createdBy: string
+}
+
+export interface PortfolioItemRequest {
+    title?: string
+    description?: string
+    role?: string
+    clientName?: string
+    category?: string
+    date?: string
+    visibility?: PortfolioVisibility
+    // For an embed (YouTube/Instagram/TikTok) item — omit when uploading an
+    // image file instead (sent as the `media` multipart field).
+    embedUrl?: string
+    embedThumbnailUrl?: string
+    embedProvider?: PortfolioMediaProvider
 }
 export interface ProfileResponse {
     statusCode: number
@@ -172,6 +272,9 @@ export interface ProfileResponse {
             website?: string
         }
         tags?: string[]
+        // TEMP (v0) — being retired in favor of portfolioItems below. Only
+        // read by the legacy Settings "Add Photo" flow, which this Step 5
+        // work migrates off it (see portfolioInformation.tsx).
         portfolioMedia?: {
             _id: string
             url: string
@@ -180,6 +283,25 @@ export interface ProfileResponse {
             order?: number
             uploadedAt?: string
         }[]
+        professionalTitle?: string
+        shortBio?: string
+        longBio?: string
+        primaryCategory?: string
+        categories?: string[]
+        skills?: string[]
+        city?: string
+        serviceAreas?: string[]
+        socialAccounts?: SocialAccount[]
+        yearsExperience?: number
+        brands?: Brand[]
+        isPublished?: boolean
+        visibility?: string
+        completenessScore?: number
+        missingFields?: MissingFieldItem[]
+        nextBestAction?: string
+        publishedAt?: string
+        viewCount?: number
+        portfolioItems?: PortfolioItem[]
         agency: {
             _id: string
             agencyName: string

@@ -20,8 +20,35 @@ import {
     PortalOTPValidationResponse,
     ClientSigninResponse,
     sendPortalOTPRequest,
+    PortfolioItemRequest,
 } from "type/api/auth.types"
 import axiosInstance from "./api.services"
+
+// Portfolio/publish item responses reuse ProfileResponse's shape for
+// single-object responses (`data` is one PortfolioItem) or a list.
+interface PortfolioItemResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: NonNullable<ProfileResponse["data"]["portfolioItems"]>[number] | null
+}
+interface PortfolioListResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: NonNullable<ProfileResponse["data"]["portfolioItems"]>
+}
+// publish()/unpublish() return the full ProfileDto on success, but on the
+// "missing required fields" failure it's just `{missingFields: string[]}`
+// (bare field keys, no labels — GET /profile's richer, labeled
+// missingFields is what the completeness widget should render instead;
+// this is only a same-tick confirmation of what blocked THIS attempt).
+interface PublishResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: ProfileResponse["data"] | { missingFields: string[] } | null
+}
 
 const ENDPOINT = "/user"
 
@@ -175,5 +202,95 @@ export const uploadPortfolioMedia = (data: FormData) => {
 export const deletePortfolioMedia = (mediaId: string) => {
     return axiosInstance.delete<ProfileResponse>(
         `/profile/portfolio-media/${mediaId}`
+    )
+}
+
+// --- Phase 1 Step 5: profile setup wizard, publish/unpublish, portfolio ---
+// manager. Every function below takes an optional `userId` — omitted for a
+// talent/agency editing their own profile, or set to a roster talent's id
+// when a manager is editing on their behalf (husridge-server's
+// canEditTalentProfile enforces the actual permission check server-side;
+// the frontend just calls the `:userId`-suffixed route and surfaces
+// whatever error, e.g. 403, comes back).
+const profilePath = (userId?: string) =>
+    userId ? `/profile/${userId}` : "/profile"
+
+export const fetchProfileFor = async (userId?: string) => {
+    const response = await axiosInstance.get<ProfileResponse>(
+        profilePath(userId)
+    )
+    return response.data
+}
+
+export const updateProfileStep = (data: ProfileRequest, userId?: string) => {
+    return axiosInstance.put<ProfileResponse>(profilePath(userId), data)
+}
+
+export const publishProfile = (userId?: string) => {
+    return axiosInstance.post<PublishResponse>(`${profilePath(userId)}/publish`)
+}
+
+export const unpublishProfile = (userId?: string) => {
+    return axiosInstance.post<PublishResponse>(
+        `${profilePath(userId)}/unpublish`
+    )
+}
+
+export const fetchPortfolioItems = async (userId?: string) => {
+    const response = await axiosInstance.get<PortfolioListResponse>(
+        `${profilePath(userId)}/portfolio`
+    )
+    return response.data
+}
+
+export const createPortfolioItem = (
+    data: PortfolioItemRequest,
+    file: File | null,
+    userId?: string,
+    onUploadProgress?: (percent: number) => void
+) => {
+    const formData = new FormData()
+    if (file) formData.append("media", file)
+    Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+            formData.append(key, String(value))
+        }
+    })
+    return axiosInstance.post<PortfolioItemResponse>(
+        `${profilePath(userId)}/portfolio`,
+        formData,
+        {
+            onUploadProgress: (event) => {
+                if (!onUploadProgress || !event.total) return
+                onUploadProgress(Math.round((event.loaded / event.total) * 100))
+            },
+        }
+    )
+}
+
+export const updatePortfolioItem = (
+    itemId: string,
+    data: PortfolioItemRequest,
+    userId?: string
+) => {
+    return axiosInstance.patch<PortfolioItemResponse>(
+        `${profilePath(userId)}/portfolio/${itemId}`,
+        data
+    )
+}
+
+export const deletePortfolioItem = (itemId: string, userId?: string) => {
+    return axiosInstance.delete<PortfolioItemResponse>(
+        `${profilePath(userId)}/portfolio/${itemId}`
+    )
+}
+
+export const reorderPortfolioItems = (
+    orderedItemIds: string[],
+    userId?: string
+) => {
+    return axiosInstance.put<PortfolioListResponse>(
+        `${profilePath(userId)}/portfolio/reorder`,
+        { orderedItemIds }
     )
 }

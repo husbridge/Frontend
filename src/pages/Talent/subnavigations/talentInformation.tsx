@@ -249,6 +249,36 @@ const TalentInformation = () => {
                                     >
                                         Edit Profile
                                     </Button>
+                                    {/* Phase 1 Step 5: manager access to a
+                                        roster talent's profile setup +
+                                        portfolio manager (canEditTalentProfile
+                                        is enforced server-side). */}
+                                    {id && (
+                                        <Button
+                                            className="flex ml-2 !text-sm"
+                                            variant="border"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/talents/${id}/profile-setup`
+                                                )
+                                            }
+                                        >
+                                            Profile Setup
+                                        </Button>
+                                    )}
+                                    {id && (
+                                        <Button
+                                            className="flex ml-2 !text-sm"
+                                            variant="border"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/talents/${id}/portfolio`
+                                                )
+                                            }
+                                        >
+                                            Portfolio
+                                        </Button>
+                                    )}
                                     {copied && (
                                         <div className="absolute left-30 mt-10">
                                             <Alert

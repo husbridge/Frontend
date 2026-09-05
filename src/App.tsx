@@ -15,6 +15,8 @@ import Dashboard from "@pages/Dashboard"
 import HelpSupport from "@pages/Help&Support"
 import InquiryManagement from "@pages/InquiryManagement"
 import Messaging from "@pages/Messaging"
+import PortfolioManager from "@pages/PortfolioManager"
+import ProfileSetup from "@pages/ProfileSetup"
 import Settings from "@pages/Settings"
 import Talents from "@pages/Talent"
 import AllInquiries from "@pages/Talent/subnavigations/allInquiries"
@@ -80,6 +82,19 @@ function App() {
                 <Route path="/calendar" element={<CalendarManagement />} />
                 <Route path="/team" element={<Team />} />
                 <Route path="/settings" element={<Settings />} />
+                {/* Phase 1 Step 5: profile setup wizard + portfolio manager.
+                    Self (talent/agency) and manager-on-roster-talent share
+                    the same page component — see each page's index.tsx. */}
+                <Route path="/profile-setup" element={<ProfileSetup />} />
+                <Route
+                    path="/talents/:id/profile-setup"
+                    element={<ProfileSetup />}
+                />
+                <Route path="/portfolio" element={<PortfolioManager />} />
+                <Route
+                    path="/talents/:id/portfolio"
+                    element={<PortfolioManager />}
+                />
                 <Route
                     path="/inquiry-management"
                     element={<InquiryManagement />}

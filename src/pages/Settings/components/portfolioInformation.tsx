@@ -1,10 +1,6 @@
 import { Button } from "@components/index"
 import { useEffect, useRef, useState, type ChangeEvent } from "react"
-import {
-    createProfile,
-    deletePortfolioMedia,
-    uploadPortfolioMedia,
-} from "@services/auth"
+import { createProfile, createPortfolioItem, deletePortfolioItem } from "@services/auth"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { showNotification } from "@mantine/notifications"
 import { type Error } from "../../../type/api/index"
@@ -55,8 +51,12 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
         },
     })
 
-    const { isPending: isUploading, mutate: uploadMedia } = useMutation({
-        mutationFn: uploadPortfolioMedia,
+    // Migrated off the TEMP /profile/portfolio-media shim onto the real
+    // PortfolioItem endpoints (Phase 1 Step 5) — see PHASE1_AUDIT.md and
+    // this PR's description for the server-side shim now ready to remove.
+    const { isPending: isUploading, mutate: uploadItem } = useMutation({
+        mutationFn: (file: File) =>
+            createPortfolioItem({ title: "Untitled" }, file),
         onSuccess: () => {
             showNotification({
                 title: "Success",
@@ -76,8 +76,8 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
         },
     })
 
-    const { mutate: removeMedia } = useMutation({
-        mutationFn: deletePortfolioMedia,
+    const { mutate: removeItem } = useMutation({
+        mutationFn: (itemId: string) => deletePortfolioItem(itemId),
         onSuccess: () => {
             queryClient
                 .invalidateQueries({ queryKey: ["profile"] })
@@ -102,9 +102,7 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (!file) return
-        const formData = new FormData()
-        formData.append("portfolio-media", file)
-        uploadMedia(formData)
+        uploadItem(file)
         e.target.value = ""
     }
 
@@ -186,24 +184,31 @@ const PortfolioInformation = ({ data }: { data?: ProfileResponse["data"] }) => {
 
             <p className="text-md font-semibold mb-2">Portfolio Photos</p>
             <div className="flex flex-wrap gap-3 mb-4">
-                {(data?.portfolioMedia || []).map((item) => (
+                {(data?.portfolioItems || []).map((item) => (
                     <div key={item._id} className="relative w-24 h-24">
                         <img
-                            src={item.url}
-                            alt={item.caption || "Portfolio photo"}
+                            src={item.media[0]?.thumbnailUrl || item.media[0]?.url}
+                            alt={item.title || "Portfolio photo"}
                             className="w-24 h-24 object-cover rounded-lg"
                         />
                         <button
                             type="button"
                             aria-label="Remove photo"
                             className="absolute -top-2 -right-2 bg-black-100 text-white rounded-full w-6 h-6 text-xs"
-                            onClick={() => removeMedia(item._id)}
+                            onClick={() => removeItem(item._id)}
                         >
                             ×
                         </button>
                     </div>
                 ))}
             </div>
+            <p className="text-xs text-[#00000066] mb-2">
+                For captions, categories, and more control, use the new{" "}
+                <a href="/portfolio" className="underline">
+                    Portfolio manager
+                </a>{" "}
+                in Settings.
+            </p>
             <input
                 ref={fileInputRef}
                 type="file"
