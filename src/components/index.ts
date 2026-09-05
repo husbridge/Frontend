@@ -10,6 +10,8 @@ export { default as TalentMagicLinkModal } from "./Modals/Dashboard/talentMagicL
 export { default as EventDetailsModal } from "./Modals/Dashboard/eventDetails"
 export { default as EventDetailModal } from "./Modals/Calendar/eventDetails"
 export { default as SyncCalendarModal } from "./Modals/Calendar/syncCalendarModal"
+export { default as BottomSheet } from "./Layout/BottomSheet"
+export { default as FullScreenPanel } from "./Layout/FullScreenPanel"
 export { default as SetReminderModal } from "./Modals/Dashboard/setReminder"
 export { default as VerificationSuccessfulModal } from "./Modals/VerificationSuccessful"
 export { default as EditTalentModal } from "./Modals/Talent/editTalent"

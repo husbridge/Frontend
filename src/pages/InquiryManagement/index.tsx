@@ -209,10 +209,10 @@ const InquiryManagement = () => {
                 <p className="font-semibold text-[16px] leading-6 mt-7">
                     Date Created
                 </p>
-                <div className="flex items-center gap-2 flex-wrap justify-between mt-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-between mt-3">
                     <Input
                         type="date"
-                        className="border border-[#382828] rounded-2xl basis-[45%] min-w-[200px] p-4 h-[50px] text-[12px] text-grey-100 font-medium"
+                        className="border border-[#382828] rounded-2xl w-full sm:basis-[45%] sm:min-w-[200px] p-4 h-[50px] text-[12px] text-grey-100 font-medium"
                         value={filters.startDate}
                         onChange={(e) =>
                             setFilters({
@@ -221,10 +221,12 @@ const InquiryManagement = () => {
                             })
                         }
                     />
-                    <span className="text-[12px] text-grey-100">to</span>
+                    <span className="text-[12px] text-grey-100 text-center sm:text-left">
+                        to
+                    </span>
                     <Input
                         type="date"
-                        className="border border-[#E0E0E0] rounded-2xl basis-[45%] min-w-[200px] p-4 h-[50px] text-[12px] text-grey-100 font-medium"
+                        className="border border-[#E0E0E0] rounded-2xl w-full sm:basis-[45%] sm:min-w-[200px] p-4 h-[50px] text-[12px] text-grey-100 font-medium"
                         value={filters.endDate}
                         onChange={(e) =>
                             setFilters({
