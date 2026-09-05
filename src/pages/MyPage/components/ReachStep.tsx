@@ -1,6 +1,7 @@
 import {
     ActionIcon,
     Button,
+    Divider,
     Group,
     Select,
     Stack,
@@ -14,16 +15,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { updateProfileStep } from "@services/auth"
 import {
     AudienceBand,
-    ProfileResponse,
     SocialAccount,
     SocialPlatform,
 } from "type/api/auth.types"
-
-export interface ReachStepProps {
-    data: ProfileResponse["data"]
-    userId?: string
-    onSaved: () => void
-}
+import { MyPageSectionProps } from "../sections"
 
 const PLATFORM_OPTIONS: { value: SocialPlatform; label: string }[] = [
     { value: "instagram", label: "Instagram" },
@@ -51,13 +46,23 @@ const emptyAccount = (): SocialAccount => ({
     audienceBand: "",
 })
 
-const ReachStep = ({ data, userId, onSaved }: ReachStepProps) => {
+// "Reach" section of My Page — social accounts (with self-reported
+// audience size, feeds the completeness score) and social links (plain
+// URLs, moved here from the old Settings > Account Information > Public
+// Portfolio block — that block no longer exists; this is the only place
+// they're edited now).
+const ReachStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const queryClient = useQueryClient()
     const [socialAccounts, setSocialAccounts] = useState<SocialAccount[]>(
         data.socialAccounts && data.socialAccounts.length > 0
             ? data.socialAccounts
             : [emptyAccount()]
     )
+    const [instagram, setInstagram] = useState(data.socialLinks?.instagram || "")
+    const [tiktok, setTiktok] = useState(data.socialLinks?.tiktok || "")
+    const [twitter, setTwitter] = useState(data.socialLinks?.twitter || "")
+    const [youtube, setYoutube] = useState(data.socialLinks?.youtube || "")
+    const [website, setWebsite] = useState(data.socialLinks?.website || "")
 
     const { isPending, mutate: save } = useMutation({
         mutationFn: () =>
@@ -66,18 +71,19 @@ const ReachStep = ({ data, userId, onSaved }: ReachStepProps) => {
                     socialAccounts: socialAccounts.filter(
                         (a) => a.handle || a.url
                     ),
+                    socialLinks: { instagram, tiktok, twitter, youtube, website },
                 },
                 userId
             ),
         onSuccess: () => {
             showNotification({
                 title: "Saved",
-                message: "Social accounts updated",
+                message: "Reach updated",
                 color: "green",
             })
             queryClient
-                .invalidateQueries({ queryKey: ["profileSetup", userId ?? "self"] })
-                .finally(() => onSaved())
+                .invalidateQueries({ queryKey: ["myPage", userId ?? "self"] })
+                .finally(() => onSaved?.())
         },
         onError: (err: any) => {
             showNotification({
@@ -95,7 +101,10 @@ const ReachStep = ({ data, userId, onSaved }: ReachStepProps) => {
     }
 
     return (
-        <Stack gap="md">
+        <Stack gap="md" className="max-w-2xl">
+            <Text size="sm" fw={600}>
+                Social accounts
+            </Text>
             <Text size="sm" c="dimmed">
                 Self-reported for now — verified audience figures come later.
             </Text>
@@ -160,6 +169,47 @@ const ReachStep = ({ data, userId, onSaved }: ReachStepProps) => {
             >
                 Add another account
             </Button>
+
+            <Divider my="sm" />
+
+            <Text size="sm" fw={600}>
+                Social links
+            </Text>
+            <Group grow wrap="wrap">
+                <TextInput
+                    label="Instagram"
+                    placeholder="https://instagram.com/..."
+                    value={instagram}
+                    onChange={(e) => setInstagram(e.currentTarget.value)}
+                />
+                <TextInput
+                    label="TikTok"
+                    placeholder="https://tiktok.com/@..."
+                    value={tiktok}
+                    onChange={(e) => setTiktok(e.currentTarget.value)}
+                />
+            </Group>
+            <Group grow wrap="wrap">
+                <TextInput
+                    label="Twitter / X"
+                    placeholder="https://x.com/..."
+                    value={twitter}
+                    onChange={(e) => setTwitter(e.currentTarget.value)}
+                />
+                <TextInput
+                    label="YouTube"
+                    placeholder="https://youtube.com/..."
+                    value={youtube}
+                    onChange={(e) => setYoutube(e.currentTarget.value)}
+                />
+            </Group>
+            <TextInput
+                label="Website"
+                placeholder="https://..."
+                value={website}
+                onChange={(e) => setWebsite(e.currentTarget.value)}
+            />
+
             <Button onClick={() => save()} loading={isPending} fullWidth>
                 Save
             </Button>

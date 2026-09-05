@@ -58,6 +58,10 @@ const Dashboard = () => {
     } = useQuery({
         queryKey: ["profile"],
         queryFn: () => fetchProfile(),
+        // Capped after a production incident where a 500 on this endpoint
+        // caused an indefinite retry storm (hundreds of failed requests) —
+        // TanStack Query's default is 3 retries with exponential backoff.
+        retry: 1,
     })
     const stage = data?.data.registrationStage
     const userType = state.user?.userType
@@ -75,6 +79,7 @@ const Dashboard = () => {
     } = useQuery({
         queryKey: ["inquiries"],
         queryFn: () => fetchInquiries(),
+        retry: 1,
     })
 
     const userState = useMemo(() => {

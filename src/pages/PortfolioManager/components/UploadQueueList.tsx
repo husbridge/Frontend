@@ -1,12 +1,17 @@
-import { CloseButton, Progress, Stack, Text } from "@mantine/core"
+import { Button, CloseButton, Progress, Stack, Text } from "@mantine/core"
 import { QueuedUpload } from "../useUploadQueue"
 
 export interface UploadQueueListProps {
     queue: QueuedUpload[]
     onDismiss: (id: string) => void
+    onRetry: (id: string) => void
 }
 
-const UploadQueueList = ({ queue, onDismiss }: UploadQueueListProps) => {
+// Every item here is in exactly one of three states — uploading (with
+// live progress), done (about to auto-clear), or error (a specific
+// message plus Retry/Dismiss) — never stuck indefinitely. See
+// useUploadQueue's top comment for how that's guaranteed.
+const UploadQueueList = ({ queue, onDismiss, onRetry }: UploadQueueListProps) => {
     if (queue.length === 0) return null
 
     return (
@@ -32,6 +37,16 @@ const UploadQueueList = ({ queue, onDismiss }: UploadQueueListProps) => {
                             </Text>
                         )}
                     </div>
+                    {upload.status === "error" && (
+                        <Button
+                            size="xs"
+                            variant="outline"
+                            color="dark"
+                            onClick={() => onRetry(upload.id)}
+                        >
+                            Retry
+                        </Button>
+                    )}
                     {upload.status !== "uploading" && (
                         <CloseButton
                             size="sm"

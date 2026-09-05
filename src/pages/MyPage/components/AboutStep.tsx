@@ -4,19 +4,10 @@ import { showNotification } from "@mantine/notifications"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { updateProfileStep } from "@services/auth"
 import { fetchCategories, fetchSkills } from "@services/taxonomy"
-import { ProfileResponse } from "type/api/auth.types"
+import { MyPageSectionProps } from "../sections"
 
-export interface ClassificationStepProps {
-    data: ProfileResponse["data"]
-    userId?: string
-    onSaved: () => void
-}
-
-const ClassificationStep = ({
-    data,
-    userId,
-    onSaved,
-}: ClassificationStepProps) => {
+// "About" section of My Page — category, city, skills, service areas.
+const AboutStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const queryClient = useQueryClient()
     const [primaryCategory, setPrimaryCategory] = useState(
         data.primaryCategory || ""
@@ -48,12 +39,12 @@ const ClassificationStep = ({
         onSuccess: () => {
             showNotification({
                 title: "Saved",
-                message: "Classification updated",
+                message: "About section updated",
                 color: "green",
             })
             queryClient
-                .invalidateQueries({ queryKey: ["profileSetup", userId ?? "self"] })
-                .finally(() => onSaved())
+                .invalidateQueries({ queryKey: ["myPage", userId ?? "self"] })
+                .finally(() => onSaved?.())
         },
         onError: (err: any) => {
             showNotification({
@@ -71,7 +62,7 @@ const ClassificationStep = ({
     const skillTagOptions = (skillOptions?.data || []).map((s) => s.label)
 
     return (
-        <Stack gap="md">
+        <Stack gap="md" className="max-w-xl">
             <Select
                 label="Primary category"
                 placeholder="Select your main category"
@@ -112,4 +103,4 @@ const ClassificationStep = ({
     )
 }
 
-export default ClassificationStep
+export default AboutStep

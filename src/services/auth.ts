@@ -260,6 +260,12 @@ export const createPortfolioItem = (
         `${profilePath(userId)}/portfolio`,
         formData,
         {
+            // A hard cap so an upload can never sit indefinitely with no
+            // feedback — the v0 portfolio-media UI had exactly this stuck
+            // "Uploading..." failure mode with no client-side timeout.
+            // Without this, a dropped connection or a hung server-side
+            // process leaves the axios promise pending forever.
+            timeout: 2 * 60 * 1000,
             onUploadProgress: (event) => {
                 if (!onUploadProgress || !event.total) return
                 onUploadProgress(Math.round((event.loaded / event.total) * 100))

@@ -61,6 +61,10 @@ const GenerateIvoiceModal = ({
     const { data } = useQuery({
         queryKey: ["profile"],
         queryFn: () => fetchProfile(),
+        // Capped after a production incident where a 500 on GET /profile
+        // caused an indefinite retry storm (hundreds of failed requests) —
+        // TanStack Query's default is 3 retries with exponential backoff.
+        retry: 1,
     })
 
     const formatCurrency = (amount: string, currency: string) => {

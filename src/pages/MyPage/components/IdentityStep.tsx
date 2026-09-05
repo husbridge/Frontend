@@ -3,15 +3,12 @@ import { useState } from "react"
 import { showNotification } from "@mantine/notifications"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { updateProfileStep, uploadProfileImage } from "@services/auth"
-import { ProfileResponse } from "type/api/auth.types"
+import { MyPageSectionProps } from "../sections"
 
-export interface IdentityStepProps {
-    data: ProfileResponse["data"]
-    userId?: string
-    onSaved: () => void
-}
-
-const IdentityStep = ({ data, userId, onSaved }: IdentityStepProps) => {
+// "Identity" section of My Page — the single profile photo (avatar), name,
+// title, short + long bio. This is the ONLY place the profile photo is
+// edited; it is not part of the Portfolio section's media grid.
+const IdentityStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const queryClient = useQueryClient()
     const [firstName, setFirstName] = useState(data.firstName || "")
     const [lastName, setLastName] = useState(data.lastName || "")
@@ -19,11 +16,12 @@ const IdentityStep = ({ data, userId, onSaved }: IdentityStepProps) => {
         data.professionalTitle || ""
     )
     const [shortBio, setShortBio] = useState(data.shortBio || "")
+    const [longBio, setLongBio] = useState(data.longBio || "")
 
     const { isPending, mutate: save } = useMutation({
         mutationFn: () =>
             updateProfileStep(
-                { firstName, lastName, professionalTitle, shortBio },
+                { firstName, lastName, professionalTitle, shortBio, longBio },
                 userId
             ),
         onSuccess: () => {
@@ -33,8 +31,8 @@ const IdentityStep = ({ data, userId, onSaved }: IdentityStepProps) => {
                 color: "green",
             })
             queryClient
-                .invalidateQueries({ queryKey: ["profileSetup", userId ?? "self"] })
-                .finally(() => onSaved())
+                .invalidateQueries({ queryKey: ["myPage", userId ?? "self"] })
+                .finally(() => onSaved?.())
         },
         onError: (err: any) => {
             showNotification({
@@ -58,7 +56,7 @@ const IdentityStep = ({ data, userId, onSaved }: IdentityStepProps) => {
                 color: "green",
             })
             queryClient
-                .invalidateQueries({ queryKey: ["profileSetup", userId ?? "self"] })
+                .invalidateQueries({ queryKey: ["myPage", userId ?? "self"] })
                 .finally(() => false)
         },
         onError: (err: any) => {
@@ -71,7 +69,7 @@ const IdentityStep = ({ data, userId, onSaved }: IdentityStepProps) => {
     })
 
     return (
-        <Stack gap="md">
+        <Stack gap="md" className="max-w-xl">
             <div className="flex items-center gap-4">
                 <img
                     src={data.profileUrl || "/placeholder-avatar.png"}
@@ -123,6 +121,14 @@ const IdentityStep = ({ data, userId, onSaved }: IdentityStepProps) => {
                 maxLength={280}
                 value={shortBio}
                 onChange={(e) => setShortBio(e.currentTarget.value)}
+            />
+            <Textarea
+                label="Long bio"
+                placeholder="The fuller story — background, experience, what you're known for"
+                minRows={5}
+                maxLength={2000}
+                value={longBio}
+                onChange={(e) => setLongBio(e.currentTarget.value)}
             />
             <Button onClick={() => save()} loading={isPending} fullWidth>
                 Save

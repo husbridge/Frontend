@@ -30,10 +30,13 @@ const PortfolioManagerBody = ({ userId }: PortfolioManagerBodyProps) => {
     const { data: response, isLoading } = useQuery({
         queryKey,
         queryFn: () => fetchPortfolioItems(userId),
+        // Same profile-router incident-driven cap as ["profile"] — see
+        // ProfileSetupBody/Dashboard.
+        retry: 1,
     })
     const items = response?.data || []
 
-    const { queue, enqueue, dismiss } = useUploadQueue(userId)
+    const { queue, enqueue, retryUpload, dismiss } = useUploadQueue(userId)
 
     const { mutate: saveEdit, isPending: isSavingEdit } = useMutation({
         mutationFn: ({
@@ -118,7 +121,11 @@ const PortfolioManagerBody = ({ userId }: PortfolioManagerBodyProps) => {
                 </Button>
             </div>
 
-            <UploadQueueList queue={queue} onDismiss={dismiss} />
+            <UploadQueueList
+                queue={queue}
+                onDismiss={dismiss}
+                onRetry={retryUpload}
+            />
 
             {items.length === 0 && queue.length === 0 ? (
                 <Text c="dimmed" size="sm">

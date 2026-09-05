@@ -11,15 +11,12 @@ import { LuPlus, LuTrash2 } from "react-icons/lu"
 import { showNotification } from "@mantine/notifications"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { updateProfileStep } from "@services/auth"
-import { Brand, ProfileResponse } from "type/api/auth.types"
+import { Brand } from "type/api/auth.types"
+import { MyPageSectionProps } from "../sections"
 
-export interface TrackRecordStepProps {
-    data: ProfileResponse["data"]
-    userId?: string
-    onSaved: () => void
-}
-
-const TrackRecordStep = ({ data, userId, onSaved }: TrackRecordStepProps) => {
+// "Track record" section of My Page — years of experience, brands worked
+// with.
+const TrackRecordStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const queryClient = useQueryClient()
     const [yearsExperience, setYearsExperience] = useState<number | "">(
         data.yearsExperience ?? ""
@@ -43,8 +40,8 @@ const TrackRecordStep = ({ data, userId, onSaved }: TrackRecordStepProps) => {
                 color: "green",
             })
             queryClient
-                .invalidateQueries({ queryKey: ["profileSetup", userId ?? "self"] })
-                .finally(() => onSaved())
+                .invalidateQueries({ queryKey: ["myPage", userId ?? "self"] })
+                .finally(() => onSaved?.())
         },
         onError: (err: any) => {
             showNotification({

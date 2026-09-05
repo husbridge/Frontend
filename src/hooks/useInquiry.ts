@@ -7,6 +7,10 @@ import { useQuery } from "@tanstack/react-query"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+// Capped (retry: 1, not TanStack's default 3 + exponential backoff) after
+// a production incident where a 500 on a similarly-critical endpoint
+// (GET /profile) caused an indefinite retry storm — applying the same cap
+// here since inquiries queries carry the same risk.
 const useGetInquiries = ({
     id,
     userType,
@@ -20,6 +24,7 @@ const useGetInquiries = ({
         queryKey: ["inquiries", filters],
         queryFn: () => fetchInquiries(filters),
         enabled: !id && userType !== "client" ? true : false,
+        retry: 1,
     })
     return result
 }
@@ -35,6 +40,7 @@ const useGetInquiriesByTalentId = ({
         queryKey: ["inquiries", id, filters],
         queryFn: () => fetchInquiriesByTalentId(id, filters),
         enabled: id ? true : false,
+        retry: 1,
     })
     return result
 }
@@ -43,6 +49,7 @@ const useGetPortalInquiries = (userType: string) => {
         queryKey: ["portalInquiries"],
         queryFn: () => fetchPortalInquiries(),
         enabled: userType === "client" ? true : false,
+        retry: 1,
     })
     return result
 }
