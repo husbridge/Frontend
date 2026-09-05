@@ -53,7 +53,7 @@ const Navbar = ({ setOpenSideBar, search }: NavBarInterface) => {
                     <HiMenuAlt2
                         size={28}
                         onClick={() => setOpenSideBar(true)}
-                        className={`lg:hidden ${!search && "absolute left-6"}`}
+                        className={`lg:hidden ${!search ? "absolute left-6" : ""}`}
                     />
                     {search && (
                         <Input
