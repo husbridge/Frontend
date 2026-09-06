@@ -53,6 +53,39 @@ const theme = createTheme({
         Button: {
             defaultProps: { radius: 999 },
         },
+        // Reported UX bug: dropdowns "appearing from the top rather than
+        // from below". Mantine's Combobox-based inputs (Select, TagsInput,
+        // MultiSelect) auto-flip the dropdown above the field when their
+        // floating-ui middleware judges there isn't enough room below —
+        // predictable/expected in isolation, but disorienting in a form
+        // where every field is expected to open downward the same way.
+        // Forcing position + disabling flip (shift still allowed, so a
+        // dropdown near a viewport edge nudges sideways, never upward)
+        // makes every dropdown in the app behave the same, predictable way.
+        Select: {
+            defaultProps: {
+                comboboxProps: {
+                    position: "bottom-start",
+                    middlewares: { flip: false, shift: true },
+                },
+            },
+        },
+        TagsInput: {
+            defaultProps: {
+                comboboxProps: {
+                    position: "bottom-start",
+                    middlewares: { flip: false, shift: true },
+                },
+            },
+        },
+        MultiSelect: {
+            defaultProps: {
+                comboboxProps: {
+                    position: "bottom-start",
+                    middlewares: { flip: false, shift: true },
+                },
+            },
+        },
     },
 })
 const queryClient = new QueryClient({

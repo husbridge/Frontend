@@ -15,7 +15,8 @@ import { Brand } from "type/api/auth.types"
 import { MyPageSectionProps } from "../sections"
 
 // "Track record" section of My Page — years of experience, brands worked
-// with.
+// with. Neither field is required to publish (not in husridge-server's
+// getPublishRequirementChecks) — both optional.
 const TrackRecordStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const queryClient = useQueryClient()
     const [yearsExperience, setYearsExperience] = useState<number | "">(
@@ -55,18 +56,19 @@ const TrackRecordStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     return (
         <Stack gap="md">
             <NumberInput
-                label="Years of experience"
+                label="Years of experience (optional)"
                 min={0}
                 max={80}
                 value={yearsExperience}
                 onChange={(value) =>
                     setYearsExperience(typeof value === "number" ? value : "")
                 }
+                className="max-w-xs"
             />
             {brands.map((brand, index) => (
                 <Group key={index} align="flex-end" wrap="wrap">
                     <TextInput
-                        label="Brand name"
+                        label="Brand name (optional)"
                         value={brand.name}
                         onChange={(e) =>
                             setBrands((prev) =>

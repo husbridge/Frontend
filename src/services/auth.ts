@@ -236,6 +236,29 @@ export const unpublishProfile = (userId?: string) => {
     )
 }
 
+interface UsernameResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: string | null
+}
+
+// Self-only on husridge-server — no :userId-suffixed variant exists for
+// either route, so a manager can't set a roster talent's username this
+// way (My Page hides this field entirely when userId is set).
+export const generateUsername = async () => {
+    const response = await axiosInstance.get<UsernameResponse>(
+        "/profile/generate-username"
+    )
+    return response.data
+}
+
+export const setUsername = (username: string) => {
+    return axiosInstance.patch<UsernameResponse>(
+        `/profile/create-username/${encodeURIComponent(username)}`
+    )
+}
+
 export const fetchPortfolioItems = async (userId?: string) => {
     const response = await axiosInstance.get<PortfolioListResponse>(
         `${profilePath(userId)}/portfolio`
