@@ -94,7 +94,13 @@ const MyPage = () => {
 
     return (
         <Layout>
-            <div className="pt-24 px-4 sm:px-8 pb-12 max-w-4xl">
+            {/* No outer max-width here — matches every other authenticated
+                page in the app (Dashboard, InquiryManagement,
+                TalentInformation), none of which cap their content width.
+                Individual form sections (Identity/About/Reach) still cap
+                their own width for readability; the Portfolio grid and the
+                completeness/publish bar intentionally use the full space. */}
+            <div className="pt-24 px-4 sm:px-8 pb-12">
                 <PreviewAndPublishBar
                     completenessScore={data.completenessScore || 0}
                     nextBestAction={data.nextBestAction || ""}

@@ -7,6 +7,8 @@ import { fetchCategories, fetchSkills } from "@services/taxonomy"
 import { MyPageSectionProps } from "../sections"
 
 // "About" section of My Page — category, city, skills, service areas.
+// Fields marked * are required to publish (matches husridge-server's
+// getPublishRequirementChecks exactly) — everything else here is optional.
 const AboutStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const queryClient = useQueryClient()
     const [primaryCategory, setPrimaryCategory] = useState(
@@ -62,36 +64,40 @@ const AboutStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     const skillTagOptions = (skillOptions?.data || []).map((s) => s.label)
 
     return (
-        <Stack gap="md" className="max-w-xl">
-            <Select
-                label="Primary category"
-                placeholder="Select your main category"
-                data={categorySelectData}
-                value={primaryCategory}
-                onChange={(value) => setPrimaryCategory(value || "")}
-                searchable
-            />
+        <Stack gap="md">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Select
+                    label="Primary category"
+                    required
+                    placeholder="Select your main category"
+                    data={categorySelectData}
+                    value={primaryCategory}
+                    onChange={(value) => setPrimaryCategory(value || "")}
+                    searchable
+                />
+                <TextInput
+                    label="City"
+                    required
+                    value={city}
+                    onChange={(e) => setCity(e.currentTarget.value)}
+                />
+            </div>
             <TagsInput
-                label="Other categories"
+                label="Other categories (optional)"
                 placeholder="Add another category"
                 data={categorySelectData.map((c) => c.label)}
                 value={categories}
                 onChange={setCategories}
             />
             <TagsInput
-                label="Skills"
+                label="Skills (optional)"
                 placeholder="Add a skill"
                 data={skillTagOptions}
                 value={skills}
                 onChange={setSkills}
             />
-            <TextInput
-                label="City"
-                value={city}
-                onChange={(e) => setCity(e.currentTarget.value)}
-            />
             <TagsInput
-                label="Service areas"
+                label="Service areas (optional)"
                 placeholder="Add a city/region you also serve"
                 value={serviceAreas}
                 onChange={setServiceAreas}

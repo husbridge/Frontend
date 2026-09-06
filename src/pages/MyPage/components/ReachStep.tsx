@@ -101,9 +101,9 @@ const ReachStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
     }
 
     return (
-        <Stack gap="md" className="max-w-2xl">
+        <Stack gap="md">
             <Text size="sm" fw={600}>
-                Social accounts
+                Social accounts (optional)
             </Text>
             <Text size="sm" c="dimmed">
                 Self-reported for now — verified audience figures come later.
@@ -173,7 +173,7 @@ const ReachStep = ({ data, userId, onSaved }: MyPageSectionProps) => {
             <Divider my="sm" />
 
             <Text size="sm" fw={600}>
-                Social links
+                Social links (optional)
             </Text>
             <Group grow wrap="wrap">
                 <TextInput

@@ -107,33 +107,33 @@ const PortfolioItemEditor = ({
                     onChange={(e) => setTitle(e.currentTarget.value)}
                 />
                 <Textarea
-                    label="Description"
+                    label="Description (optional)"
                     maxLength={600}
                     minRows={3}
                     value={description}
                     onChange={(e) => setDescription(e.currentTarget.value)}
                 />
                 <TextInput
-                    label="Your role"
+                    label="Your role (optional)"
                     placeholder="e.g. Photographer, Director"
                     value={role}
                     onChange={(e) => setRole(e.currentTarget.value)}
                 />
                 <TextInput
-                    label="Client"
+                    label="Client (optional)"
                     maxLength={80}
                     value={clientName}
                     onChange={(e) => setClientName(e.currentTarget.value)}
                 />
                 <Select
-                    label="Category"
+                    label="Category (optional)"
                     data={CATEGORY_OPTIONS}
                     value={category}
                     onChange={(value) => setCategory(value || "")}
                     searchable
                 />
                 <TextInput
-                    label="Date"
+                    label="Date (optional)"
                     placeholder="2026-03"
                     value={date}
                     onChange={(e) => setDate(e.currentTarget.value)}
