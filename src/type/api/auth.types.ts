@@ -371,7 +371,14 @@ export interface PublicProfileResponse {
     statusCode: number
     message: string
     hasError: boolean
+    // Gated on isPublished server-side (PHASE1_AUDIT.md §16) — an
+    // unpublished profile returns just {isPublished: false, uniqueUsername},
+    // none of the fields below. Left as one loosely-typed shape rather than
+    // a proper union since every existing field access here already goes
+    // through optional chaining.
     data: {
+        isPublished?: boolean
+        uniqueUsername?: string
         _id: string
         profileUrl: string
         fullName: string
