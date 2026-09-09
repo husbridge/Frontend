@@ -10,9 +10,7 @@ import {
     bookingEventValidationSchema,
     bookingDetailsValidationSchema,
 } from "@utils/validationSchema"
-import { useNavigate } from "react-router-dom"
-import { useMutation } from "@tanstack/react-query"
-import { sendPortalOTP } from "@services/auth"
+import { useInquirySubmission } from "@hooks/useInquirySubmission"
 import { showNotification } from "@mantine/notifications"
 import { useInquiryStore } from "@hooks/useInquiry";
 import { uploadFile } from "@services/storage"
@@ -21,23 +19,7 @@ const Booking = ({ id }: { id: string }) => {
     const [step, setStep] = useState(1);
     const document = useInquiryStore((state) => state.document);
 
-    const navigate = useNavigate()
-
-    const onSendOtp = useMutation({
-        mutationFn: sendPortalOTP,
-        onSuccess: () => {
-            navigate("/confirm-inquiry")
-        },
-        onError: (err: Error) => {
-            showNotification({
-                title: "Error",
-                message:
-                    err.message ||
-                    "Something went wrong, please try again later",
-                color: "red",
-            })
-        },
-    })
+    const { submit, isPending, isAuthenticatedBuyer } = useInquirySubmission()
 
     const handleValidation = async (values: any) => {
         let uploadedDocumentKey = "";
@@ -85,12 +67,7 @@ const Booking = ({ id }: { id: string }) => {
             talentID: id,
             attachDocument: uploadedDocumentKey
         }
-        sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
-
-        onSendOtp.mutate({
-            email: values.emailAddress,
-            name: values.fullName,
-        })
+        submit(inquiry)
     }
 
     return (
@@ -150,7 +127,7 @@ const Booking = ({ id }: { id: string }) => {
                                 booking
                             />
                         )}
-                        {step === 1 && (
+                        {step === 1 && !isAuthenticatedBuyer && (
                             <p className="text-black-60 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
@@ -169,7 +146,7 @@ const Booking = ({ id }: { id: string }) => {
                                 variant="primary"
                                 className={`px-6 text-white-100  w-full rounded-[40px] mt-10 ${step === 3 ? "ml-4" : "ml-0"}`}
                                 type={"submit"}
-                                disabled={onSendOtp.isPending}
+                                disabled={isPending}
                             >
                                 {step > 2 ? "Send Inquiry" : "Proceed"}
                             </Button>

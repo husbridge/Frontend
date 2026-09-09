@@ -7,6 +7,7 @@ import { useEffect } from "react"
 import { clientLoginValidationSchema } from "@utils/validationSchema"
 import { useNavigate } from "react-router-dom"
 import { setAccessToken } from "@services/api.services"
+import { safeReturnTo } from "@utils/returnTo"
 import useAuth from "@hooks/auth/useAuth"
 
 const ClientLogin: React.FC = () => {
@@ -46,7 +47,7 @@ const ClientLogin: React.FC = () => {
                     userType: "client",
                 })
             )
-            navigate(redirectUrl || "/inquiry-management")
+            navigate(safeReturnTo(redirectUrl))
         }
     }, [data])
 
@@ -114,6 +115,13 @@ const ClientLogin: React.FC = () => {
                 </Formik>
                 <p className="font-medium text-md text-center mt-8 justify-center underline text-[#475569ca]">
                     <Link to="/login">Not a client?</Link>
+                </p>
+                <p className="font-medium text-md text-center mt-2 justify-center underline text-[#475569ca]">
+                    <Link
+                        to={`/client-signup${redirectUrl ? `?redirect_url=${encodeURIComponent(redirectUrl)}` : ""}`}
+                    >
+                        Don't have an account? Sign up
+                    </Link>
                 </p>
             </div>
         </div>

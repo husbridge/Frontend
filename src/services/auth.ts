@@ -19,6 +19,8 @@ import {
     PortalOTPValidationRequest,
     PortalOTPValidationResponse,
     ClientSigninResponse,
+    ClientSignupRequest,
+    ClientSignupResponse,
     sendPortalOTPRequest,
     PortfolioItemRequest,
 } from "type/api/auth.types"
@@ -101,6 +103,9 @@ export const signin = (data: SigninRequest) => {
 }
 export const clientSignin = (data: ClientSigninRequest) => {
     return axiosInstance.post<ClientSigninResponse>("/portal/auth/login", data)
+}
+export const clientSignup = (data: ClientSignupRequest) => {
+    return axiosInstance.post<ClientSignupResponse>("/portal/auth/signup", data)
 }
 
 export const requestForgotPassword = (data: { username: string }) => {

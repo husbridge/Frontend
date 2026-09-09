@@ -49,10 +49,27 @@ export interface resendOTPRequest {
     username: string
 }
 export interface ClientSigninResponse{
-    statusCode: number 
-    message: string 
-    hasError: boolean 
+    statusCode: number
+    message: string
+    hasError: boolean
     data: {accessToken: string, id: string}
+}
+// Buyer self-signup (Phase 1 Step 3 backend, wired to the UI here as part
+// of the Book/Message CTA flow). Signup itself issues no token — it just
+// stages the account and emails an OTP; the token only comes from
+// clientSignin, called after validate-otp confirms the code.
+export interface ClientSignupRequest {
+    name: string
+    email: string
+    password: string
+    organisationName?: string
+    phone?: string
+}
+export interface ClientSignupResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: { id: string; email: string } | null
 }
 export interface OTPValidationRequest {
     username: string

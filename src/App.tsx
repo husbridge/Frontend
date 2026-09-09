@@ -1,6 +1,9 @@
 import useAuth from "@hooks/auth/useAuth"
 import AgencySignUp from "@pages/auth/agencySignUp"
 import ClientLogin from "@pages/auth/clientSignIn"
+import ClientSignUp from "@pages/auth/clientSignUp"
+import ConfirmClientSignup from "@pages/auth/confirmClientSignup"
+import InquiryStart from "@pages/auth/inquiryStart"
 import ConfirmEmailAddress from "@pages/auth/confirmEmailAddress"
 import CreateNewPassword from "@pages/auth/createNewpassword"
 import ForgetPassword from "@pages/auth/forget"
@@ -176,6 +179,19 @@ function App() {
             />
             <Route path="/confirm-inquiry" element={<ValidateClientEmail />} />
             <Route path="/contact/:uniqueName" element={<Contact />} />
+            {/* Phase 1 Step 6 (buyer self-signup): reached from husridge.com/
+                t/:uniqueName's Book/Message CTAs. All three sit outside the
+                Authenticated/UnauthenticatedRoutes guards (like /contact and
+                /confirm-inquiry above) because each does its own auth check
+                internally — the guards' hardcoded redirect targets don't
+                carry a returnTo, which these need to preserve through the
+                whole signup/login → OTP → pre-filled-inquiry hop. */}
+            <Route path="/inquiry/start" element={<InquiryStart />} />
+            <Route path="/client-signup" element={<ClientSignUp />} />
+            <Route
+                path="/confirm-client-signup"
+                element={<ConfirmClientSignup />}
+            />
         </Routes>
     )
 }

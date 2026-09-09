@@ -81,6 +81,21 @@ export const clientLoginValidationSchema = yup.object().shape({
         .min(5, "Password must be a minimum of 5 characters"),
 })
 
+export const clientSignupValidationSchema = yup.object().shape({
+    name: yup.string().trim().required("Name is required"),
+    email: yup
+        .string()
+        .trim()
+        .email("Please use a valid email address")
+        .required("Email is required"),
+    password: yup
+        .string()
+        .required("Password is required")
+        .min(5, "Password must be a minimum of 5 characters"),
+    organisationName: yup.string().trim(),
+    phone: yup.string().trim(),
+})
+
 export const forgotPasswordValidationSchema = yup.object().shape({
     username: yup
         .string()
