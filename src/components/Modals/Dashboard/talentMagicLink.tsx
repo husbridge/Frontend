@@ -3,7 +3,7 @@ import { Input } from "@components/index"
 import Avatar from "@components/Layout/avatar"
 import PendingTalent from "@components/Layout/PendingTalent"
 import { Alert, Modal } from "@mantine/core"
-import { frontendUrl } from "@services/api.services"
+import { magicLinkUrl } from "@services/api.services"
 import { fetchTalents } from "@services/talents"
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
@@ -109,7 +109,7 @@ const TalentMagicLinkModal = ({
                                                 setCopied(false)
                                             }, 2000)
                                         }}
-                                        text={`${frontendUrl()}/contact/${item.uniqueUsername}`}
+                                        text={magicLinkUrl(item.uniqueUsername)}
                                     >
                                         <div className="flex">
                                             <div className="flex items-center cursor-pointer">

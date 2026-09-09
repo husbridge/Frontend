@@ -1,4 +1,11 @@
 {
+    "redirects": [
+        {
+            "source": "/contact/:uniqueName",
+            "destination": "https://husridge.com/t/:uniqueName",
+            "permanent": true
+        }
+    ],
     "rewrites": [
         {"source": "/(.*)", "destination": "/"}
     ]

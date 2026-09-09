@@ -36,7 +36,7 @@ import { RiLinksFill } from "react-icons/ri"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Data as InquiryData } from "type/api/inquiry.types"
 import { Data } from "../../../type/api/event.types"
-import { frontendUrl } from "@services/api.services"
+import { magicLinkUrl } from "@services/api.services"
 
 const TalentInformation = () => {
     const [username, setUsername] = useState("")
@@ -240,7 +240,12 @@ const TalentInformation = () => {
                                                 setCopied(false)
                                             }, 3000)
                                         }}
-                                        text={`${frontendUrl()}/contact/${id ? data?.data.uniqueUsername : profileData?.data.uniqueUsername}`}
+                                        text={magicLinkUrl(
+                                            (id
+                                                ? data?.data.uniqueUsername
+                                                : profileData?.data
+                                                      .uniqueUsername) || ""
+                                        )}
                                     >
                                         <Button
                                             className="flex !text-sm !px-1"

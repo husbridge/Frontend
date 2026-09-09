@@ -27,7 +27,7 @@ import UpcomingEvents from "./components/upcomingEvents"
 import ErrorComponent from "@components/errorComponent"
 import { useGetEvents } from "@hooks/useEvent"
 import { Alert } from "@mantine/core"
-import { frontendUrl } from "@services/api.services"
+import { magicLinkUrl } from "@services/api.services"
 import { fetchInquiries } from "@services/inquiry"
 import { CopyToClipboard as BaseCopyToClipboard } from "react-copy-to-clipboard"
 import React from "react"
@@ -242,7 +242,9 @@ const Dashboard = () => {
                                                 setCopied(false)
                                             }, 2000)
                                         }}
-                                        text={`${frontendUrl()}/contact/${data?.data.uniqueUsername}`}
+                                        text={magicLinkUrl(
+                                            data?.data.uniqueUsername || ""
+                                        )}
                                     >
                                         <Button
                                             className="flex"
