@@ -32,12 +32,29 @@ const Contact = () => {
         queryFn: () => fetchPublicProfile(uniqueName || ""),
     })
 
+    // husridge-server now gates this endpoint on isPublished (PHASE1_AUDIT.md
+    // §16) — an unpublished profile returns this minimal shape instead of
+    // full data. Handled here rather than left to render undefined fields.
+    const isUnpublished = data?.data?.isPublished === false
+
     return (
         <>
             {isLoading ? (
                 <LoadingState />
             ) : error ? (
                 <ErrorComponent />
+            ) : isUnpublished ? (
+                <section className="min-h-screen flex items-center justify-center bg-[#F2F2F2] px-4">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-semibold text-black-100 mb-2">
+                            This page isn&apos;t live yet
+                        </h1>
+                        <p className="text-black-60">
+                            The talent behind this link hasn&apos;t
+                            published their profile yet. Check back soon.
+                        </p>
+                    </div>
+                </section>
             ) : (
                 <section className="bg-[#F2F2F2]">
                     <section className="sm:w-[70%] min-h-screen mx-auto bg-white-100">
