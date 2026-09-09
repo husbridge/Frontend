@@ -5,39 +5,22 @@ import BookingSummary from "./bookingSummary"
 import { Button, InquirySentModal } from "@components/index"
 import { Formik, Form } from "formik"
 import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
 import {
     bookingPersonalValidationSchema,
     bookingEventValidationSchema,
     bookingDetailsValidationSchema,
 } from "@utils/validationSchema"
 import { showNotification } from "@mantine/notifications"
-import { useNavigate } from "react-router-dom"
-import { sendPortalOTP } from "@services/auth"
+import { useInquirySubmission } from "@hooks/useInquirySubmission"
 import { useInquiryStore } from "@hooks/useInquiry";
 import { uploadFile } from "@services/storage"
 
 const Collaboration = ({ id }: { id: string }) => {
     const [step, setStep] = useState(1)
     const [opened, setOpened] = useState(false)
-    const navigate = useNavigate()
     const document = useInquiryStore((state) => state.document);
 
-    const onSendOtp = useMutation({
-        mutationFn: sendPortalOTP,
-        onSuccess: () => {
-            navigate("/confirm-inquiry")
-        },
-        onError: (err: Error) => {
-            showNotification({
-                title: "Error",
-                message:
-                    err.message ||
-                    "Something went wrong, please try again later",
-                color: "red",
-            })
-        },
-    })
+    const { submit, isPending, isAuthenticatedBuyer } = useInquirySubmission()
 
     const handleValidation = async (values: any) => {
         let uploadedDocumentKey = "";
@@ -81,12 +64,7 @@ const Collaboration = ({ id }: { id: string }) => {
             attachDocument: uploadedDocumentKey
         }
 
-        sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
-
-        onSendOtp.mutate({
-            email: values.emailAddress,
-            name: values.fullName,
-        })
+        submit(inquiry)
     }
 
     return (
@@ -148,7 +126,7 @@ const Collaboration = ({ id }: { id: string }) => {
                                 booking={false}
                             />
                         )}
-                        {step === 1 && (
+                        {step === 1 && !isAuthenticatedBuyer && (
                             <p className="text-black-60 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
@@ -167,7 +145,7 @@ const Collaboration = ({ id }: { id: string }) => {
                                 variant="primary"
                                 className={`px-6 text-white-100  w-full rounded-[40px] mt-10 ${step === 3 ? "ml-4" : "ml-0"}`}
                                 type={"submit"}
-                                disabled={onSendOtp.isPending}
+                                disabled={isPending}
                             >
                                 {step === 4 ? "Send Inquiry" : "Proceed"}
                             </Button>

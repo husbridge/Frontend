@@ -1,41 +1,16 @@
 import { Button, FormControls, InquirySentModal } from "@components/index"
 import { Progress } from "@mantine/core"
 import { showNotification } from "@mantine/notifications"
-import { sendPortalOTP } from "@services/auth"
 import { uploadFile } from "@services/storage"
-import { useMutation } from "@tanstack/react-query"
+import { useInquirySubmission } from "@hooks/useInquirySubmission"
 import { proposalInquiryValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
 
 const Proposal = ({ id }: { id: string }) => {
     const [opened, setOpened] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(0)
-    const navigate = useNavigate()
-
-    const onSendOtp = useMutation({
-        mutationFn: sendPortalOTP,
-        onSuccess: (data: any) => {
-            if (data?.message) {
-                showNotification({
-                    title: "Success",
-                    message: data.message || "",
-                    color: "green",
-                })
-            }
-            navigate("/confirm-inquiry")
-        },
-        onError: (err: Error) => {
-            showNotification({
-                title: "Error",
-                message:
-                    err.message ||
-                    "Something went wrong, please try again later",
-                color: "red",
-            })
-        },
-    })
+    const { submit, isPending, isAuthenticatedBuyer } = useInquirySubmission()
 
     const handleValidation = async (values: any) => {
         console.log(values.attachDocument)
@@ -68,12 +43,7 @@ const Proposal = ({ id }: { id: string }) => {
             attachDocument: uploadedDocumentKey,
         }
 
-        sessionStorage.setItem("inquiry", JSON.stringify(inquiry))
-
-        onSendOtp.mutate({
-            email: values.emailAddress,
-            name: values.fullName,
-        })
+        submit(inquiry)
     }
 
     return (
@@ -189,14 +159,17 @@ const Proposal = ({ id }: { id: string }) => {
                                 />
                             )}
                         </div>
-                        <p className="text-black-60 text-sm text-center">
-                            *You'll be required to validate your email address
-                        </p>
+                        {!isAuthenticatedBuyer && (
+                            <p className="text-black-60 text-sm text-center">
+                                *You'll be required to validate your email
+                                address
+                            </p>
+                        )}
                         <Button
                             variant="primary"
                             className="px-6 text-white-100  w-full rounded-[40px] mt-10"
                             type="submit"
-                            disabled={onSendOtp.isPending}
+                            disabled={isPending}
                         >
                             Send Inquiry
                         </Button>

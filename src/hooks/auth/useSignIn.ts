@@ -1,6 +1,6 @@
 import { showNotification } from "@mantine/notifications"
 import { setAccessToken } from "@services/api.services"
-import { clientSignin, signin } from "@services/auth"
+import { clientSignin, clientSignup, signin } from "@services/auth"
 import { useMutation } from "@tanstack/react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 import { type Error } from "../../type/api"
@@ -55,6 +55,21 @@ export function useSignin() {
 export function useClientSignin() {
     const mutation = useMutation({
         mutationFn: clientSignin,
+        onError: (err: Error) => {
+            showNotification({
+                title: "Error",
+                message: err.response?.data?.message || err.message,
+                color: "red",
+            })
+        },
+    })
+
+    return mutation
+}
+
+export function useClientSignup() {
+    const mutation = useMutation({
+        mutationFn: clientSignup,
         onError: (err: Error) => {
             showNotification({
                 title: "Error",
