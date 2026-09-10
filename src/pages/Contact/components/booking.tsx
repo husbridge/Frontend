@@ -2,7 +2,7 @@ import BookingDetails from "./bookingDetails"
 import BookingPersonalInformation from "./bookingPersonalInformation"
 import BookingEventInformation from "./bookingEventInformation"
 import BookingSummary from "./bookingSummary"
-import { Button } from "@components/index"
+import { Button, LoadingState } from "@components/index"
 import { Formik, Form } from "formik"
 import { useState } from "react"
 import {
@@ -11,6 +11,7 @@ import {
     bookingDetailsValidationSchema,
 } from "@utils/validationSchema"
 import { useInquirySubmission } from "@hooks/useInquirySubmission"
+import { useBuyerPrefill } from "@hooks/useBuyerPrefill"
 import { showNotification } from "@mantine/notifications"
 import { useInquiryStore } from "@hooks/useInquiry";
 import { uploadFile } from "@services/storage"
@@ -20,6 +21,9 @@ const Booking = ({ id }: { id: string }) => {
     const document = useInquiryStore((state) => state.document);
 
     const { submit, isPending, isAuthenticatedBuyer } = useInquirySubmission()
+    const { prefill, isLoading: isPrefillLoading } = useBuyerPrefill()
+
+    if (isPrefillLoading) return <LoadingState />
 
     const handleValidation = async (values: any) => {
         let uploadedDocumentKey = "";
@@ -74,10 +78,10 @@ const Booking = ({ id }: { id: string }) => {
         <>
             <Formik
                 initialValues={{
-                    fullName: "",
+                    fullName: prefill?.fullName || "",
                     alsoKnownAs: "",
-                    emailAddress: "",
-                    phoneNumber: "",
+                    emailAddress: prefill?.emailAddress || "",
+                    phoneNumber: prefill?.phoneNumber || "",
                     subject: "",
                     description: "",
                     eventTitle: "",
