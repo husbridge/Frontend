@@ -258,6 +258,39 @@ export interface PortfolioItemRequest {
     embedThumbnailUrl?: string
     embedProvider?: PortfolioMediaProvider
 }
+
+// Phase 2 (PHASE2_DESIGN.md) — husridge-server's PackageDto. price is
+// always an integer in the smallest unit of `currency` (kobo for NGN),
+// never a float — PackageEditor converts to/from the major unit for
+// display, this type stores the wire shape as-is.
+export interface Package {
+    _id: string
+    category: string
+    label: string
+    description: string
+    price: number
+    currency: string
+    deliverables: string[]
+    turnaroundDays: number
+    revisions: number
+    terms: string
+    sortOrder: number
+    active: boolean
+    archivedAt: string | null
+    createdBy: string
+}
+
+export interface PackageRequest {
+    category?: string
+    label?: string
+    description?: string
+    price?: number
+    currency?: string
+    deliverables?: string[]
+    turnaroundDays?: number
+    revisions?: number
+    terms?: string
+}
 export interface ProfileResponse {
     statusCode: number
     message: string
@@ -430,7 +463,28 @@ export interface PublicProfileResponse {
             order?: number
             uploadedAt?: string
         }[]
+        // Phase 2 (PHASE2_DESIGN.md) — husridge-server's ProfilePublicDto
+        // now includes this on both public profile routes (the whitelisted
+        // one and this legacy one). Used to resolve a booking flow's
+        // ?packageId into a display summary (label/price/deliverables) —
+        // never re-trusted for anything beyond display, since the actual
+        // create-inquiry call is validated server-side regardless.
+        packages?: PublicPackage[]
     }
+}
+
+export interface PublicPackage {
+    _id: string
+    category: string
+    label: string
+    description: string
+    price: number
+    currency: string
+    deliverables: string[]
+    turnaroundDays: number
+    revisions: number
+    terms: string
+    sortOrder: number
 }
 export interface NotificationSettingsResponse {
     statusCode: number

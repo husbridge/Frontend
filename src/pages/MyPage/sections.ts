@@ -2,6 +2,7 @@ import { ComponentType } from "react"
 import IdentityStep from "./components/IdentityStep"
 import AboutStep from "./components/AboutStep"
 import PortfolioManagerBody from "@pages/PortfolioManager/components/PortfolioManagerBody"
+import PackagesManagerBody from "@pages/PackagesManager/components/PackagesManagerBody"
 import ReachStep from "./components/ReachStep"
 import TrackRecordStep from "./components/TrackRecordStep"
 import { ProfileResponse } from "type/api/auth.types"
@@ -48,6 +49,13 @@ export const MY_PAGE_SECTIONS: MyPageSection[] = [
         title: "Portfolio",
         description: "Photos, videos, reorder",
         Component: PortfolioManagerBody,
+    },
+    {
+        key: "packages",
+        path: "packages",
+        title: "Packages",
+        description: "Pricing, deliverables, availability",
+        Component: PackagesManagerBody,
     },
     {
         key: "reach",
