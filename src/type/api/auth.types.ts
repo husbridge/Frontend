@@ -478,6 +478,7 @@ export interface PublicPackage {
     category: string
     label: string
     description: string
+    image: string
     price: number
     currency: string
     deliverables: string[]
