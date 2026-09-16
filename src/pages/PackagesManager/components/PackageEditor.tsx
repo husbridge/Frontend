@@ -1,10 +1,12 @@
 import { FullScreenPanel } from "@components/index"
 import {
     Button,
+    FileButton,
     NumberInput,
     Select,
     Stack,
     TagsInput,
+    Text,
     Textarea,
     TextInput,
 } from "@mantine/core"
@@ -21,6 +23,12 @@ export interface PackageEditorProps {
     pkg?: Package
     onSubmit: (data: PackageRequest) => void
     isSubmitting: boolean
+    /** Image upload/removal need a saved packageId — both undefined while
+     * creating a new package (see the image section below). */
+    onUploadImage?: (file: File) => void
+    onRemoveImage?: () => void
+    isUploadingImage?: boolean
+    isRemovingImage?: boolean
 }
 
 // Only NGN today — matches the platform-wide precedent (BillingAccount/
@@ -40,6 +48,10 @@ const PackageEditor = ({
     pkg,
     onSubmit,
     isSubmitting,
+    onUploadImage,
+    onRemoveImage,
+    isUploadingImage,
+    isRemovingImage,
 }: PackageEditorProps) => {
     const [category, setCategory] = useState(pkg?.category || "")
     const [label, setLabel] = useState(pkg?.label || "")
@@ -98,6 +110,54 @@ const PackageEditor = ({
             title={pkg ? "Edit package" : "Add package"}
         >
             <Stack gap="md">
+                {pkg ? (
+                    <Stack gap={4}>
+                        <Text size="sm" fw={500}>
+                            Image (optional)
+                        </Text>
+                        {pkg.image && (
+                            <img
+                                src={pkg.image}
+                                alt=""
+                                className="w-full h-40 object-cover rounded-lg"
+                            />
+                        )}
+                        <div className="flex gap-2">
+                            <FileButton
+                                onChange={(file) =>
+                                    file && onUploadImage?.(file)
+                                }
+                                accept="image/png,image/jpeg,image/jpg,image/webp"
+                            >
+                                {(props) => (
+                                    <Button
+                                        {...props}
+                                        variant="outline"
+                                        loading={isUploadingImage}
+                                    >
+                                        {pkg.image
+                                            ? "Change image"
+                                            : "Add an image"}
+                                    </Button>
+                                )}
+                            </FileButton>
+                            {pkg.image && (
+                                <Button
+                                    variant="subtle"
+                                    color="red"
+                                    loading={isRemovingImage}
+                                    onClick={() => onRemoveImage?.()}
+                                >
+                                    Remove
+                                </Button>
+                            )}
+                        </div>
+                    </Stack>
+                ) : (
+                    <Text size="sm" c="dimmed">
+                        Save the package first, then add a cover image.
+                    </Text>
+                )}
                 <TextInput
                     label="Package name"
                     required

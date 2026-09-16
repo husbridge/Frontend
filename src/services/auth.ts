@@ -382,6 +382,25 @@ export const updatePackage = (
     )
 }
 
+// A dedicated upload endpoint (not folded into create/update's JSON body,
+// unlike portfolio) — see husridge-server's profile.controller.ts comment
+// for why: Package's array/numeric fields don't survive a multipart
+// round-trip as cleanly as portfolio's all-string fields. Only valid for
+// an existing package (needs packageId), same reason PackageEditor only
+// offers this once a package has already been saved.
+export const uploadPackageImage = (
+    packageId: string,
+    file: File,
+    userId?: string
+) => {
+    const formData = new FormData()
+    formData.append("image", file)
+    return axiosInstance.post<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/image`,
+        formData
+    )
+}
+
 export const duplicatePackage = (packageId: string, userId?: string) => {
     return axiosInstance.post<PackageResponse>(
         `${profilePath(userId)}/packages/${packageId}/duplicate`

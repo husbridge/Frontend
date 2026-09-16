@@ -31,6 +31,7 @@ import {
     reorderPackages,
     unarchivePackage,
     updatePackage,
+    uploadPackageImage,
 } from "@services/auth"
 import { Package, PackageRequest } from "type/api/auth.types"
 import { formatMoney } from "@utils/money"
@@ -111,6 +112,32 @@ const PackagesManagerBody = ({ userId }: PackagesManagerBodyProps) => {
         onError,
     })
 
+    // Both need an already-saved package (packageId) — PackageEditor only
+    // offers these once `pkg` is defined, so `editingPackage` is always
+    // set by the time either of these can actually be called.
+    const { mutate: uploadImage, isPending: isUploadingImage } = useMutation({
+        mutationFn: (file: File) =>
+            uploadPackageImage(editingPackage!._id, file, userId),
+        onSuccess: (res) => {
+            invalidate()
+            const uploadedUrl = res.data.data?.image
+            setEditingPackage((prev) =>
+                prev ? { ...prev, image: uploadedUrl || prev.image } : prev
+            )
+        },
+        onError,
+    })
+
+    const { mutate: removeImage, isPending: isRemovingImage } = useMutation({
+        mutationFn: () =>
+            updatePackage(editingPackage!._id, { image: "" }, userId),
+        onSuccess: () => {
+            invalidate()
+            setEditingPackage((prev) => (prev ? { ...prev, image: "" } : prev))
+        },
+        onError,
+    })
+
     const { mutate: duplicate } = useMutation({
         mutationFn: (packageId: string) => duplicatePackage(packageId, userId),
         onSuccess: () => {
@@ -184,6 +211,15 @@ const PackagesManagerBody = ({ userId }: PackagesManagerBodyProps) => {
             key={pkg._id}
             className="border border-gray-100 rounded-2xl p-4 flex items-start justify-between gap-4"
         >
+            {pkg.image ? (
+                <img
+                    src={pkg.image}
+                    alt=""
+                    className="w-14 h-14 rounded-lg object-cover flex-none"
+                />
+            ) : (
+                <div className="w-14 h-14 rounded-lg bg-gray-50 flex-none" />
+            )}
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                     <Text size="sm" fw={600} truncate>
@@ -344,6 +380,10 @@ const PackagesManagerBody = ({ userId }: PackagesManagerBodyProps) => {
                         saveEdit({ packageId: editingPackage._id, data })
                     }
                 }}
+                onUploadImage={(file) => uploadImage(file)}
+                onRemoveImage={() => removeImage()}
+                isUploadingImage={isUploadingImage}
+                isRemovingImage={isRemovingImage}
             />
         </Stack>
     )
