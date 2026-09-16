@@ -8,6 +8,7 @@ function pkg(overrides: Partial<PublicPackage> = {}): PublicPackage {
         category: "photography",
         label: "Wedding package",
         description: "",
+        image: "",
         price: 15000000,
         currency: "NGN",
         deliverables: [],
