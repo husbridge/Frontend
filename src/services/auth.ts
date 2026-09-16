@@ -21,6 +21,7 @@ import {
     ClientSigninResponse,
     ClientSignupRequest,
     ClientSignupResponse,
+    OwnPortalProfileResponse,
     sendPortalOTPRequest,
     PortfolioItemRequest,
 } from "type/api/auth.types"
@@ -106,6 +107,11 @@ export const clientSignin = (data: ClientSigninRequest) => {
 }
 export const clientSignup = (data: ClientSignupRequest) => {
     return axiosInstance.post<ClientSignupResponse>("/portal/auth/signup", data)
+}
+export const fetchOwnPortalProfile = async () => {
+    const response =
+        await axiosInstance.get<OwnPortalProfileResponse>("/portal/auth/me")
+    return response.data
 }
 
 export const requestForgotPassword = (data: { username: string }) => {

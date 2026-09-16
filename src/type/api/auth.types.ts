@@ -71,6 +71,20 @@ export interface ClientSignupResponse {
     hasError: boolean
     data: { id: string; email: string } | null
 }
+// GET /portal/auth/me — the authenticated buyer's own account fields, for
+// prefilling the inquiry forms (not their inquiry list — that's
+// ClientSigninResponse's dashboard cousin, fetchPortalInquiries).
+export interface OwnPortalProfileResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: {
+        name: string
+        email: string
+        phoneNumber: string
+        organisationName: string
+    } | null
+}
 export interface OTPValidationRequest {
     username: string
     code: string

@@ -1,8 +1,9 @@
-import { Button, FormControls, InquirySentModal } from "@components/index"
+import { Button, FormControls, InquirySentModal, LoadingState } from "@components/index"
 import { Progress } from "@mantine/core"
 import { showNotification } from "@mantine/notifications"
 import { uploadFile } from "@services/storage"
 import { useInquirySubmission } from "@hooks/useInquirySubmission"
+import { useBuyerPrefill } from "@hooks/useBuyerPrefill"
 import { proposalInquiryValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
 import { useState } from "react"
@@ -11,6 +12,9 @@ const Proposal = ({ id }: { id: string }) => {
     const [opened, setOpened] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(0)
     const { submit, isPending, isAuthenticatedBuyer } = useInquirySubmission()
+    const { prefill, isLoading: isPrefillLoading } = useBuyerPrefill()
+
+    if (isPrefillLoading) return <LoadingState />
 
     const handleValidation = async (values: any) => {
         console.log(values.attachDocument)
@@ -51,10 +55,10 @@ const Proposal = ({ id }: { id: string }) => {
             <InquirySentModal opened={opened} setOpened={setOpened} />
             <Formik
                 initialValues={{
-                    fullName: "",
+                    fullName: prefill?.fullName || "",
                     alsoKnownAs: "",
-                    emailAddress: "",
-                    phoneNumber: "",
+                    emailAddress: prefill?.emailAddress || "",
+                    phoneNumber: prefill?.phoneNumber || "",
                     subject: "",
                     description: "",
                     attachDocument: null,
