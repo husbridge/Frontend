@@ -15,8 +15,20 @@ import { useBuyerPrefill } from "@hooks/useBuyerPrefill"
 import { showNotification } from "@mantine/notifications"
 import { useInquiryStore } from "@hooks/useInquiry";
 import { uploadFile } from "@services/storage"
+import { PublicPackage } from "type/api/auth.types"
+import { formatMoney } from "@utils/money"
 
-const Booking = ({ id }: { id: string }) => {
+const Booking = ({
+    id,
+    selectedPackage,
+}: {
+    id: string
+    // Set only when the buyer arrived here via a package's "Book this
+    // package" CTA (PHASE2_DESIGN.md §1) — display-only summary; the
+    // create-inquiry call below still carries the raw packageId, which
+    // husridge-server validates independently.
+    selectedPackage?: PublicPackage | null
+}) => {
     const [step, setStep] = useState(1);
     const document = useInquiryStore((state) => state.document);
 
@@ -69,7 +81,8 @@ const Booking = ({ id }: { id: string }) => {
             subject: values.subject,
             inquiryType: "booking",
             talentID: id,
-            attachDocument: uploadedDocumentKey
+            attachDocument: uploadedDocumentKey,
+            ...(selectedPackage ? { packageId: selectedPackage._id } : {}),
         }
         submit(inquiry)
     }
@@ -118,6 +131,20 @@ const Booking = ({ id }: { id: string }) => {
             >
                 {({ values }) => (
                     <Form className="py-4 mt-4">
+                        {step === 1 && selectedPackage && (
+                            <div className="mb-6">
+                                <p className="font-medium sm:text-md text-sm text-[#475569]">
+                                    Package selected
+                                </p>
+                                <p className="font-medium sm:text-md text-sm text-[#000000] mt-2">
+                                    {selectedPackage.label} —{" "}
+                                    {formatMoney(
+                                        selectedPackage.price,
+                                        selectedPackage.currency
+                                    )}
+                                </p>
+                            </div>
+                        )}
                         {step === 1 ? (
                             <BookingPersonalInformation />
                         ) : step === 2 ? (

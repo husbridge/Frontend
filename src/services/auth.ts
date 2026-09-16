@@ -24,6 +24,8 @@ import {
     OwnPortalProfileResponse,
     sendPortalOTPRequest,
     PortfolioItemRequest,
+    Package,
+    PackageRequest,
 } from "type/api/auth.types"
 import axiosInstance from "./api.services"
 
@@ -40,6 +42,18 @@ interface PortfolioListResponse {
     message: string
     hasError: boolean
     data: NonNullable<ProfileResponse["data"]["portfolioItems"]>
+}
+interface PackageResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: Package | null
+}
+interface PackageListResponse {
+    statusCode: number
+    message: string
+    hasError: boolean
+    data: Package[]
 }
 // publish()/unpublish() return the full ProfileDto on success, but on the
 // "missing required fields" failure it's just `{missingFields: string[]}`
@@ -332,5 +346,78 @@ export const reorderPortfolioItems = (
     return axiosInstance.put<PortfolioListResponse>(
         `${profilePath(userId)}/portfolio/reorder`,
         { orderedItemIds }
+    )
+}
+
+// --- Phase 2: Packages (PHASE2_DESIGN.md) ----------------------------
+// Same userId convention as the portfolio functions above — omitted for
+// self-service, set to a roster talent's id for a manager acting on their
+// behalf.
+
+export const fetchPackages = async (
+    userId?: string,
+    includeArchived?: boolean
+) => {
+    const response = await axiosInstance.get<PackageListResponse>(
+        `${profilePath(userId)}/packages${includeArchived ? "?includeArchived=true" : ""}`
+    )
+    return response.data
+}
+
+export const createPackage = (data: PackageRequest, userId?: string) => {
+    return axiosInstance.post<PackageResponse>(
+        `${profilePath(userId)}/packages`,
+        data
+    )
+}
+
+export const updatePackage = (
+    packageId: string,
+    data: PackageRequest,
+    userId?: string
+) => {
+    return axiosInstance.patch<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}`,
+        data
+    )
+}
+
+export const duplicatePackage = (packageId: string, userId?: string) => {
+    return axiosInstance.post<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/duplicate`
+    )
+}
+
+export const activatePackage = (packageId: string, userId?: string) => {
+    return axiosInstance.patch<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/activate`
+    )
+}
+
+export const deactivatePackage = (packageId: string, userId?: string) => {
+    return axiosInstance.patch<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/deactivate`
+    )
+}
+
+export const archivePackage = (packageId: string, userId?: string) => {
+    return axiosInstance.patch<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/archive`
+    )
+}
+
+export const unarchivePackage = (packageId: string, userId?: string) => {
+    return axiosInstance.patch<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/unarchive`
+    )
+}
+
+export const reorderPackages = (
+    orderedPackageIds: string[],
+    userId?: string
+) => {
+    return axiosInstance.put<PackageListResponse>(
+        `${profilePath(userId)}/packages/reorder`,
+        { orderedPackageIds }
     )
 }

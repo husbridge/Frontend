@@ -56,6 +56,11 @@ export interface CreateInquiryRequest {
     inquiryType: string
     talentID: string
     eventDate?: EventDate[]
+    // Optional — set only when a buyer picked a package before starting
+    // contact (see the Website's PackagesSection "Book this package" CTA).
+    // Booking-only in practice; husridge-server validates it against
+    // talentID regardless of inquiryType.
+    packageId?: string
 }
 export type CreateInquiryResponse = APIResponse<null>
 

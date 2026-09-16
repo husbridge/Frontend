@@ -13,10 +13,16 @@ import { useNavigate, useSearchParams } from "react-router-dom"
 // carried through as returnTo.
 //
 // Deliberately builds the internal returnTo path itself from validated
-// pieces (talent uniqueName + a fixed inquiryType enum) rather than
-// accepting a path/URL from the Website redirect — nothing here ever
-// trusts a raw redirect target from that query string.
+// pieces (talent uniqueName + a fixed inquiryType enum, and now an
+// optional packageId) rather than accepting a path/URL from the Website
+// redirect — nothing here ever trusts a raw redirect target from that
+// query string.
 const ALLOWED_TYPES = ["booking", "message"] as const
+// A Mongo ObjectId's actual shape — same validation-by-lookup husridge-
+// server does isn't possible client-side (no DB access here), so this is
+// the cheapest real check: reject anything that couldn't possibly be one
+// rather than forwarding arbitrary query-string content unchecked.
+const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/
 
 const InquiryStart = () => {
     const navigate = useNavigate()
@@ -29,12 +35,15 @@ const InquiryStart = () => {
         const type = (ALLOWED_TYPES as readonly string[]).includes(rawType)
             ? rawType
             : "booking"
+        const rawPackageId = searchParams.get("packageId") || ""
+        const packageId = OBJECT_ID_RE.test(rawPackageId) ? rawPackageId : ""
 
         // "Message" has no dedicated inquiry type today — Collaboration is
         // the closest existing tab to a general, non-event contact.
         const tab = type === "message" ? "collaboration" : "booking"
+        const packageParam = packageId ? `&packageId=${packageId}` : ""
         const returnTo = talent
-            ? `/contact/${encodeURIComponent(talent)}?type=${tab}`
+            ? `/contact/${encodeURIComponent(talent)}?type=${tab}${packageParam}`
             : "/inquiry-management"
 
         if (state.isAuthenticated) {

@@ -21,6 +21,13 @@ const Contact = () => {
     const [activeTab, setActiveTab] = useState<string | null>(
         requestedTab && VALID_TABS.includes(requestedTab) ? requestedTab : "booking"
     )
+    // Additive, optional — set only when a buyer picked a package before
+    // starting contact (Website's PackagesSection "Book this package").
+    // Display-only here: resolved from the same public profile payload
+    // already fetched below, purely to show a summary; the actual
+    // packageId sent on submit is validated against the talent server-
+    // side regardless (PortalService.createInquiries).
+    const packageId = searchParams.get("packageId") || ""
 
     const matches = useMediaQuery("(min-width: 1100px)")
     const matches1 = useMediaQuery("(min-width: 800px)")
@@ -176,7 +183,14 @@ const Contact = () => {
                                 </Tabs.Tab>
                             </Tabs.List>
                             <Tabs.Panel value="booking">
-                                <Booking id={data?.data._id || ""} />
+                                <Booking
+                                    id={data?.data._id || ""}
+                                    selectedPackage={
+                                        data?.data.packages?.find(
+                                            (p) => p._id === packageId
+                                        ) || null
+                                    }
+                                />
                             </Tabs.Panel>
 
                             <Tabs.Panel value="proposal">
