@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import {
     LuArchive,
+    LuArchiveRestore,
     LuChevronDown,
     LuChevronUp,
     LuCopy,
@@ -28,9 +29,11 @@ import {
     duplicatePackage,
     fetchPackages,
     reorderPackages,
+    unarchivePackage,
     updatePackage,
 } from "@services/auth"
 import { Package, PackageRequest } from "type/api/auth.types"
+import { formatMoney } from "@utils/money"
 import PackageEditor from "./PackageEditor"
 
 export interface PackagesManagerBodyProps {
@@ -41,13 +44,6 @@ export interface PackagesManagerBodyProps {
 
 const MAX_PACKAGES = 30
 
-function formatMoney(price: number, currency: string) {
-    return new Intl.NumberFormat("en-NG", {
-        style: "currency",
-        currency,
-        maximumFractionDigits: 0,
-    }).format(price / 100)
-}
 
 // Mirrors PortfolioManagerBody's shape (list + editor panel + inline
 // actions), extended with Package's four lifecycle actions beyond
@@ -143,6 +139,19 @@ const PackagesManagerBody = ({ userId }: PackagesManagerBodyProps) => {
             showNotification({
                 title: "Archived",
                 message: "Package archived",
+                color: "green",
+            })
+            invalidate()
+        },
+        onError,
+    })
+
+    const { mutate: unarchive } = useMutation({
+        mutationFn: (packageId: string) => unarchivePackage(packageId, userId),
+        onSuccess: () => {
+            showNotification({
+                title: "Unarchived",
+                message: "Package restored — review it and re-activate when ready",
                 color: "green",
             })
             invalidate()
@@ -258,6 +267,15 @@ const PackagesManagerBody = ({ userId }: PackagesManagerBodyProps) => {
                             <LuArchive size={16} />
                         </ActionIcon>
                     </>
+                )}
+                {pkg.archivedAt && (
+                    <ActionIcon
+                        variant="subtle"
+                        aria-label="Unarchive"
+                        onClick={() => unarchive(pkg._id)}
+                    >
+                        <LuArchiveRestore size={16} />
+                    </ActionIcon>
                 )}
             </div>
         </div>

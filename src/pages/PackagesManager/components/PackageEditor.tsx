@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { fetchCategories } from "@services/taxonomy"
 import { Package, PackageRequest } from "type/api/auth.types"
+import { fromMinorUnits, toMinorUnits } from "@utils/money"
 
 export interface PackageEditorProps {
     opened: boolean
@@ -44,7 +45,7 @@ const PackageEditor = ({
     const [label, setLabel] = useState(pkg?.label || "")
     const [description, setDescription] = useState(pkg?.description || "")
     const [priceMajorUnit, setPriceMajorUnit] = useState<number | "">(
-        pkg ? pkg.price / 100 : ""
+        pkg ? fromMinorUnits(pkg.price) : ""
     )
     const [currency, setCurrency] = useState(pkg?.currency || "NGN")
     const [deliverables, setDeliverables] = useState<string[]>(
@@ -81,7 +82,7 @@ const PackageEditor = ({
             category,
             label,
             description,
-            price: Math.round(Number(priceMajorUnit) * 100),
+            price: toMinorUnits(Number(priceMajorUnit)),
             currency,
             deliverables,
             turnaroundDays: Number(turnaroundDays),

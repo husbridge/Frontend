@@ -406,6 +406,12 @@ export const archivePackage = (packageId: string, userId?: string) => {
     )
 }
 
+export const unarchivePackage = (packageId: string, userId?: string) => {
+    return axiosInstance.patch<PackageResponse>(
+        `${profilePath(userId)}/packages/${packageId}/unarchive`
+    )
+}
+
 export const reorderPackages = (
     orderedPackageIds: string[],
     userId?: string

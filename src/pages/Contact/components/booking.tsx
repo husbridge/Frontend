@@ -16,14 +16,7 @@ import { showNotification } from "@mantine/notifications"
 import { useInquiryStore } from "@hooks/useInquiry";
 import { uploadFile } from "@services/storage"
 import { PublicPackage } from "type/api/auth.types"
-
-function formatPackagePrice(price: number, currency: string) {
-    return new Intl.NumberFormat("en-NG", {
-        style: "currency",
-        currency,
-        maximumFractionDigits: 0,
-    }).format(price / 100)
-}
+import { formatMoney } from "@utils/money"
 
 const Booking = ({
     id,
@@ -145,7 +138,7 @@ const Booking = ({
                                 </p>
                                 <p className="font-medium sm:text-md text-sm text-[#000000] mt-2">
                                     {selectedPackage.label} —{" "}
-                                    {formatPackagePrice(
+                                    {formatMoney(
                                         selectedPackage.price,
                                         selectedPackage.currency
                                     )}
