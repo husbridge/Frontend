@@ -107,7 +107,15 @@ export interface PortalOTPValidationResponse {
     statusCode: number
     message: string
     hasError: boolean
-    data: null
+    // sendPortalOTP's response never carries these — only a successful
+    // POST /portal/auth/validate-otp does, since that's the moment email
+    // ownership is actually proven. Optional rather than a second type
+    // since both endpoints share this response shape and call site.
+    data: {
+        message?: string
+        accessToken?: string
+        id?: string
+    } | null
 }
 export interface Data {
     accessToken: string
