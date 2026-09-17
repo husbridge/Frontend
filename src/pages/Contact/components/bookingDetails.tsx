@@ -1,5 +1,6 @@
 import { FormControls } from "@components/index"
 import { useInquiryStore } from "@hooks/useInquiry"
+import { darkInput, darkTextarea, darkLabel, darkStepCounter, darkHelperText } from "../darkTheme"
 
 const BookingDetails = () => {
     const document = useInquiryStore((state) => state.document)
@@ -14,8 +15,8 @@ const BookingDetails = () => {
     return (
         <div>
             <div className="flex justify-between my-6">
-                <p className="text-2md font-medium">Event Information</p>
-                <p className="text-2md font-medium text-[#333333]">3 of 3</p>
+                <p className="text-2md font-medium text-white">Event Information</p>
+                <p className={`text-2md font-medium ${darkStepCounter}`}>3 of 3</p>
             </div>
 
             <div className="mb-6">
@@ -23,10 +24,8 @@ const BookingDetails = () => {
                     label="Subject"
                     control="input"
                     name="subject"
-                    classNames={{
-                        mainRoot: " border  border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px]",
-                    }}
+                    classNames={darkInput}
+                    labelClassName={darkLabel}
                 />
             </div>
             <div className="mb-6">
@@ -35,9 +34,10 @@ const BookingDetails = () => {
                     control="textarea"
                     name="description"
                     classNames={{
-                        mainRoot: " border border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px] h-[150px]",
+                        wrapper: darkTextarea.wrapper,
+                        input: `${darkTextarea.input} h-[150px]`,
                     }}
+                    labelClassName={darkLabel}
                 />
             </div>
             <div className="mb-6">
@@ -51,13 +51,15 @@ const BookingDetails = () => {
 
                 {/* Custom Label with File Input */}
                 <label htmlFor="file-upload">
-                    <div className="text-md mb-1">Attach document</div>
+                    <div className={`text-md mb-1 ${darkLabel}`}>Attach document</div>
                     <div
-                        className="border border-dashed border-[#CBD5E1] px-2 rounded-3xl cursor-pointer"
+                        className="border border-dashed border-white/20 bg-white/5 px-2 rounded-3xl cursor-pointer"
                         style={{ padding: 16 }}
                     >
-                        {document?.name || (
-                            <p className="text-[#ccc] text-md">
+                        {document?.name ? (
+                            <p className="text-white text-md">{document.name}</p>
+                        ) : (
+                            <p className={`${darkHelperText} text-md`}>
                                 Upload Png, Jpg or Jpeg of your Valid ID
                             </p>
                         )}

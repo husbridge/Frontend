@@ -268,7 +268,9 @@ function OTPInput(props: any) {
                             meta.touched && meta.error
                                 ? "border-red-100 "
                                 : "border-black-500 "
-                        } border    mr-2 code  rounded-[16px]`}
+                        } border    mr-2 code  rounded-[16px] ${
+                            classNames?.input || ""
+                        }`}
                         containerStyle="flex w-full text-center mt-2"
                     />
                     {meta.touched && meta.error && (

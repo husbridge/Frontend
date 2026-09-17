@@ -1,12 +1,13 @@
 import { FormControls} from "@components/index"
+import { darkInput, darkLabel, darkStepCounter } from "../darkTheme"
 
 
 const BookingPersonalInformation = () => {
     return (
         <div>
             <div className="flex justify-between my-6">
-                <p className="text-2md font-medium">Personal Information</p>
-                <p className="text-2md font-medium text-[#333333]">1 of 3</p>
+                <p className="text-2md font-medium text-white">Personal Information</p>
+                <p className={`text-2md font-medium ${darkStepCounter}`}>1 of 3</p>
             </div>
 
             <div className="mb-6">
@@ -14,11 +15,8 @@ const BookingPersonalInformation = () => {
                     label="Full Name"
                     control="input"
                     name="fullName"
-                    classNames={{
-                        mainRoot: " border  border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px]",
-                    }}
-                    labelClassName="text-[#000]"
+                    classNames={darkInput}
+                    labelClassName={darkLabel}
                 />
             </div>
             <div className="mb-6">
@@ -27,11 +25,8 @@ const BookingPersonalInformation = () => {
                     control="input"
                     name="alsoKnownAs"
                     placeholder="what is a popular name you are known as"
-                    classNames={{
-                        mainRoot: " border  border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px]",
-                    }}
-                    labelClassName="text-[#000]"
+                    classNames={darkInput}
+                    labelClassName={darkLabel}
                 />
             </div>
 
@@ -40,10 +35,8 @@ const BookingPersonalInformation = () => {
                     label="Email"
                     control="input"
                     name="emailAddress"
-                    classNames={{
-                        mainRoot: " border  border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px]",
-                    }}
+                    classNames={darkInput}
+                    labelClassName={darkLabel}
                 />
             </div>
             <div className="mb-6">
@@ -51,10 +44,8 @@ const BookingPersonalInformation = () => {
                     label="Mobile Number"
                     control="input"
                     name="phoneNumber"
-                    classNames={{
-                        mainRoot: " border  border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px]",
-                    }}
+                    classNames={darkInput}
+                    labelClassName={darkLabel}
                 />
             </div>
         </div>

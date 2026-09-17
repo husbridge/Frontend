@@ -4,6 +4,17 @@ import { FieldArray, useFormikContext } from "formik"
 import { EventDate } from "type/api/event.types"
 import axios from "axios"
 import { useState, useEffect } from "react"
+import { darkInput, darkLabel, darkStepCounter } from "../darkTheme"
+
+// react-datepicker's `className` prop styles its own rendered <input>
+// directly (there's no separate `classNames.input` read by
+// DatePickerInput below), so date/time fields merge mainRoot+input into
+// one string rather than the {mainRoot, input} shape the other controls
+// use. The popup calendar itself isn't restyled — react-datepicker.css's
+// default light popup is left as-is, same scope cut as Event Country's
+// customselect below (both would need changes to the shared FormControls
+// component, used across the whole — otherwise light-themed — app).
+const darkDateInput = `${darkInput.mainRoot} ${darkInput.input}`
 
 const BookingEventInformation = () => {
     const { values } = useFormikContext<{
@@ -12,7 +23,6 @@ const BookingEventInformation = () => {
     const [countries, setCountries] = useState([])
     const [isLoading, setIsloading] = useState(false)
     // const [cities, setCities] = useState([])
-    console.log(values)
     useEffect(() => {
         const fetchCountries = async () => {
             try {
@@ -35,25 +45,11 @@ const BookingEventInformation = () => {
         fetchCountries()
     }, [])
 
-    // const handleCountryChange = (country: string) => {
-    //     //try {
-    //     //@ts-expect-error
-    //     const cityOptions = countries
-    //         .find((item: any) => item.label === country)
-    //         //@ts-expect-error
-    //         .value.cities.map((city) => ({
-    //             value: city,
-    //             label: city,
-    //         }))
-
-    //     // setCities(cityOptions)
-    // }
-
     return (
         <div>
             <div className="flex justify-between my-6">
-                <p className="text-2md font-medium">Event Information</p>
-                <p className="text-2md font-medium text-[#333333]">2 of 3</p>
+                <p className="text-2md font-medium text-white">Event Information</p>
+                <p className={`text-2md font-medium ${darkStepCounter}`}>2 of 3</p>
             </div>
 
             <div className="mb-6">
@@ -61,11 +57,8 @@ const BookingEventInformation = () => {
                     label="Event Title"
                     control="input"
                     name="eventTitle"
-                    classNames={{
-                        mainRoot: " border  border-black-20 px-2",
-                        input: "text-[#40540A] text-[14px]",
-                    }}
-                    labelClassName="text-[#000]"
+                    classNames={darkInput}
+                    labelClassName={darkLabel}
                 />
             </div>
             <FieldArray
@@ -79,13 +72,8 @@ const BookingEventInformation = () => {
                                         label="Event Venue"
                                         control="input"
                                         name={`eventDate[${index}].eventVenue`}
-                                        //placeholder="enter your password"
-
-                                        classNames={{
-                                            mainRoot:
-                                                " border  border-black-20 px-2",
-                                            input: "text-black-100 text-[14px]",
-                                        }}
+                                        classNames={darkInput}
+                                        labelClassName={darkLabel}
                                         suffixIcon={
                                             <svg
                                                 className="cursor-pointer"
@@ -146,16 +134,7 @@ const BookingEventInformation = () => {
                                             placeholder="Select a country"
                                             options={countries}
                                             isLoading={isLoading}
-                                            // onChange={(val) => {
-                                            //     //@ts-expect-error
-                                            //     handleCountryChange(val.label)
-                                            // }}
-                                            classNames={{
-                                                mainRoot:
-                                                    " border  border-black-20 px-2",
-                                                input: "text-black-100 text-[14px]",
-                                            }}
-                                            labelClassName="text-[#000] text-[14px] mb-1"
+                                            labelClassName={`${darkLabel} text-[14px] mb-1`}
                                         />
                                     </div>
 
@@ -164,11 +143,8 @@ const BookingEventInformation = () => {
                                             label="Event City"
                                             control="input"
                                             name={`eventDate[${index}]eventCity`}
-                                            classNames={{
-                                                mainRoot:
-                                                    " border  border-black-20 px-2",
-                                                input: "text-black-100 text-[14px]",
-                                            }}
+                                            classNames={darkInput}
+                                            labelClassName={darkLabel}
                                         />
                                     </div>
                                 </div>
@@ -178,12 +154,8 @@ const BookingEventInformation = () => {
                                         control="date"
                                         name={`eventDate[${index}]date`}
                                         placeholder="00/00/00"
-                                        classNames={{
-                                            mainRoot:
-                                                " border  border-black-20 px-4",
-                                            input: "text-black-100 text-[14px]",
-                                        }}
-                                        labelClassName="text-[#000]"
+                                        classNames={{ mainRoot: darkDateInput }}
+                                        labelClassName={darkLabel}
                                         //@ts-expect-error
                                         currentDate={
                                             values.eventDate[index].date
@@ -201,11 +173,8 @@ const BookingEventInformation = () => {
                                             showTimeSelectOnly
                                             dateFormat="h:mm aa"
                                             timeCaption="Time"
-                                            classNames={{
-                                                mainRoot:
-                                                    " border  border-black-20 px-4",
-                                                input: "text-black-100 text-[14px]",
-                                            }}
+                                            classNames={{ mainRoot: darkDateInput }}
+                                            labelClassName={darkLabel}
                                             //@ts-expect-error
                                             currentDate={
                                                 values.eventDate[index]
@@ -223,11 +192,8 @@ const BookingEventInformation = () => {
                                             showTimeSelectOnly
                                             dateFormat="h:mm aa"
                                             timeCaption="Time"
-                                            classNames={{
-                                                mainRoot:
-                                                    " border  border-black-20 px-4",
-                                                input: "text-black-100 text-[14px]",
-                                            }}
+                                            classNames={{ mainRoot: darkDateInput }}
+                                            labelClassName={darkLabel}
                                             //@ts-expect-error
                                             currentDate={
                                                 values.eventDate[index]
@@ -252,8 +218,8 @@ const BookingEventInformation = () => {
                                 })
                             }}
                         >
-                            <GoPlus color="#E8B006" size="24px" />{" "}
-                            <p className="text-[#E8B006] text-md ml-2 cursor-pointer">
+                            <GoPlus color="#FEC009" size="24px" />{" "}
+                            <p className="text-[#FEC009] text-md ml-2 cursor-pointer">
                                 Add Another Venue
                             </p>
                         </div>

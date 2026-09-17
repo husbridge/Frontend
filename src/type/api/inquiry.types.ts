@@ -1,5 +1,6 @@
 import { APIResponse } from "."
 import { EventDate } from "./event.types"
+import { PublicPackage } from "./auth.types"
 
 export type InquiryResponse = APIResponse<Data[]>
 
@@ -19,6 +20,15 @@ export interface Data {
     attachDocument: string
     chatGroupId: string
     isDeleted: false
+    // Set only when the buyer picked a package before starting contact
+    // (PHASE2_DESIGN.md §1). husridge-server populates this — it's the
+    // full package (label/price/deliverables/image), not a bare id — see
+    // PortalService.getInquiresByTalentId's PackagePublicDto wrapping.
+    // Was missing from this type entirely, which is why the talent-facing
+    // detail view had no package field to render at all: the data existed
+    // server-side (PHASE2_BACKLOG.md, "packageId reached the write side
+    // but never the read side") but nothing on this side declared it.
+    packageId: PublicPackage | null
     bookedForTalent: {
         _id: string
         profileUrl: string
