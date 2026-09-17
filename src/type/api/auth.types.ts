@@ -268,6 +268,7 @@ export interface Package {
     category: string
     label: string
     description: string
+    image: string
     price: number
     currency: string
     deliverables: string[]
@@ -284,6 +285,7 @@ export interface PackageRequest {
     category?: string
     label?: string
     description?: string
+    image?: string
     price?: number
     currency?: string
     deliverables?: string[]
