@@ -7,6 +7,7 @@ import { useBuyerPrefill } from "@hooks/useBuyerPrefill"
 import { proposalInquiryValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
 import { useState } from "react"
+import { darkInput, darkTextarea, darkLabel } from "../darkTheme"
 
 const Proposal = ({ id }: { id: string }) => {
     const [opened, setOpened] = useState(false)
@@ -17,7 +18,6 @@ const Proposal = ({ id }: { id: string }) => {
     if (isPrefillLoading) return <LoadingState />
 
     const handleValidation = async (values: any) => {
-        console.log(values.attachDocument)
         let uploadedDocumentKey
 
         if (values.attachDocument) {
@@ -39,7 +39,6 @@ const Proposal = ({ id }: { id: string }) => {
             uploadedDocumentKey = path
         }
 
-        console.log(uploadedDocumentKey)
         const inquiry = {
             ...values,
             inquiryType: "proposal",
@@ -75,11 +74,8 @@ const Proposal = ({ id }: { id: string }) => {
                                 label="Full Name"
                                 control="input"
                                 name="fullName"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
-                                labelClassName="text-[#000]"
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                             />
                         </div>
                         <div className="mb-6">
@@ -88,11 +84,8 @@ const Proposal = ({ id }: { id: string }) => {
                                 control="input"
                                 name="alsoKnowAs"
                                 placeholder="what is a popular name you are known as"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
-                                labelClassName="text-[#000]"
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                             />
                         </div>
 
@@ -101,10 +94,8 @@ const Proposal = ({ id }: { id: string }) => {
                                 label="Email"
                                 control="input"
                                 name="emailAddress"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                             />
                         </div>
                         <div className="mb-6">
@@ -112,10 +103,8 @@ const Proposal = ({ id }: { id: string }) => {
                                 label="Phone Number"
                                 control="input"
                                 name="phoneNumber"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                             />
                         </div>
                         <div className="mb-6">
@@ -123,10 +112,8 @@ const Proposal = ({ id }: { id: string }) => {
                                 label="Subject"
                                 control="input"
                                 name="subject"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                                 placeholder="Short title for your inquiry"
                             />
                         </div>
@@ -136,10 +123,10 @@ const Proposal = ({ id }: { id: string }) => {
                                 control="textarea"
                                 name="description"
                                 classNames={{
-                                    mainRoot:
-                                        " border  border-black-20 px-2 h-[100px]",
-                                    input: "text-[#40540A] text-[14px] h-[150px]",
+                                    wrapper: `${darkTextarea.wrapper} h-[100px]`,
+                                    input: darkTextarea.input,
                                 }}
+                                labelClassName={darkLabel}
                                 placeholder="Make your Inquiry"
                             />
                         </div>
@@ -150,9 +137,10 @@ const Proposal = ({ id }: { id: string }) => {
                                 name="attachDocument"
                                 classNames={{
                                     mainRoot:
-                                        "border border-dashed  border-[#CBD5E1] px-2 rounded-3xl",
-                                    input: "text-[#40540A] text-[14px]",
+                                        "border border-dashed !border-white/20 !bg-white/5 px-2 rounded-3xl",
+                                    input: "!text-white/40",
                                 }}
+                                labelClassName={darkLabel}
                                 placeholder="Upload Png, Jpg or Jpeg of your Valid ID"
                             />
                             {uploadProgress > 0 && (
@@ -164,7 +152,7 @@ const Proposal = ({ id }: { id: string }) => {
                             )}
                         </div>
                         {!isAuthenticatedBuyer && (
-                            <p className="text-black-60 text-sm text-center">
+                            <p className="text-white/50 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>

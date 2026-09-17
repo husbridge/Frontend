@@ -4,6 +4,7 @@ import { useBuyerPrefill } from "@hooks/useBuyerPrefill"
 import { messageInquiryValidationSchema } from "@utils/validationSchema"
 import { Form, Formik } from "formik"
 import { useState } from "react"
+import { darkInput, darkTextarea, darkLabel } from "../darkTheme"
 
 // Deliberately the lightest of the four tabs — a general "just want to ask
 // something" contact, not a booking request. Was previously not a real
@@ -43,11 +44,8 @@ const Message = ({ id }: { id: string }) => {
                                 label="Full Name"
                                 control="input"
                                 name="fullName"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
-                                labelClassName="text-[#000]"
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                             />
                         </div>
                         <div className="mb-6">
@@ -55,10 +53,8 @@ const Message = ({ id }: { id: string }) => {
                                 label="Email"
                                 control="input"
                                 name="emailAddress"
-                                classNames={{
-                                    mainRoot: " border  border-black-20 px-2",
-                                    input: "text-[#40540A] text-[14px]",
-                                }}
+                                classNames={darkInput}
+                                labelClassName={darkLabel}
                             />
                         </div>
                         <div className="mb-6">
@@ -67,15 +63,15 @@ const Message = ({ id }: { id: string }) => {
                                 control="textarea"
                                 name="description"
                                 classNames={{
-                                    mainRoot:
-                                        " border  border-black-20 px-2 h-[100px]",
-                                    input: "text-[#40540A] text-[14px] h-[150px]",
+                                    wrapper: `${darkTextarea.wrapper} h-[100px]`,
+                                    input: darkTextarea.input,
                                 }}
+                                labelClassName={darkLabel}
                                 placeholder="What would you like to ask?"
                             />
                         </div>
                         {!isAuthenticatedBuyer && (
-                            <p className="text-black-60 text-sm text-center">
+                            <p className="text-white/50 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>
