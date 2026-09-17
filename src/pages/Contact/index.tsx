@@ -6,15 +6,16 @@ import Logo from "@assets/icons/logo.svg"
 import ErrorComponent from "@components/errorComponent"
 import { LoadingState } from "@components/index"
 import { useMediaQuery } from "@mantine/hooks"
-import { fetchPublicProfile } from "@services/auth"
+import { fetchProfileBookingContext } from "@services/auth"
 import { useQuery } from "@tanstack/react-query"
 import { useParams, useSearchParams } from "react-router-dom"
 import Booking from "./components/booking"
 import Collaboration from "./components/collaboration"
+import Message from "./components/message"
 import Proposal from "./components/proposal"
 import { resolveSelectedPackage } from "@utils/selectedPackage"
 
-const VALID_TABS = ["booking", "proposal", "collaboration"]
+const VALID_TABS = ["booking", "proposal", "collaboration", "message"]
 
 const Contact = () => {
     const [searchParams] = useSearchParams()
@@ -47,8 +48,8 @@ const Contact = () => {
     // different talents' Contact pages in one session can't do the same
     // thing to each other.
     const { data, isLoading, error } = useQuery({
-        queryKey: ["public-profile", uniqueName],
-        queryFn: () => fetchPublicProfile(uniqueName || ""),
+        queryKey: ["public-profile-booking-context", uniqueName],
+        queryFn: () => fetchProfileBookingContext(uniqueName || ""),
     })
 
     return (
@@ -83,61 +84,6 @@ const Contact = () => {
                                 </p>
                             )}
                         </section>
-                        {(data?.data.bio ||
-                            (data?.data.portfolioMedia &&
-                                data.data.portfolioMedia.length > 0) ||
-                            (data?.data.socialLinks &&
-                                Object.values(data.data.socialLinks).some(
-                                    Boolean
-                                ))) && (
-                            <section className="px-8 mb-6">
-                                {data?.data.bio && (
-                                    <p className="text-md text-black-100 whitespace-pre-line mb-4">
-                                        {data.data.bio}
-                                    </p>
-                                )}
-                                {data?.data.socialLinks &&
-                                    Object.values(data.data.socialLinks).some(
-                                        Boolean
-                                    ) && (
-                                        <div className="flex flex-wrap gap-4 mb-4">
-                                            {Object.entries(
-                                                data.data.socialLinks
-                                            )
-                                                .filter(([, url]) => url)
-                                                .map(([platform, url]) => (
-                                                    <a
-                                                        key={platform}
-                                                        href={url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-sm text-[#475569] underline capitalize"
-                                                    >
-                                                        {platform}
-                                                    </a>
-                                                ))}
-                                        </div>
-                                    )}
-                                {data?.data.portfolioMedia &&
-                                    data.data.portfolioMedia.length > 0 && (
-                                        <div className="flex flex-wrap gap-3">
-                                            {data.data.portfolioMedia.map(
-                                                (item) => (
-                                                    <img
-                                                        key={item._id}
-                                                        src={item.url}
-                                                        alt={
-                                                            item.caption ||
-                                                            "Portfolio photo"
-                                                        }
-                                                        className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-lg"
-                                                    />
-                                                )
-                                            )}
-                                        </div>
-                                    )}
-                            </section>
-                        )}
                         <Tabs
                             variant="unstyled"
                             defaultValue="singleAddition"
@@ -193,6 +139,12 @@ const Contact = () => {
                                 >
                                     Collaboration
                                 </Tabs.Tab>
+                                <Tabs.Tab
+                                    value="message"
+                                    className={`${activeTab === "message" ? "text-black-100 bg-white-100 rounded-[40px]" : "text-[#475569]"} p-4`}
+                                >
+                                    Message
+                                </Tabs.Tab>
                             </Tabs.List>
                             <Tabs.Panel value="booking">
                                 <Booking
@@ -209,6 +161,9 @@ const Contact = () => {
                             </Tabs.Panel>
                             <Tabs.Panel value="collaboration">
                                 <Collaboration id={data?.data._id || ""} />
+                            </Tabs.Panel>
+                            <Tabs.Panel value="message">
+                                <Message id={data?.data._id || ""} />
                             </Tabs.Panel>
                         </Tabs>
                     </section>
