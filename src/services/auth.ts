@@ -14,7 +14,7 @@ import {
     ChangePasswordResponse,
     NotificationSettingsRequest,
     NotificationSettingsResponse,
-    PublicProfileResponse,
+    ProfileBookingContextResponse,
     ClientSigninRequest,
     PortalOTPValidationRequest,
     PortalOTPValidationResponse,
@@ -172,9 +172,14 @@ export const fetchNotificationSettings = async () => {
     return response.data
 }
 
-export const fetchPublicProfile = async (username: string) => {
-    const response = await axiosInstance.get<PublicProfileResponse>(
-        `/profile/pub/usr/${username}`
+// Replaces the old /profile/pub/usr/:username (retired server-side in the
+// same change — it had exactly one caller, this one, confirmed by a sweep
+// of this repo, husridge-server, and Website first). Narrower response:
+// Contact/index.tsx's forms never needed bio/socialLinks/portfolioMedia,
+// which this endpoint no longer sends.
+export const fetchProfileBookingContext = async (username: string) => {
+    const response = await axiosInstance.get<ProfileBookingContextResponse>(
+        `/public/profiles/${username}/booking-context`
     )
     return response.data
 }

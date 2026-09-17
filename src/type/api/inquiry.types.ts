@@ -47,9 +47,12 @@ export interface NewData {
 export interface CreateInquiryRequest {
     fullName: string
     emailAddress: string
-    phoneNumber: string
+    // Not required by every inquiryType — "message" sends neither
+    // (PortalController.ts validates each type's own required fields;
+    // this shared shape stays permissive rather than a union per type).
+    phoneNumber?: string
     eventTitle?: string
-    subject: string
+    subject?: string
     alsoKnowAs?: string
     description: string
     attachDocument?: string

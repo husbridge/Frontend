@@ -38,12 +38,9 @@ const InquiryStart = () => {
         const rawPackageId = searchParams.get("packageId") || ""
         const packageId = OBJECT_ID_RE.test(rawPackageId) ? rawPackageId : ""
 
-        // "Message" has no dedicated inquiry type today — Collaboration is
-        // the closest existing tab to a general, non-event contact.
-        const tab = type === "message" ? "collaboration" : "booking"
         const packageParam = packageId ? `&packageId=${packageId}` : ""
         const returnTo = talent
-            ? `/contact/${encodeURIComponent(talent)}?type=${tab}${packageParam}`
+            ? `/contact/${encodeURIComponent(talent)}?type=${type}${packageParam}`
             : "/inquiry-management"
 
         if (state.isAuthenticated) {

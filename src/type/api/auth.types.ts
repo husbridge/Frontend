@@ -416,61 +416,25 @@ export interface Staffs {
     uniqueUsername: string
 }
 
-export interface PublicProfileResponse {
+// Backs GET /public/profiles/:uniqueName/booking-context — Contact/
+// index.tsx's data source (see fetchProfileBookingContext, services/auth.ts).
+// Deliberately narrower than PublicProfileResponse: the Booking/Proposal/
+// Collaboration/Message forms only ever read _id/fullName/stageName/
+// profileUrl/manager.fullName/packages, not bio/socialLinks/portfolioMedia
+// (those were only used by Contact's own profile-display block, removed in
+// the surface-consolidation pass — Website's /t/:uniqueName is the page
+// that renders that content now). Matches husridge-server's
+// ProfileBookingContextDto field-for-field.
+export interface ProfileBookingContextResponse {
     statusCode: number
     message: string
     hasError: boolean
     data: {
         _id: string
-        profileUrl: string
         fullName: string
-        firstName: string
-        lastName: string
-        gender: string
-        isVerified: true
-        agency: {
-            _id: string
-            agencyName: string
-            regNumber: string
-            industry: string
-            address: string
-            country: string
-            state: string
-            shortDescription: string
-            longDescriptions: {
-                title: string
-                subTitle: string
-                description: string
-                _id: string
-            }
-            staffs: string[]
-        }
-        manager: Data
-        industry: string
         stageName: string
-        bio?: string
-        socialLinks?: {
-            instagram?: string
-            tiktok?: string
-            twitter?: string
-            youtube?: string
-            website?: string
-        }
-        tags?: string[]
-        portfolioMedia?: {
-            _id: string
-            url: string
-            type: "image"
-            caption?: string
-            order?: number
-            uploadedAt?: string
-        }[]
-        // Phase 2 (PHASE2_DESIGN.md) — husridge-server's ProfilePublicDto
-        // now includes this on both public profile routes (the whitelisted
-        // one and this legacy one). Used to resolve a booking flow's
-        // ?packageId into a display summary (label/price/deliverables) —
-        // never re-trusted for anything beyond display, since the actual
-        // create-inquiry call is validated server-side regardless.
+        profileUrl: string
+        manager: { fullName: string } | null
         packages?: PublicPackage[]
     }
 }

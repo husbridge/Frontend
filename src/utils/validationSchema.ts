@@ -176,6 +176,14 @@ export const proposalInquiryValidationSchema = yup.object().shape({
     subject: yup.string().required("Subject is required"),
     description: yup.string().required("Description is required"),
 })
+export const messageInquiryValidationSchema = yup.object().shape({
+    fullName: yup.string().required("Full name is required"),
+    emailAddress: yup
+        .string()
+        .required("Email is required")
+        .email("Please use a valid email address"),
+    description: yup.string().required("Message is required"),
+})
 export const bookingPersonalValidationSchema = yup.object().shape({
     fullName: yup.string().required("Full name is required"),
     emailAddress: yup
