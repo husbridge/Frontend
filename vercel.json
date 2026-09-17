@@ -3,7 +3,10 @@
         {
             "source": "/contact/:uniqueName",
             "destination": "https://husridge.com/t/:uniqueName",
-            "permanent": true
+            "permanent": true,
+            "missing": [
+                { "type": "query", "key": "type" }
+            ]
         }
     ],
     "rewrites": [

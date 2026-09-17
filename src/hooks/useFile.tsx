@@ -20,8 +20,15 @@ export const useGetChatFileUrl = (path: string) => {
 export const useGetFileMetadata = (path: string, opened: boolean = false) => {
     const { state } = useAuth()
 
+    // Was queryKey: ["fileMetadata"] — bare, while queryFn closed over
+    // `path`. Same bug class as Contact/index.tsx's ["profile"] collision
+    // (found sweeping this codebase after that fix): opening inquiry A's
+    // attachment, then inquiry B's, in the same session without a reload,
+    // could show A's cached file name/size while B's real fetch was still
+    // in flight — worse here, since useGetShareableUrl below has the
+    // identical bug on a share link, not just a display label.
     const result = useQuery({
-        queryKey: ["fileMetadata"],
+        queryKey: ["fileMetadata", path],
         queryFn: () => getFileMetadata(path, state.user?.accessToken || ""),
         enabled: opened,
     })
@@ -31,9 +38,13 @@ export const useGetFileMetadata = (path: string, opened: boolean = false) => {
 
 export const useGetShareableUrl = (path: string) => {
     const { state } = useAuth()
-    // console.log("path from useFile", path)
+    // Was queryKey: ["shareableUrl"] — same bare-key-with-a-closure-
+    // variable bug as useGetFileMetadata above, worse here: a stale
+    // cross-document cache entry means whichever share action runs
+    // (copy link, Gmail, WhatsApp) could hand out a different inquiry's
+    // attachment link than the one currently open.
     const result = useQuery({
-        queryKey: ["shareableUrl"],
+        queryKey: ["shareableUrl", path],
         queryFn: () => getShareableUrl(path, state.user?.accessToken || ""),
     })
 
