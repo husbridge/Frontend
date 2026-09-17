@@ -4,6 +4,8 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
+        "preinstall": "node -e \"if (!/yarn/.test(process.env.npm_config_user_agent||'')) { console.error('\\n\\u2716 This repo uses yarn (yarn.lock is the real lockfile) \\u2014 run: yarn install\\n\\n  Note: this only catches a bare, no-argument npm install. Adding a single package (npm install some-pkg) does NOT run this script at all \\u2014 confirmed empirically against husridge-server, same npm behavior applies here. prebuild is what actually catches that case, by failing the Vercel build if package-lock.json was committed.\\n'); process.exit(1); }\"",
+        "prebuild": "node -e \"if (require('fs').existsSync('package-lock.json')) { console.error('\\n\\u2716 package-lock.json is committed \\u2014 this repo uses yarn.lock only. Run: git rm package-lock.json && yarn install, then commit the resynced yarn.lock.\\n'); process.exit(1); }\"",
         "dev": "vite",
         "build": "tsc && vite build",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
