@@ -12,6 +12,7 @@ import { useParams, useSearchParams } from "react-router-dom"
 import Booking from "./components/booking"
 import Collaboration from "./components/collaboration"
 import Proposal from "./components/proposal"
+import { resolveSelectedPackage } from "@utils/selectedPackage"
 
 const VALID_TABS = ["booking", "proposal", "collaboration"]
 
@@ -34,8 +35,19 @@ const Contact = () => {
     const matches2 = useMediaQuery("(min-width: 460px)")
     const { uniqueName } = useParams<string>()
 
+    // Was ["profile"] — the exact same literal key Dashboard/Settings/
+    // TalentInformation use for fetchProfile() (a DIFFERENT endpoint,
+    // returning a DIFFERENT, private shape, for the AUTHENTICATED caller's
+    // own account). React Query caches by key alone: within one SPA
+    // session (no hard reload — e.g. testing as the talent, then as a
+    // buyer, in the same tab) those queries collided, and this page could
+    // mount showing another query's cached data — including its packages
+    // array — instead of a fresh fetch for the talent actually being
+    // viewed. Scoped by uniqueName too, so switching between two
+    // different talents' Contact pages in one session can't do the same
+    // thing to each other.
     const { data, isLoading, error } = useQuery({
-        queryKey: ["profile"],
+        queryKey: ["public-profile", uniqueName],
         queryFn: () => fetchPublicProfile(uniqueName || ""),
     })
 
@@ -185,11 +197,10 @@ const Contact = () => {
                             <Tabs.Panel value="booking">
                                 <Booking
                                     id={data?.data._id || ""}
-                                    selectedPackage={
-                                        data?.data.packages?.find(
-                                            (p) => p._id === packageId
-                                        ) || null
-                                    }
+                                    selectedPackage={resolveSelectedPackage(
+                                        data?.data.packages,
+                                        packageId
+                                    )}
                                 />
                             </Tabs.Panel>
 
