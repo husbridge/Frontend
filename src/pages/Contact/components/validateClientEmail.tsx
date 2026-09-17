@@ -44,10 +44,20 @@ const ValidateClientEmail = () => {
             setOpenModal(true)
         },
         onError: (err: Error) => {
+            // Was `err.message` alone — the generic axios text ("Request
+            // failed with status code 401"), not husridge-server's actual
+            // message ("Please verify your email before submitting an
+            // inquiry"). Matters more now than it used to: this call can
+            // fail with a real, meaningful 401 from the auth-gate fix
+            // (server PR #95), and a buyer seeing "Request failed with
+            // status code 401" has nothing to act on, while the server's
+            // own message at least tells them what happened.
             showNotification({
                 title: "Error",
                 message:
-                    err.message || "Something went wrong, please try again!",
+                    err.response?.data?.message ||
+                    err.message ||
+                    "Something went wrong, please try again!",
                 color: "red",
             })
         },
