@@ -24,6 +24,7 @@ import { Data } from "type/api/inquiry.types"
 import GenerateInvoiceModal from "./generateInvoice"
 import useFile from "@hooks/useFile"
 import { uploadChatFile } from "@services/storage"
+import { formatMoney } from "@utils/money"
 
 export interface InquiryDetailsModalProps {
     opened: boolean
@@ -270,6 +271,39 @@ const InquiryDetails = ({
                     )}
                 </div>
             </div>
+
+            {data?.packageId && (
+                <>
+                    <p className="bg-[#F7F7F7] mt-4 p-2 w-full text-[14px] font-semibold">
+                        Package requested
+                    </p>
+                    <div className="flex items-center mt-4 border border-[#0000001A] rounded-[8px] p-3">
+                        {data.packageId.image ? (
+                            <img
+                                src={data.packageId.image}
+                                alt=""
+                                className="w-16 h-16 rounded-[8px] object-cover flex-none"
+                            />
+                        ) : null}
+                        <div className={data.packageId.image ? "ml-3" : ""}>
+                            <p className="text-3md font-semibold">
+                                {data.packageId.label}
+                            </p>
+                            <p className="text-md font-medium mt-1">
+                                {formatMoney(
+                                    data.packageId.price,
+                                    data.packageId.currency
+                                )}
+                            </p>
+                            {data.packageId.deliverables?.length > 0 && (
+                                <p className="text-sm text-[#5F5E5E] mt-1">
+                                    {data.packageId.deliverables.join(" · ")}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </>
+            )}
 
             <p className="bg-[#F7F7F7] mt-4 p-2 w-full text-[14px] font-semibold">
                 Subject
