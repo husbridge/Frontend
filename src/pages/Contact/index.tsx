@@ -59,11 +59,15 @@ const Contact = () => {
             ) : error ? (
                 <ErrorComponent />
             ) : (
-                <section className="bg-[#F2F2F2]">
-                    <section className="sm:w-[70%] min-h-screen mx-auto bg-white-100">
-                        <section className="bg-black-100 p-8 rounded-b-2xl mb-6">
-                            <img src={Logo} alt="" className="w-24" />
-                            <div className="flex justify-center mt-2">
+                <section className="bg-[#101214] min-h-screen">
+                    <section className="sm:w-[70%] min-h-screen mx-auto bg-[#101214]">
+                        <section className="bg-[#101214] p-8 rounded-b-2xl mb-6 relative overflow-hidden">
+                            <div
+                                className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#FEC009]/10 blur-3xl pointer-events-none"
+                                aria-hidden
+                            />
+                            <img src={Logo} alt="" className="w-24 relative" />
+                            <div className="flex justify-center mt-2 relative">
                                 <Avatar
                                     src={
                                         data?.data.profileUrl.trim()
@@ -74,12 +78,12 @@ const Contact = () => {
                                     className="size-20 rounded-full"
                                 />
                             </div>
-                            <p className="text-white-100 text-center sm:text-lg text-3md font-semibold mt-2">
+                            <p className="text-[#ffffff] text-center sm:text-lg text-3md font-semibold mt-2 relative">
                                 Contact{" "}
                                 {`${data?.data.fullName} ${data?.data.stageName && `(${data?.data.stageName})`}`}
                             </p>
                             {data?.data.manager && (
-                                <p className="text-white-100 text-center text-md mt-2 font-normal">
+                                <p className="text-[#ffffff]/70 text-center text-md mt-2 font-normal relative">
                                     Managed by {data?.data.manager.fullName}
                                 </p>
                             )}
@@ -91,7 +95,7 @@ const Contact = () => {
                             value={activeTab}
                             styles={{
                                 list: {
-                                    backgroundColor: "#F7F7F7",
+                                    backgroundColor: "rgba(255,255,255,0.05)",
                                     borderRadius: 40,
                                     //width: "80%",
                                     margin: "auto",
@@ -123,25 +127,25 @@ const Contact = () => {
                             <Tabs.List grow>
                                 <Tabs.Tab
                                     value="booking"
-                                    className={`${activeTab === "booking" ? "text-black-100 bg-white-100 rounded-[40px]" : "text-[#475569]"} p-4`}
+                                    className={`${activeTab === "booking" ? "text-[#101214] bg-[#FEC009] rounded-[40px] font-semibold" : "text-[#ffffff]/70"} p-4`}
                                 >
                                     Booking
                                 </Tabs.Tab>
                                 <Tabs.Tab
                                     value="proposal"
-                                    className={`${activeTab === "proposal" ? "text-black-100 bg-white-100 rounded-[40px]" : "text-[#475569]"} p-4`}
+                                    className={`${activeTab === "proposal" ? "text-[#101214] bg-[#FEC009] rounded-[40px] font-semibold" : "text-[#ffffff]/70"} p-4`}
                                 >
                                     Proposal
                                 </Tabs.Tab>
                                 <Tabs.Tab
                                     value="collaboration"
-                                    className={`${activeTab === "collaboration" ? "text-black-100 bg-white-100 rounded-[40px]" : "text-[#475569]"} p-4`}
+                                    className={`${activeTab === "collaboration" ? "text-[#101214] bg-[#FEC009] rounded-[40px] font-semibold" : "text-[#ffffff]/70"} p-4`}
                                 >
                                     Collaboration
                                 </Tabs.Tab>
                                 <Tabs.Tab
                                     value="message"
-                                    className={`${activeTab === "message" ? "text-black-100 bg-white-100 rounded-[40px]" : "text-[#475569]"} p-4`}
+                                    className={`${activeTab === "message" ? "text-[#101214] bg-[#FEC009] rounded-[40px] font-semibold" : "text-[#ffffff]/70"} p-4`}
                                 >
                                     Message
                                 </Tabs.Tab>

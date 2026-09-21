@@ -132,17 +132,51 @@ const Booking = ({
                 {({ values }) => (
                     <Form className="py-4 mt-4">
                         {step === 1 && selectedPackage && (
-                            <div className="mb-6">
-                                <p className="font-medium sm:text-md text-sm text-[#475569]">
-                                    Package selected
-                                </p>
-                                <p className="font-medium sm:text-md text-sm text-[#000000] mt-2">
-                                    {selectedPackage.label} —{" "}
-                                    {formatMoney(
-                                        selectedPackage.price,
-                                        selectedPackage.currency
+                            <div className="mb-6 flex items-center rounded-2xl overflow-hidden bg-[#ffffff]/5 border border-[#ffffff]/15">
+                                {selectedPackage.image ? (
+                                    <img
+                                        src={selectedPackage.image}
+                                        alt={selectedPackage.label}
+                                        className="w-24 h-24 object-cover flex-none"
+                                    />
+                                ) : (
+                                    // Matches Website's own no-image fallback
+                                    // for a package card (PackagesSection.tsx:
+                                    // `from-primary-light-gray to-primary-black`)
+                                    // rather than inventing a different
+                                    // placeholder treatment for the same case.
+                                    <div className="w-24 h-24 flex-none bg-gradient-to-br from-[#313A47]/40 to-[#101214]" />
+                                )}
+                                <div className="p-4 flex-1 min-w-0">
+                                    <p className="text-xs text-[#ffffff]/70 uppercase tracking-wide">
+                                        Enquiring about
+                                    </p>
+                                    <div className="flex items-center justify-between gap-2 mt-1">
+                                        <p className="font-semibold text-[#ffffff] truncate">
+                                            {selectedPackage.label}
+                                        </p>
+                                        <span className="bg-[#FEC009] text-[#101214] text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap flex-none">
+                                            {formatMoney(
+                                                selectedPackage.price,
+                                                selectedPackage.currency
+                                            )}
+                                        </span>
+                                    </div>
+                                    {selectedPackage.deliverables?.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5 mt-2">
+                                            {selectedPackage.deliverables.map(
+                                                (d, i) => (
+                                                    <span
+                                                        key={i}
+                                                        className="text-xs bg-[#ffffff]/10 text-[#ffffff]/85 rounded-full px-2 py-0.5"
+                                                    >
+                                                        {d}
+                                                    </span>
+                                                )
+                                            )}
+                                        </div>
                                     )}
-                                </p>
+                                </div>
                             </div>
                         )}
                         {step === 1 ? (
@@ -159,7 +193,7 @@ const Booking = ({
                             />
                         )}
                         {step === 1 && !isAuthenticatedBuyer && (
-                            <p className="text-black-60 text-sm text-center">
+                            <p className="text-[#ffffff]/70 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>
@@ -167,7 +201,7 @@ const Booking = ({
                         <div className="flex">
                             <Button
                                 variant="yellow"
-                                className={`px-6 text-white-100  w-full rounded-[40px] mt-10 ${step === 3 ? "block" : "hidden"}`}
+                                className={`px-6 !text-[#ffffff] w-full rounded-[40px] mt-10 ${step === 3 ? "block" : "hidden"}`}
                                 type="button"
                                 onClick={() => setStep(4)}
                             >

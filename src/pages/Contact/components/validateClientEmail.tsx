@@ -12,6 +12,7 @@ import { MdArrowBack } from "react-icons/md"
 import { useNavigate } from "react-router-dom"
 import { type Error } from "type/api"
 import { CreateInquiryRequest } from "type/api/inquiry.types"
+import { darkLabel } from "../darkTheme"
 
 const ValidateClientEmail = () => {
     const { handleTimerStart, time, minutes, seconds } = useTimer()
@@ -102,13 +103,13 @@ const ValidateClientEmail = () => {
                 <LeftBackground />
             </div>
 
-            <div className="bg-white-100 sm:p-20 md:pt-32  p-6 md:w-[70%] w-full">
+            <div className="bg-[#101214] sm:p-20 md:pt-32  p-6 md:w-[70%] w-full">
                 <MdArrowBack
                     size={28}
-                    className="mb-10 cursor-pointer"
+                    className="mb-10 cursor-pointer text-[#ffffff]"
                     onClick={() => navigate(-1)}
                 />
-                <h3 className="font-semibold text-[24px] sm:text-[28px] md:text-2lg !leading-10">
+                <h3 className="font-semibold text-[24px] sm:text-[28px] md:text-2lg !leading-10 text-[#ffffff]">
                     Verify your email address <br /> to confirm your{" "}
                     {inquiry?.inquiryType} request
                 </h3>
@@ -132,10 +133,9 @@ const ValidateClientEmail = () => {
                                     name="code"
                                     placeholder="enter your new password"
                                     classNames={{
-                                        mainRoot: " h-12  border-black-20 p",
-                                        input: "text-black-100 text-[14px]",
+                                        input: "!bg-[#ffffff]/5 !border-[#ffffff]/15 !text-[#ffffff]",
                                     }}
-                                    labelClassName="text-[#000000B2]"
+                                    labelClassName={darkLabel}
                                 />
                             </div>
 
@@ -151,18 +151,18 @@ const ValidateClientEmail = () => {
                     )}
                 </Formik>
 
-                <p className="mt-6 text-base text-[#475569]">
+                <p className="mt-6 text-base text-[#ffffff]/70">
                     Didn't receive any code?{" "}
                     {time <= 0 ? (
                         <button
                             onClick={() => handleResend()}
-                            className="inline-flex hover:!text-black"
+                            className="inline-flex hover:!text-[#FEC009] text-[#ffffff]"
                         >
                             {isLoading ? "Sending..." : "Resend"}
                         </button>
                     ) : (
                         <>
-                            <span className="text-[#47556978] pr-2">
+                            <span className="text-[#ffffff]/70 pr-2">
                                 Retry in {`${minutes}:${seconds}`}
                             </span>
                         </>
