@@ -38,6 +38,17 @@ export default function AuthContextProvider({
             setAccessToken(state.user?.accessToken)
         }
         setExpiryInterceptor(async () => {
+            // A 401 only means "your session expired" when there was a
+            // session to begin with. Without this guard, ANY 401 from
+            // ANY anonymous request anywhere in the app — e.g. the
+            // anonymous-inquiry flow's POST /portal/inquires, now
+            // authenticated via a token minted right after OTP
+            // verification rather than a login — would redirect an
+            // anonymous visitor to /login and clear a session that never
+            // existed, silently discarding whatever they were doing
+            // (their inquiry, in that case) with no visible connection
+            // between the redirect and the failure.
+            if (!state.user) return
             if (state.user?.userType === "client") {
                 navigate("/client-login")
             } else {

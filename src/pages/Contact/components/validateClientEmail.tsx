@@ -3,6 +3,7 @@ import useTimer from "@hooks/auth/useTimer"
 import { showNotification } from "@mantine/notifications"
 import LeftBackground from "@pages/auth/components/leftBackground"
 import { sendPortalOTP, verifyPortalOTP } from "@services/auth"
+import { setAccessToken } from "@services/api.services"
 import { createInquiry } from "@services/inquiry"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { confirmEmailAddressSchema } from "@utils/validationSchema"
@@ -44,10 +45,20 @@ const ValidateClientEmail = () => {
             setOpenModal(true)
         },
         onError: (err: Error) => {
+            // Was `err.message` alone — the generic axios text ("Request
+            // failed with status code 401"), not husridge-server's actual
+            // message ("Please verify your email before submitting an
+            // inquiry"). Matters more now than it used to: this call can
+            // fail with a real, meaningful 401 from the auth-gate fix
+            // (server PR #95), and a buyer seeing "Request failed with
+            // status code 401" has nothing to act on, while the server's
+            // own message at least tells them what happened.
             showNotification({
                 title: "Error",
                 message:
-                    err.message || "Something went wrong, please try again!",
+                    err.response?.data?.message ||
+                    err.message ||
+                    "Something went wrong, please try again!",
                 color: "red",
             })
         },
@@ -55,7 +66,14 @@ const ValidateClientEmail = () => {
 
     const { isPending, mutate } = useMutation({
         mutationFn: verifyPortalOTP,
-        onSuccess: () => {
+        // POST /portal/inquires now requires an authenticated request
+        // (husridge-server's auth-gate fix) — verifyPortalUserOtp mints a
+        // real access token the same way a normal login does, right when
+        // email ownership is proven, so this sets it before the
+        // immediately-following createInquiry call rather than sending
+        // that call with no Authorization header at all.
+        onSuccess: (response) => {
+            setAccessToken(response.data.data?.accessToken || "")
             if (inquiry) onCreateInquiry.mutate(inquiry)
         },
         onError: (err: Error) => {
