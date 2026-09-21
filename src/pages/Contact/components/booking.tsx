@@ -152,7 +152,7 @@ const Booking = ({
                                         Enquiring about
                                     </p>
                                     <div className="flex items-center justify-between gap-2 mt-1">
-                                        <p className="font-semibold text-white truncate">
+                                        <p className="font-semibold text-[#ffffff] truncate">
                                             {selectedPackage.label}
                                         </p>
                                         <span className="bg-[#FEC009] text-[#101214] text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap flex-none">
@@ -201,7 +201,7 @@ const Booking = ({
                         <div className="flex">
                             <Button
                                 variant="yellow"
-                                className={`px-6 !text-white w-full rounded-[40px] mt-10 ${step === 3 ? "block" : "hidden"}`}
+                                className={`px-6 !text-[#ffffff] w-full rounded-[40px] mt-10 ${step === 3 ? "block" : "hidden"}`}
                                 type="button"
                                 onClick={() => setStep(4)}
                             >

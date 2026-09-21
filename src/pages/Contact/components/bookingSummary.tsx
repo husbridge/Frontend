@@ -17,7 +17,7 @@ const BookingSummary = ({
         <div className="px-2 sm:px-0">
             <div className="">
                 <div className="flex justify-between">
-                    <p className="font-medium text-3md text-white">
+                    <p className="font-medium text-3md text-[#ffffff]">
                         {" "}
                         Personal Information{" "}
                     </p>
@@ -69,7 +69,7 @@ const BookingSummary = ({
                 </div>
 
                 <div className="flex justify-between my-4 ">
-                    <p className="font-medium text-3md text-white"> Venue Information </p>
+                    <p className="font-medium text-3md text-[#ffffff]"> Venue Information </p>
                     <div className="cursor-pointer" onClick={() => setStep(2)}>
                         <FaEdit className="text-[#ffffff]/70" />
                     </div>
@@ -142,7 +142,7 @@ const BookingSummary = ({
                 ))}
 
                 <div className="flex justify-between mt-4">
-                    <p className="font-medium text-3md text-white">
+                    <p className="font-medium text-3md text-[#ffffff]">
                         {" "}
                         {booking ? "Booking" : "collaboration"} Details{" "}
                     </p>

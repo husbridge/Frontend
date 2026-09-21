@@ -48,7 +48,7 @@ const BookingEventInformation = () => {
     return (
         <div>
             <div className="flex justify-between my-6">
-                <p className="text-2md font-medium text-white">Event Information</p>
+                <p className="text-2md font-medium text-[#ffffff]">Event Information</p>
                 <p className={`text-2md font-medium ${darkStepCounter}`}>2 of 3</p>
             </div>
 

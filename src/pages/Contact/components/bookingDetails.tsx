@@ -15,7 +15,7 @@ const BookingDetails = () => {
     return (
         <div>
             <div className="flex justify-between my-6">
-                <p className="text-2md font-medium text-white">Event Information</p>
+                <p className="text-2md font-medium text-[#ffffff]">Event Information</p>
                 <p className={`text-2md font-medium ${darkStepCounter}`}>3 of 3</p>
             </div>
 
@@ -57,7 +57,7 @@ const BookingDetails = () => {
                         style={{ padding: 16 }}
                     >
                         {document?.name ? (
-                            <p className="text-white text-md">{document.name}</p>
+                            <p className="text-[#ffffff] text-md">{document.name}</p>
                         ) : (
                             <p className={`${darkHelperText} text-md`}>
                                 Upload Png, Jpg or Jpeg of your Valid ID

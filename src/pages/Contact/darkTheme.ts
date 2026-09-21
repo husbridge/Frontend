@@ -21,33 +21,43 @@
 export const darkPageBg = "bg-[#101214]"
 export const darkCardBg = "bg-[#171A1E]"
 
-// IMPORTANT — why every translucent-white color below is written as
-// `text-[#ffffff]/NN` (an arbitrary hex value with an opacity suffix)
-// and NEVER as `text-white/NN`: this app's Tailwind config
-// (tailwind.config.js) defines `white` as a keyed object
-// (`{100: "#ffffff", 60: "rgba(255,255,255,0.6)"}`), not a plain color
-// string. Tailwind's opacity-modifier syntax (`color/opacity`) only
-// works on a plain color value — against a keyed object it silently
-// generates NOTHING (no error, no warning, the class just never appears
-// in the compiled CSS), so `text-white/70` and every sibling class built
-// the same way in the first version of this file rendered as pure
-// no-ops. FormControls' own hardcoded `text-black-100` (or the browser's
-// unstyled default) won by default instead, which is exactly the
-// dark-text-on-dark-background bug reported against that first version.
-// `text-[#ffffff]/NN` sidesteps this entirely — an arbitrary value isn't
-// looked up in the theme at all, so the opacity suffix always applies.
-// Verified by building this app (`npm run build`) and grepping the
-// compiled CSS in dist/assets/*.css for each class used below, not by
-// assuming the syntax is fine because it looks like valid Tailwind.
+// TWO separate, both-silent Tailwind failure modes produced the first two
+// rounds of this bug, and every value below is written the way it is
+// specifically to avoid both. Both were confirmed by building this app
+// (`npm run build`) and grepping the compiled CSS in dist/assets/*.css
+// for the EXACT class actually applied at runtime — not by re-reading
+// the source and assuming it was fine, which is what let both slip
+// through in the first place.
+//
+// 1. Bare `text-white` (no suffix, no opacity) generates NOTHING. This
+//    app's Tailwind config defines `white` as a keyed object
+//    (`{100: "#ffffff", 60: "rgba(...)"}`), which shadows Tailwind's own
+//    built-in bare `white`. Only `text-white-100`/`text-white-60`
+//    (the exact declared keys) or an arbitrary value (`text-[#ffffff]`)
+//    resolve to anything. `text-white/NN` fails for the same root reason
+//    — the opacity modifier needs a plain color to apply to, and a keyed
+//    object isn't one.
+// 2. A class built by TEMPLATE-LITERAL INTERPOLATION of another exported
+//    constant (e.g. `` `!${darkTextSecondary}` ``) never appears as
+//    literal text anywhere in this file — the source only contains the
+//    characters `!${darkTextSecondary}`, and Tailwind's scanner matches
+//    against raw file text, it doesn't evaluate JavaScript. So it never
+//    sees the string `!text-[#ffffff]/70` this would actually produce at
+//    runtime, and never generates a rule for it — even though the
+//    variable it references (`darkTextSecondary`) is itself a valid,
+//    separately-working class. This is exactly how `darkLabel` broke in
+//    the second round: verifying that `text-[#ffffff]/70` existed in the
+//    compiled CSS (true, from OTHER call sites using it unprefixed) was
+//    mistaken for verifying that `!text-[#ffffff]/70` did — a different,
+//    never-generated class the check never actually looked for. Every
+//    class below is now written out in full, with no interpolation.
 //
 // Contrast (WCAG relative-luminance formula, computed against the actual
-// page background #101214, not eyeballed):
+// page background #101214):
 //   text-[#ffffff]      (100%) -> ~18.8:1
-//   text-[#ffffff]/70   (secondary text used below) -> ~9.4:1
-//   text-[#ffffff]/55   (placeholder used below) -> ~6.2:1
-// All comfortably clear WCAG AA's 4.5:1 body-text minimum, with margin
-// for the slightly lighter surfaces (input fill, card background) some
-// of this text sits on top of rather than the page background directly.
+//   text-[#ffffff]/70   (secondary text) -> ~9.4:1
+//   text-[#ffffff]/55   (placeholder)    -> ~6.2:1
+// All clear WCAG AA's 4.5:1 body-text minimum with real margin.
 export const darkTextPrimary = "text-[#ffffff]"
 export const darkTextSecondary = "text-[#ffffff]/70"
 export const darkPlaceholder = "text-[#ffffff]/55"
@@ -55,21 +65,16 @@ export const darkPlaceholder = "text-[#ffffff]/55"
 export const darkInput = {
     mainRoot:
         "!bg-[#ffffff]/5 !border !border-[#ffffff]/15 !rounded-[10px] !px-3",
-    input: `!${darkTextPrimary} placeholder:!${darkPlaceholder}`,
+    input: "!text-[#ffffff] placeholder:!text-[#ffffff]/55",
 }
 
 export const darkTextarea = {
     wrapper: "!bg-[#ffffff]/5 !border !border-[#ffffff]/15 !rounded-2xl",
-    input: `!${darkTextPrimary} placeholder:!${darkPlaceholder}`,
+    input: "!text-[#ffffff] placeholder:!text-[#ffffff]/55",
 }
 
-export const darkSelect = {
-    mainRoot: `!bg-[#ffffff]/5 !border !border-[#ffffff]/15 !${darkTextPrimary}`,
-    input: `!${darkTextPrimary}`,
-}
-
-export const darkLabel = `!${darkTextSecondary}`
-export const darkStepCounter = darkTextSecondary
-export const darkFieldLabel = darkTextSecondary
-export const darkFieldValue = darkTextPrimary
-export const darkHelperText = darkTextSecondary
+export const darkLabel = "!text-[#ffffff]/70"
+export const darkStepCounter = "text-[#ffffff]/70"
+export const darkFieldLabel = "text-[#ffffff]/70"
+export const darkFieldValue = "text-[#ffffff]"
+export const darkHelperText = "text-[#ffffff]/70"

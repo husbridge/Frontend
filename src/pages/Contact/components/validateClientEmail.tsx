@@ -106,10 +106,10 @@ const ValidateClientEmail = () => {
             <div className="bg-[#101214] sm:p-20 md:pt-32  p-6 md:w-[70%] w-full">
                 <MdArrowBack
                     size={28}
-                    className="mb-10 cursor-pointer text-white"
+                    className="mb-10 cursor-pointer text-[#ffffff]"
                     onClick={() => navigate(-1)}
                 />
-                <h3 className="font-semibold text-[24px] sm:text-[28px] md:text-2lg !leading-10 text-white">
+                <h3 className="font-semibold text-[24px] sm:text-[28px] md:text-2lg !leading-10 text-[#ffffff]">
                     Verify your email address <br /> to confirm your{" "}
                     {inquiry?.inquiryType} request
                 </h3>
@@ -156,7 +156,7 @@ const ValidateClientEmail = () => {
                     {time <= 0 ? (
                         <button
                             onClick={() => handleResend()}
-                            className="inline-flex hover:!text-[#FEC009] text-white"
+                            className="inline-flex hover:!text-[#FEC009] text-[#ffffff]"
                         >
                             {isLoading ? "Sending..." : "Resend"}
                         </button>

@@ -6,7 +6,7 @@ const BookingPersonalInformation = () => {
     return (
         <div>
             <div className="flex justify-between my-6">
-                <p className="text-2md font-medium text-white">Personal Information</p>
+                <p className="text-2md font-medium text-[#ffffff]">Personal Information</p>
                 <p className={`text-2md font-medium ${darkStepCounter}`}>1 of 3</p>
             </div>
 

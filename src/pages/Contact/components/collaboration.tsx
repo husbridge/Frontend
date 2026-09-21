@@ -131,7 +131,7 @@ const Collaboration = ({ id }: { id: string }) => {
                             />
                         )}
                         {step === 1 && !isAuthenticatedBuyer && (
-                            <p className="text-black-60 text-sm text-center">
+                            <p className="text-[#ffffff]/70 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>
@@ -139,7 +139,7 @@ const Collaboration = ({ id }: { id: string }) => {
                         <div className="flex">
                             <Button
                                 variant="yellow"
-                                className={`px-6 text-white-100  w-full rounded-[40px] mt-10 ${step === 3 ? "block" : "hidden"}`}
+                                className={`px-6 !text-[#ffffff] w-full rounded-[40px] mt-10 ${step === 3 ? "block" : "hidden"}`}
                                 type="button"
                                 onClick={() => setStep(4)}
                             >

@@ -78,7 +78,7 @@ const Contact = () => {
                                     className="size-20 rounded-full"
                                 />
                             </div>
-                            <p className="text-white text-center sm:text-lg text-3md font-semibold mt-2 relative">
+                            <p className="text-[#ffffff] text-center sm:text-lg text-3md font-semibold mt-2 relative">
                                 Contact{" "}
                                 {`${data?.data.fullName} ${data?.data.stageName && `(${data?.data.stageName})`}`}
                             </p>
