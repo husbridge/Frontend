@@ -1,8 +1,9 @@
-import { FullScreenPanel } from "@components/index"
 import {
     Button,
     FileButton,
+    Modal,
     NumberInput,
+    ScrollArea,
     Select,
     Stack,
     TagsInput,
@@ -35,9 +36,14 @@ export interface PackageEditorProps {
 // Invoice) of NGN-only, not a real multi-currency picker yet.
 const CURRENCY_OPTIONS = ["NGN"]
 
-// Mirrors PortfolioItemEditor: FullScreenPanel (right panel on desktop,
-// full-screen with a back control under the mobile breakpoint, PRD §9),
-// same Mantine field set/spacing as the rest of My Page's forms. price is
+// Centered Modal — the overlay primitive used everywhere else in this app
+// (Settings/changeName, Payment/PaymentInformationModal, and others).
+// Was FullScreenPanel (a right-side sliding Drawer, PRD §9's pattern for
+// PortfolioItemEditor) until a real production walkthrough flagged it as
+// the one overlay in the product that slides in from the side instead of
+// centering — switched to match, not to PortfolioItemEditor, which still
+// uses FullScreenPanel and wasn't part of what was reported. Same Mantine
+// field set/spacing as the rest of My Page's forms either way. price is
 // entered/displayed in the major currency unit (e.g. naira) for a human
 // to type normally, converted to/from the integer minor-unit wire value
 // (kobo) here at the edges — PackageRequest/Package themselves never see
@@ -104,10 +110,15 @@ const PackageEditor = ({
     }
 
     return (
-        <FullScreenPanel
+        <Modal
             opened={opened}
             onClose={onClose}
             title={pkg ? "Edit package" : "Add package"}
+            centered
+            size="lg"
+            radius={20}
+            className="font-Montserrat"
+            scrollAreaComponent={ScrollArea.Autosize}
         >
             <Stack gap="md">
                 {pkg ? (
@@ -245,7 +256,7 @@ const PackageEditor = ({
                     {pkg ? "Save changes" : "Add package"}
                 </Button>
             </Stack>
-        </FullScreenPanel>
+        </Modal>
     )
 }
 
