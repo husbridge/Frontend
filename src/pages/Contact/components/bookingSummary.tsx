@@ -22,7 +22,7 @@ const BookingSummary = ({
                         Personal Information{" "}
                     </p>
                     <div className="cursor-pointer" onClick={() => setStep(1)}>
-                        <FaEdit className="text-white/70" />
+                        <FaEdit className="text-[#ffffff]/70" />
                     </div>
                 </div>
 
@@ -47,7 +47,7 @@ const BookingSummary = ({
                     </div>
                 </div>
 
-                <div className="flex mt-5 space-x-20 border-b border-white/10 py-4">
+                <div className="flex mt-5 space-x-20 border-b border-[#ffffff]/15 py-4">
                     <div className="w-1/2">
                         <p className={`font-Montserrat font-medium sm:text-md text-sm ${darkFieldLabel}`}>
                             Mobile Number
@@ -71,7 +71,7 @@ const BookingSummary = ({
                 <div className="flex justify-between my-4 ">
                     <p className="font-medium text-3md text-white"> Venue Information </p>
                     <div className="cursor-pointer" onClick={() => setStep(2)}>
-                        <FaEdit className="text-white/70" />
+                        <FaEdit className="text-[#ffffff]/70" />
                     </div>
                 </div>
                 <div className="w-1/2">
@@ -147,7 +147,7 @@ const BookingSummary = ({
                         {booking ? "Booking" : "collaboration"} Details{" "}
                     </p>
                     <div className="cursor-pointer" onClick={() => setStep(3)}>
-                        <FaEdit className="text-white/70" />
+                        <FaEdit className="text-[#ffffff]/70" />
                     </div>
                 </div>
 

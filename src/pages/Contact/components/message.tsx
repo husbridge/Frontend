@@ -71,7 +71,7 @@ const Message = ({ id }: { id: string }) => {
                             />
                         </div>
                         {!isAuthenticatedBuyer && (
-                            <p className="text-white/50 text-sm text-center">
+                            <p className="text-[#ffffff]/70 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>

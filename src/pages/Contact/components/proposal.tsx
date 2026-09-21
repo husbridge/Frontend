@@ -137,8 +137,8 @@ const Proposal = ({ id }: { id: string }) => {
                                 name="attachDocument"
                                 classNames={{
                                     mainRoot:
-                                        "border border-dashed !border-white/20 !bg-white/5 px-2 rounded-3xl",
-                                    input: "!text-white/40",
+                                        "border border-dashed !border-[#ffffff]/15 !bg-[#ffffff]/5 px-2 rounded-3xl",
+                                    input: "!text-[#ffffff]/55",
                                 }}
                                 labelClassName={darkLabel}
                                 placeholder="Upload Png, Jpg or Jpeg of your Valid ID"
@@ -152,7 +152,7 @@ const Proposal = ({ id }: { id: string }) => {
                             )}
                         </div>
                         {!isAuthenticatedBuyer && (
-                            <p className="text-white/50 text-sm text-center">
+                            <p className="text-[#ffffff]/70 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>

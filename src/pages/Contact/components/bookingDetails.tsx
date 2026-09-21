@@ -53,7 +53,7 @@ const BookingDetails = () => {
                 <label htmlFor="file-upload">
                     <div className={`text-md mb-1 ${darkLabel}`}>Attach document</div>
                     <div
-                        className="border border-dashed border-white/20 bg-white/5 px-2 rounded-3xl cursor-pointer"
+                        className="border border-dashed border-[#ffffff]/15 bg-[#ffffff]/5 px-2 rounded-3xl cursor-pointer"
                         style={{ padding: 16 }}
                     >
                         {document?.name ? (

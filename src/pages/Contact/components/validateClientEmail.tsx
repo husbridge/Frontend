@@ -133,7 +133,7 @@ const ValidateClientEmail = () => {
                                     name="code"
                                     placeholder="enter your new password"
                                     classNames={{
-                                        input: "!bg-white/5 !border-white/20 !text-white",
+                                        input: "!bg-[#ffffff]/5 !border-[#ffffff]/15 !text-[#ffffff]",
                                     }}
                                     labelClassName={darkLabel}
                                 />
@@ -151,7 +151,7 @@ const ValidateClientEmail = () => {
                     )}
                 </Formik>
 
-                <p className="mt-6 text-base text-white/50">
+                <p className="mt-6 text-base text-[#ffffff]/70">
                     Didn't receive any code?{" "}
                     {time <= 0 ? (
                         <button
@@ -162,7 +162,7 @@ const ValidateClientEmail = () => {
                         </button>
                     ) : (
                         <>
-                            <span className="text-white/30 pr-2">
+                            <span className="text-[#ffffff]/70 pr-2">
                                 Retry in {`${minutes}:${seconds}`}
                             </span>
                         </>

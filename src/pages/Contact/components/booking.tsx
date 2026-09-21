@@ -132,7 +132,7 @@ const Booking = ({
                 {({ values }) => (
                     <Form className="py-4 mt-4">
                         {step === 1 && selectedPackage && (
-                            <div className="mb-6 flex items-center rounded-2xl overflow-hidden bg-white/5 border border-white/10">
+                            <div className="mb-6 flex items-center rounded-2xl overflow-hidden bg-[#ffffff]/5 border border-[#ffffff]/15">
                                 {selectedPackage.image ? (
                                     <img
                                         src={selectedPackage.image}
@@ -140,10 +140,15 @@ const Booking = ({
                                         className="w-24 h-24 object-cover flex-none"
                                     />
                                 ) : (
-                                    <div className="w-24 h-24 flex-none bg-gradient-to-br from-white/10 to-transparent" />
+                                    // Matches Website's own no-image fallback
+                                    // for a package card (PackagesSection.tsx:
+                                    // `from-primary-light-gray to-primary-black`)
+                                    // rather than inventing a different
+                                    // placeholder treatment for the same case.
+                                    <div className="w-24 h-24 flex-none bg-gradient-to-br from-[#313A47]/40 to-[#101214]" />
                                 )}
                                 <div className="p-4 flex-1 min-w-0">
-                                    <p className="text-xs text-white/50 uppercase tracking-wide">
+                                    <p className="text-xs text-[#ffffff]/70 uppercase tracking-wide">
                                         Enquiring about
                                     </p>
                                     <div className="flex items-center justify-between gap-2 mt-1">
@@ -163,7 +168,7 @@ const Booking = ({
                                                 (d, i) => (
                                                     <span
                                                         key={i}
-                                                        className="text-xs bg-white/10 text-white/80 rounded-full px-2 py-0.5"
+                                                        className="text-xs bg-[#ffffff]/10 text-[#ffffff]/85 rounded-full px-2 py-0.5"
                                                     >
                                                         {d}
                                                     </span>
@@ -188,7 +193,7 @@ const Booking = ({
                             />
                         )}
                         {step === 1 && !isAuthenticatedBuyer && (
-                            <p className="text-white/50 text-sm text-center">
+                            <p className="text-[#ffffff]/70 text-sm text-center">
                                 *You'll be required to validate your email
                                 address
                             </p>
