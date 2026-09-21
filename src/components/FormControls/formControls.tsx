@@ -543,6 +543,21 @@ function SelectInput(props: ISelectProps) {
         </>
     )
 }
+// selectClassNames — additive, optional per-part class overrides for the
+// underlying react-select instance. Not portaled (no menuPortalTarget is
+// set anywhere this renders), so it lives in the normal DOM subtree and a
+// caller-supplied class genuinely reaches the control AND its dropdown
+// list, not just the field wrapper — confirmed before adding this, not
+// assumed. Every part defaults to "" (unchanged) when not supplied, so
+// every existing caller (AddEvent/singleAddition.tsx,
+// auth/agencyInformation.tsx) is unaffected; only a caller that opts in
+// (Contact's dark theme) sees anything different. Appended after the
+// existing hardcoded classes, not replacing them, and given as plain
+// Tailwind classes with the `!` modifier where a value (e.g. background)
+// needs to beat react-select's own inline `styles` — see darkTheme.ts
+// (pages/Contact) for why arbitrary-value classes, not
+// `text-white`/`bg-white` opacity variants, are what actually work in
+// this app's Tailwind config.
 function CustomSelect(props: formInterface) {
     const {
         // className,
@@ -559,6 +574,7 @@ function CustomSelect(props: formInterface) {
         isClearable,
         isLoading,
         placeholder,
+        selectClassNames,
         ...rest
     } = props
     return (
@@ -592,12 +608,20 @@ function CustomSelect(props: formInterface) {
                                     meta.touched &&
                                     meta.error &&
                                     "border border-red-100"
-                                }  w-full  `,
+                                }  w-full   ${selectClassNames?.control || ""}`,
                             container: () =>
-                                "border-gray-100 rounded-full w-full text-[14px] h-14",
+                                `border-gray-100 rounded-full w-full text-[14px] h-14 ${selectClassNames?.container || ""}`,
                             valueContainer: () =>
-                                "border-gray-100 rounded-full w-full text-[14px] h-12  ",
+                                `border-gray-100 rounded-full w-full text-[14px] h-12   ${selectClassNames?.valueContainer || ""}`,
                             indicatorSeparator: () => "hidden",
+                            menu: () => selectClassNames?.menu || "",
+                            menuList: () => selectClassNames?.menuList || "",
+                            option: () => selectClassNames?.option || "",
+                            singleValue: () =>
+                                selectClassNames?.singleValue || "",
+                            input: () => selectClassNames?.input || "",
+                            placeholder: () =>
+                                selectClassNames?.placeholder || "",
                             //input:()=>'rounded-full border-gray-100 bg-[blue]',
                         }}
                         // classNamePrefix="select"

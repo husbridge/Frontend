@@ -6,6 +6,21 @@ export interface Option {
     value: string
     icon: string
 }
+
+// Additive, optional per-part class overrides for control="customselect"
+// (react-select under the hood). See CustomSelect in formControls.tsx for
+// why this exists and why it's additive rather than a replacement.
+export interface SelectClassNameOverrides {
+    control?: string
+    container?: string
+    valueContainer?: string
+    menu?: string
+    menuList?: string
+    option?: string
+    singleValue?: string
+    input?: string
+    placeholder?: string
+}
 export interface formInterface
     extends React.InputHTMLAttributes<HTMLInputElement> {
     control:
@@ -46,6 +61,12 @@ export interface formInterface
     isLoading?: boolean
     isClearable?:boolean
     options?: Option[]
+    selectClassNames?: SelectClassNameOverrides
+    // react-datepicker's own prop (control="date"), forwarded through
+    // DatePickerInput's `...rest` untouched — see darkCalendarClassName in
+    // Contact/darkTheme.ts for why this needs a page-scoped CSS file rather
+    // than a classNames-style override.
+    calendarClassName?: string
 }
 
 export interface ISelectProps {

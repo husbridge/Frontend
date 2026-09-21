@@ -1,0 +1,91 @@
+/*
+ * Dark-theme override for react-datepicker's calendar popup, scoped to
+ * `.contact-dark-datepicker` (react-datepicker's own `calendarClassName`
+ * prop) and imported ONLY by bookingEventInformation.tsx — not globally,
+ * so every other react-datepicker instance in this app (e.g.
+ * CalendarManagement) keeps the default light calendar untouched.
+ *
+ * react-datepicker exposes no per-part classNames function the way
+ * react-select does (see darkSelect in darkTheme.ts) — its markup is a
+ * fixed set of BEM-style class names from react-datepicker.css, so the
+ * only way to restyle it per-instance is scoped CSS like this, targeting
+ * those exact class names under the marker class.
+ *
+ * Not portaled (react-datepicker only portals with `portalId`/
+ * `withPortal`, neither set anywhere in this app), so this reaches the
+ * real, rendered popup — confirmed before writing this, not assumed.
+ */
+.contact-dark-datepicker.react-datepicker {
+  background-color: #171a1e;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-family: inherit;
+}
+
+.contact-dark-datepicker .react-datepicker__triangle::before,
+.contact-dark-datepicker .react-datepicker__triangle::after {
+  border-bottom-color: #171a1e !important;
+}
+
+.contact-dark-datepicker .react-datepicker__header {
+  background-color: #171a1e;
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.contact-dark-datepicker .react-datepicker__current-month,
+.contact-dark-datepicker .react-datepicker-time__header {
+  color: #ffffff;
+}
+
+.contact-dark-datepicker .react-datepicker__day-name,
+.contact-dark-datepicker .react-datepicker__day {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.contact-dark-datepicker .react-datepicker__day:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.contact-dark-datepicker .react-datepicker__day--outside-month {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.contact-dark-datepicker .react-datepicker__day--disabled {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.contact-dark-datepicker .react-datepicker__day--selected,
+.contact-dark-datepicker .react-datepicker__day--keyboard-selected,
+.contact-dark-datepicker .react-datepicker__day--today {
+  background-color: #fec009;
+  color: #101214;
+  font-weight: 600;
+}
+
+.contact-dark-datepicker .react-datepicker__navigation-icon::before {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Time-only picker (Start Time / End Time — showTimeSelect + showTimeSelectOnly) */
+.contact-dark-datepicker .react-datepicker__time-container,
+.contact-dark-datepicker .react-datepicker__time,
+.contact-dark-datepicker .react-datepicker__time-box {
+  background-color: #171a1e;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.contact-dark-datepicker .react-datepicker__time-list-item {
+  color: rgba(255, 255, 255, 0.85);
+  background-color: #171a1e;
+}
+
+.contact-dark-datepicker .react-datepicker__time-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.contact-dark-datepicker .react-datepicker__time-list-item--selected {
+  background-color: #fec009 !important;
+  color: #101214 !important;
+  font-weight: 600;
+}
