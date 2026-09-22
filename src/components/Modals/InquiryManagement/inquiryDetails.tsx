@@ -1,6 +1,6 @@
 import Close from "@assets/icons/close.svg"
 import PdfIcon from "@assets/icons/pdf.svg"
-import { Button } from "@components/index"
+import { Button, ErrorBoundary } from "@components/index"
 import Avatar from "@components/Layout/avatar"
 import ShareConversationModal from "@components/Modals/InquiryManagement/shareConversation"
 import useAuth from "@hooks/auth/useAuth"
@@ -38,7 +38,7 @@ export interface ShareConversationModalProps {
     setOpened: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const InquiryDetails = ({
+export const InquiryDetailsContent = ({
     opened,
     setOpened,
     data,
@@ -272,7 +272,14 @@ const InquiryDetails = ({
                 </div>
             </div>
 
-            {data?.packageId && (
+            {/* data.packageId is typed as an already-populated package, but
+                not every read path on the server actually populates the
+                ref (see husridge-server#99/#103) — on those it arrives as
+                a bare id string. `typeof === "object"` is what tells the
+                two apart at runtime; without it, formatMoney below throws
+                on the missing price/currency and (pre-error-boundary) took
+                the whole dashboard down with it. */}
+            {data?.packageId && typeof data.packageId === "object" && (
                 <>
                     <p className="bg-[#F7F7F7] mt-4 p-2 w-full text-[14px] font-semibold">
                         Package requested
@@ -289,12 +296,15 @@ const InquiryDetails = ({
                             <p className="text-3md font-semibold">
                                 {data.packageId.label}
                             </p>
-                            <p className="text-md font-medium mt-1">
-                                {formatMoney(
-                                    data.packageId.price,
-                                    data.packageId.currency
+                            {typeof data.packageId.price === "number" &&
+                                data.packageId.currency && (
+                                    <p className="text-md font-medium mt-1">
+                                        {formatMoney(
+                                            data.packageId.price,
+                                            data.packageId.currency
+                                        )}
+                                    </p>
                                 )}
-                            </p>
                             {data.packageId.deliverables?.length > 0 && (
                                 <p className="text-sm text-[#5F5E5E] mt-1">
                                     {data.packageId.deliverables.join(" · ")}
@@ -621,4 +631,47 @@ const InquiryDetails = ({
         </Drawer>
     )
 }
+
+// One malformed inquiry (e.g. an unpopulated packageId slipping through on
+// some read path) must never take the whole dashboard down with it — see
+// PRODUCTION_CHANGES.md, the blank-dashboard incident. resetKey on data?._id
+// means switching to a different inquiry gets a fresh render attempt
+// instead of staying stuck on a previous crash.
+const InquiryDetails = (props: InquiryDetailsModalProps) => (
+    <ErrorBoundary
+        resetKey={props.data?._id}
+        fallback={
+            <Drawer
+                opened={props.opened}
+                withCloseButton={false}
+                onClose={() => props.setOpened(false)}
+                size="550px"
+                position="right"
+                radius={30}
+                className="font-Montserrat"
+                classNames={{ body: "p-4 py-10" }}
+            >
+                <div className="flex mb-6 items-center">
+                    <p className="text-[20px] font-semibold flex-1 text-center">
+                        Inquiry details
+                    </p>
+                    <img
+                        src={Close}
+                        alt=""
+                        className="flex-none cursor-pointer"
+                        onClick={() => props.setOpened(false)}
+                    />
+                </div>
+                <p className="text-md text-center text-[#5F5E5E]">
+                    We couldn't load this inquiry. Try closing and reopening
+                    it — if that doesn't work, the team's already been
+                    notified.
+                </p>
+            </Drawer>
+        }
+    >
+        <InquiryDetailsContent {...props} />
+    </ErrorBoundary>
+)
+
 export default InquiryDetails
