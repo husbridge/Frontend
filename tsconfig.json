@@ -31,6 +31,6 @@
           "@services/*": ["services/*"]
       }
   },
-  "include": ["src", "postcss.config.js"],
+  "include": ["src", "postcss.config.js", "vitest.setup.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

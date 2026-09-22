@@ -16,6 +16,10 @@ export default defineConfig({
             { find: "@services", replacement: "/src/services" },
         ],
     },
+    test: {
+        environment: "jsdom",
+        setupFiles: ["./vitest.setup.ts"],
+    },
     //   server: {
     //     proxy: {
     //       '/api': {
