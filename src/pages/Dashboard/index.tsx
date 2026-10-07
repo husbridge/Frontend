@@ -92,7 +92,7 @@ const Dashboard = () => {
     useEffect(() => {
         if (userType === "agency") {
             setTalentCount(
-                data?.data?.agency?.staffs.filter(
+                data?.data?.agency?.staffs?.filter(
                     (item) => item.userType === "talent"
                 ).length || 0
             )

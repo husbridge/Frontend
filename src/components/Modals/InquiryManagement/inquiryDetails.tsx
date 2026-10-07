@@ -248,18 +248,18 @@ export const InquiryDetailsContent = ({
                     size={52}
                     alt={
                         isClient
-                            ? data?.bookedForTalent.firstName
+                            ? data?.bookedForTalent?.firstName
                             : data?.fullName
                     }
                     imageUrl={
-                        isClient ? data?.bookedForTalent.profileUrl : undefined
+                        isClient ? data?.bookedForTalent?.profileUrl : undefined
                     }
                 />
                 <div className="ml-4">
                     <div className="flex items-center">
                         <p className="text-3md sm:text-lg font-medium">
                             {isClient
-                                ? data?.bookedForTalent.firstName
+                                ? data?.bookedForTalent?.firstName
                                 : data?.fullName}
                         </p>
                         <MdVerified color="#D95B0E" className="ml-2" />

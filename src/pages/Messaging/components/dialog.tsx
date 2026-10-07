@@ -112,21 +112,21 @@ export const Chats = ({ handleClick, data, state }: ChatsProps) => {
                                     size={46}
                                     alt={
                                         state.user?.userType === "client"
-                                            ? item[0].bookedForTalent.fullName
+                                            ? item[0].bookedForTalent?.fullName
                                                   .split("  ")
                                                   .join(" ")
                                             : item[0].fullName.trim()
                                     }
                                     imageUrl={
                                         state.user?.userType === "client"
-                                            ? item[0].bookedForTalent.profileUrl
+                                            ? item[0].bookedForTalent?.profileUrl
                                             : undefined
                                     }
                                 />
                                 <div className="ml-2">
                                     <p className="text-[#0F0E0E] text-2md sm:text-3md font-medium">
                                         {state.user?.userType === "client"
-                                            ? item[0].bookedForTalent.fullName
+                                            ? item[0].bookedForTalent?.fullName
                                             : item[0].fullName}
                                     </p>
                                     <p className="text-sm text-gray-400">
