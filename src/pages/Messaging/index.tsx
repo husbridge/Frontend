@@ -332,12 +332,12 @@ const Messaging = () => {
                                                     imageUrl={
                                                         activeGroup
                                                             ?.bookedForTalent
-                                                            .profileUrl
+                                                            ?.profileUrl
                                                     }
                                                     alt={
                                                         state.user?.userType ===
                                                         "client"
-                                                            ? activeGroup?.bookedForTalent.fullName
+                                                            ? activeGroup?.bookedForTalent?.fullName
                                                                   .split("  ")
                                                                   .join(" ")
                                                             : activeGroup?.fullName.trim()
@@ -351,7 +351,7 @@ const Messaging = () => {
                                                         "client"
                                                             ? activeGroup
                                                                   ?.bookedForTalent
-                                                                  .fullName
+                                                                  ?.fullName
                                                             : activeGroup?.fullName}
                                                     </p>
                                                     <p className="text-sm sm:text-md text-[#5F5E5E]">
@@ -360,7 +360,7 @@ const Messaging = () => {
                                                         "client"
                                                             ? activeGroup
                                                                   ?.bookedForTalent
-                                                                  .uniqueUsername
+                                                                  ?.uniqueUsername
                                                             : activeGroup?.emailAddress}
                                                     </p>
                                                 </div>

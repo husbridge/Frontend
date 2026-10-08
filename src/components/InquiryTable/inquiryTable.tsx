@@ -33,9 +33,11 @@ const InquiryTable = ({
             <Table.Td>{item.emailAddress}</Table.Td>
             {showTalent && (
                 <Table.Td>
-                    {item.bookedForTalent.firstName +
-                        " " +
-                        item.bookedForTalent.lastName}
+                    {item.bookedForTalent
+                        ? item.bookedForTalent.firstName +
+                          " " +
+                          item.bookedForTalent.lastName
+                        : "—"}
                 </Table.Td>
             )}
             <Table.Td>{item.inquiryType}</Table.Td>

@@ -29,6 +29,9 @@ export interface Data {
     // server-side (PHASE2_BACKLOG.md, "packageId reached the write side
     // but never the read side") but nothing on this side declared it.
     packageId: PublicPackage | null
+    // null when the talent account was deleted (server: toInquiryResponse
+    // in portal.service.ts). Every read has to handle that — one unguarded
+    // `.firstName` blanks the whole page, the same way packageId did.
     bookedForTalent: {
         _id: string
         profileUrl: string
@@ -43,7 +46,7 @@ export interface Data {
         stageName: string
         userType: string
         uniqueUsername: string
-    }
+    } | null
     eventDate: EventDate[]
     inquiryType: string
     createdAt: string
